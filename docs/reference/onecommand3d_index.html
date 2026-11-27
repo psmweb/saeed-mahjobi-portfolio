@@ -1,0 +1,106 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:SG;src:url(../../fonts/static/SG-700.ttf);font-weight:700}
+@font-face{font-family:SG;src:url(../../fonts/static/SG-600.ttf);font-weight:600}
+@font-face{font-family:SG;src:url(../../fonts/static/SG-500.ttf);font-weight:500}
+@font-face{font-family:IN;src:url(../../fonts/static/Inter-400.ttf);font-weight:400}
+@font-face{font-family:IN;src:url(../../fonts/static/Inter-500.ttf);font-weight:500}
+@font-face{font-family:IN;src:url(../../fonts/static/Inter-600.ttf);font-weight:600}
+@font-face{font-family:MO;src:url(fonts/NotoSansMono-Regular.ttf);font-weight:400}
+@font-face{font-family:MO;src:url(fonts/NotoSansMono-Bold.ttf);font-weight:700}
+@font-face{font-family:VZ;src:url(../../fonts/vz/fonts/ttf/Vazirmatn-SemiBold.ttf);font-weight:600}
+@font-face{font-family:VZ;src:url(../../fonts/vz/fonts/ttf/Vazirmatn-Black.ttf);font-weight:900}
+@font-face{font-family:VZ;src:url(../../fonts/vz/fonts/ttf/Vazirmatn-Regular.ttf);font-weight:400}
+:root{--gold:#F2B544;--gold2:#FFD27A;--green:#3DDC97;--ink:#EDEDE6;--mut:#8C93A3}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1280px;height:720px;overflow:hidden;background:#05070C;color:var(--ink);font-family:IN,sans-serif;-webkit-font-smoothing:antialiased}
+canvas{position:absolute;left:0;top:0}
+#hud{position:absolute;inset:0;pointer-events:none}
+.a{position:absolute}
+.glass{background:linear-gradient(180deg,rgba(22,26,38,.78),rgba(10,12,19,.82));border:1px solid rgba(255,255,255,.13);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.09);backdrop-filter:blur(6px)}
+.lbl{font-family:MO;font-size:11px;letter-spacing:.18em;color:var(--gold);text-transform:uppercase}
+.mono{font-family:MO}
+#nav{left:50px;top:18px;width:1180px;height:50px;border-radius:25px;display:flex;align-items:center;padding:0 10px 0 12px;background:rgba(14,17,26,.72);border:1px solid rgba(255,255,255,.1);box-shadow:0 10px 40px rgba(0,0,0,.5)}
+#logo{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold2),#C98A1E);color:#120d02;font-family:SG;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
+#brand{margin-left:12px;font-family:SG;font-weight:600;font-size:14px;letter-spacing:.16em}
+#chap{margin-left:auto;margin-right:auto;display:flex;gap:6px}
+.ch{font-family:MO;font-size:11px;letter-spacing:.08em;color:#6C7383;padding:6px 11px;border-radius:14px}
+.ch.on{color:#120d02;background:var(--gold)}
+#lang{display:flex;align-items:center;border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:3px;gap:2px}
+#lang span{font-size:12px;padding:5px 12px;border-radius:13px;color:var(--mut)}
+#lang span.on{background:#fff;color:#0a0c12;font-weight:600}
+#lang .fa{font-family:VZ;font-weight:600}
+#bat{left:1243px;top:200px;width:18px;height:250px;border:1.5px solid rgba(255,255,255,.3);border-radius:6px}
+#bat:before{content:"";position:absolute;left:4px;top:-6px;width:7px;height:4px;border-radius:2px 2px 0 0;background:rgba(255,255,255,.35)}
+#batf{position:absolute;left:2px;right:2px;bottom:2px;border-radius:3px;background:linear-gradient(0deg,#C98A1E,var(--gold2));box-shadow:0 0 14px rgba(242,181,68,.7)}
+#batp{left:1226px;top:460px;width:52px;text-align:center;font-family:MO;font-size:10px;color:var(--gold)}
+#log{left:0;right:0;top:684px;height:36px;border-top:1px solid rgba(255,255,255,.08);background:rgba(8,10,16,.88);display:flex;align-items:center;padding:0 24px;font-family:MO;font-size:12px}
+#logdot{width:7px;height:7px;border-radius:50%;margin-right:10px;background:var(--green);box-shadow:0 0 8px #3DDC97}
+#logl{color:#A9B0BE}
+#logr{margin-left:auto;color:#566070;letter-spacing:.12em}
+#term{left:60px;top:490px;width:520px;height:170px;border-radius:16px;background:rgba(10,12,19,.9);border:1px solid rgba(255,255,255,.12);box-shadow:0 30px 80px rgba(0,0,0,.6)}
+#term .bar{height:34px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;padding:0 14px;gap:7px}
+#term .bar i{width:11px;height:11px;border-radius:50%;display:block}
+#term .bar b{margin-left:auto;margin-right:auto;font-family:MO;font-weight:400;font-size:11px;color:#5d6575;transform:translateX(-24px)}
+.tl{left:22px;font-family:MO;white-space:pre}
+#tl1{top:52px;font-size:16px;color:#fff}#tl1 .p{color:var(--gold)}
+#cur{display:inline-block;width:9px;height:18px;background:var(--gold);vertical-align:-3px;margin-left:2px}
+#tl2{top:90px;font-size:12.5px;color:var(--green)}#tl3{top:114px;font-size:12.5px;color:#9AA3B2}#tl4{top:138px;font-size:12.5px;color:#9AA3B2}
+#sub1{left:60px;top:452px;font-size:16px;color:var(--mut)}
+.chip{display:inline-flex;align-items:center;gap:8px;font-family:MO;font-size:12px;font-weight:700;letter-spacing:.08em;color:#120d02;background:linear-gradient(135deg,var(--gold2),var(--gold));padding:8px 13px;border-radius:10px;box-shadow:0 0 24px rgba(242,181,68,.35)}
+.h2{font-family:SG;font-weight:700;letter-spacing:-.02em;color:#fff}
+.btn{white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;height:50px;padding:0 20px;border-radius:25px;font-family:SG;font-weight:700;font-size:16px}
+</style>
+<script type="importmap">{"imports":{"three":"./node_modules/three/build/three.module.js","three/addons/":"./node_modules/three/examples/jsm/"}}</script>
+</head><body>
+<div id="hud">
+ <div id="sweep" class="a" style="top:0;bottom:0;width:420px;opacity:0;background:linear-gradient(90deg,rgba(255,210,122,0),rgba(255,210,122,.55) 45%,#FFF3D6 50%,rgba(255,210,122,.55) 55%,rgba(255,210,122,0));mix-blend-mode:screen"></div>
+ <!-- act1 -->
+ <div id="a1" class="a" style="inset:0">
+  <div id="sub1" class="a">Founder &amp; CEO · AI-Native Operator · 6 Ventures · 5 AI Agents</div>
+  <div id="term" class="a"><div class="bar"><i style="background:#FF5F57"></i><i style="background:#FEBC2E"></i><i style="background:#28C840"></i><b>saeed@founder — zsh</b></div>
+   <div id="tl1" class="a tl"><span class="p">❯ </span><span id="cmd"></span><span id="cur"></span></div>
+   <div id="tl2" class="a tl">✓ intent received → 6 ventures · 5 agents · verify=on</div>
+   <div id="tl3" class="a tl">→ loading 10-year archive 2016 … 2026</div>
+   <div id="tl4" class="a tl">→ dispatching storyteller ···</div></div>
+ </div>
+ <!-- act2 -->
+ <div id="a2" class="a glass" style="left:50px;top:556px;width:580px;height:108px;padding:16px 22px">
+  <div class="lbl">02 · Evolution · 2016 → 2026</div>
+  <div id="a2h" class="h2" style="font-size:27px;margin-top:8px;white-space:nowrap"></div>
+  <div id="a2s" class="mono" style="font-size:12px;color:var(--mut);margin-top:8px;letter-spacing:.06em"></div></div>
+ <!-- act3 placard -->
+ <div id="pl" class="a glass" style="left:40px;top:300px;width:318px;padding:22px 22px 20px">
+  <div id="plk" class="lbl"></div>
+  <div id="pln" class="h2" style="font-size:36px;margin-top:12px;line-height:1.02"></div>
+  <div id="pld" style="font-size:13.5px;color:#B4BAC6;line-height:1.5;margin-top:12px"></div>
+  <div id="pls" class="mono" style="font-size:11px;color:var(--mut);letter-spacing:.06em;margin-top:12px;line-height:1.6"></div>
+  <div style="margin-top:16px"><span id="plb" class="chip"></span></div></div>
+ <div id="sat" class="a" style="left:40px;top:572px;width:318px;display:flex;flex-direction:column;gap:8px;opacity:0">
+  <div class="glass" style="border-radius:12px;padding:9px 14px;display:flex;justify-content:space-between;align-items:center"><span style="font-family:SG;font-weight:700;font-size:13px">Xchange</span><span class="mono" style="font-size:9.5px;white-space:nowrap;color:var(--mut);letter-spacing:.06em">NEXT.JS 15 + LARAVEL 12</span></div>
+  <div class="glass" style="border-radius:12px;padding:9px 14px;display:flex;justify-content:space-between;align-items:center"><span style="font-family:SG;font-weight:700;font-size:13px;white-space:nowrap">Rap Historical</span><span class="mono" style="font-size:9.5px;color:var(--mut);letter-spacing:.04em;white-space:nowrap">@RapHistorical · 3D AI SHORTS</span></div></div>
+ <!-- act4 -->
+ <div id="a4" class="a glass" style="left:50px;top:80px;height:44px;border-radius:22px;padding:0 18px;display:flex;align-items:center;gap:14px;white-space:nowrap">
+  <span class="lbl">04 · Agent arena</span><span class="h2" style="font-size:17px">1 founder → 5 AI agents</span>
+  <span id="a4s" class="mono" style="font-size:11px;color:var(--green);letter-spacing:.06em"></span></div>
+ <div id="a4r" class="a glass" style="right:50px;top:80px;height:44px;border-radius:22px;padding:0 18px;display:flex;align-items:center;gap:12px;white-space:nowrap">
+  <span class="lbl" style="color:#8C93A3">Live simulation · demo</span><span id="a4t" class="mono" style="font-size:11.5px;color:#EDEDE6"></span></div>
+ <div id="toast" class="a" style="left:0;width:1280px;top:636px;text-align:center"><span class="chip" style="font-size:13px;padding:10px 18px">✓ SHIPPED · RELEASE v0.8 · LIVE SIMULATION · DEMO</span></div>
+ <!-- act5 -->
+ <div id="a5" class="a" dir="rtl" style="right:70px;top:130px;width:660px;text-align:right">
+  <div id="a5k" style="font-family:VZ;font-weight:600;font-size:14px;color:var(--gold);letter-spacing:.02em">۰۵ · مرکز فرماندهی · تأیید نهایی با مالک</div>
+  <div id="a5h" style="font-family:VZ;font-weight:900;font-size:64px;line-height:1.25;margin-top:10px;background:linear-gradient(180deg,#fff 35%,#C9CCD6);-webkit-background-clip:text;color:transparent">سعید محجوبی</div>
+  <div id="a5s" style="font-family:VZ;font-weight:600;font-size:27px;line-height:1.6;color:#EDEDE6;margin-top:2px">۱۰ سال ساختن، <span style="color:var(--gold)">فرماندهی با ۵ ایجنت</span></div>
+  <div id="a5b" dir="ltr" style="display:flex;gap:12px;justify-content:flex-end;margin-top:22px">
+   <span class="btn" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18);color:#EDEDE6;font-family:MO;font-size:13px;font-weight:400">github.com/psmweb</span>
+   <span class="btn" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);color:#fff">Download Resume PDF ↓</span>
+   <span id="appr" class="btn" style="background:linear-gradient(135deg,#FFD27A,#F2B544);color:#120d02">Approve &amp; Deploy ✓</span></div>
+  <div id="a5c" dir="ltr" class="mono" style="font-size:12px;color:var(--mut);margin-top:16px;letter-spacing:.06em">psmsaeed223@gmail.com · English (Fluent) · Persian (Native)</div></div>
+ <!-- chrome -->
+ <div id="nav" class="a"><div id="logo">SM</div><div id="brand">SAEED MAHJOBI</div><div id="chap"></div>
+  <div id="lang"><span id="len" class="on">EN</span><span id="lfa" class="fa">فارسی</span></div></div>
+ <div id="bat" class="a"><div id="batf"></div></div><div id="batp" class="a"></div>
+ <div id="log" class="a"><div id="logdot"></div><div id="logl"></div><div id="logr">ONE COMMAND · 3D STORY PREVIEW</div></div>
+</div>
+<script type="module" src="main.js"></script>
+</body></html>

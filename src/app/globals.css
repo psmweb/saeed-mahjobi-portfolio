@@ -56,6 +56,17 @@ html[dir="rtl"] .font-sans {
   font-family: var(--font-fa);
 }
 
+/* --font-bebas is registered on <html> by next/font. Hero titles keep it in both directions. */
+.font-hero-display {
+  font-family: var(--font-bebas), sans-serif;
+  letter-spacing: 0.06em;
+}
+
+html[dir="rtl"] .font-hero-display {
+  font-family: var(--font-bebas), sans-serif;
+  letter-spacing: 0.06em;
+}
+
 ::selection {
   background: color-mix(in srgb, var(--amber) 35%, transparent);
   color: var(--ink);

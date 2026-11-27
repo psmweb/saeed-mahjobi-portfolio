@@ -2,7 +2,15 @@ import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 
 const root = process.cwd();
-const roots = ["src", "public", "README.md", "ARCHITECTURE.md"];
+const roots = [
+  "src",
+  "public",
+  "README.md",
+  "ARCHITECTURE.md",
+  "AGENTS.md",
+  "CHANGELOG.md",
+  "docs",
+];
 const extensions = new Set([".ts", ".tsx", ".css", ".md", ".json", ".svg", ".txt", ".html"]);
 
 const patterns = [
@@ -13,6 +21,7 @@ const patterns = [
   { name: "toman", re: /\btomans?\b/i },
   { name: "626", re: /(?<!\d)626(?!\d)/ },
   { name: "hossein mokhtari", re: /hossein\s+mokhtari/i },
+  { name: "mokhtari", re: /\bmokhtari\b/i },
   { name: "fa-person", re: /حسین\s*مختاری/ },
   { name: "fa-iran", re: /ایران/ },
   { name: "fa-tehran", re: /تهران/ },

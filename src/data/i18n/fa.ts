@@ -99,4 +99,8 @@ export const fa: Dictionary = {
   },
   emptyVentures: "محصول فعالی فهرست نشده است.",
   heroPrompt: "one --open portfolio",
+  resume: {
+    en: "رزومه (EN)",
+    fa: "رزومه (FA)",
+  },
 };

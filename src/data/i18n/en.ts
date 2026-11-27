@@ -99,4 +99,8 @@ export const en: Dictionary = {
   },
   emptyVentures: "No active products are listed.",
   heroPrompt: "one --open portfolio",
+  resume: {
+    en: "Resume (EN)",
+    fa: "Resume (FA)",
+  },
 };

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { JetBrains_Mono, Plus_Jakarta_Sans, Space_Grotesk, Vazirmatn } from "next/font/google";
+import { Bebas_Neue, JetBrains_Mono, Plus_Jakarta_Sans, Space_Grotesk, Vazirmatn } from "next/font/google";
 import { LanguageProvider } from "@/context/LanguageContext";
 import "./globals.css";
 
@@ -21,6 +21,13 @@ const jetbrains = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
   variable: "--font-jetbrains",
+  display: "swap",
+});
+
+const bebas = Bebas_Neue({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-bebas",
   display: "swap",
 });
 
@@ -46,7 +53,7 @@ export default function RootLayout({
     <html
       lang="en"
       dir="ltr"
-      className={`${jakarta.variable} ${space.variable} ${jetbrains.variable} ${vazir.variable}`}
+      className={`${jakarta.variable} ${space.variable} ${jetbrains.variable} ${vazir.variable} ${bebas.variable}`}
     >
       <body className="antialiased">
         <LanguageProvider>{children}</LanguageProvider>

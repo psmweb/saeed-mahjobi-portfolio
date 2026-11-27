@@ -30,4 +30,5 @@ export type Dictionary = {
   arena: { skeletonNote: string; slotLabel: string };
   emptyVentures: string;
   heroPrompt: string;
+  resume: { en: string; fa: string };
 };

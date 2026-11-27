@@ -2,6 +2,7 @@
 
 import { agents } from "@/data/agents";
 import { portraits } from "@/data/portraits";
+import { resumes } from "@/data/resumes";
 import { activeVentures } from "@/data/ventures";
 import { useLanguage } from "@/context/LanguageContext";
 import { Portrait } from "../Portrait";
@@ -33,6 +34,22 @@ export function Act5FinaleCommandCenter() {
             ))}
           </dl>
           <p className="mt-6 text-sm text-ink">{dictionary.brand.name}</p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <a
+              href={resumes.en}
+              download
+              className="rounded-full border border-amber/40 px-3 py-1.5 font-mono text-xs text-amber"
+            >
+              {dictionary.resume.en}
+            </a>
+            <a
+              href={resumes.fa}
+              download
+              className="rounded-full border border-white/15 px-3 py-1.5 font-mono text-xs text-ink"
+            >
+              {dictionary.resume.fa}
+            </a>
+          </div>
         </div>
       </div>
     </ActFrame>
