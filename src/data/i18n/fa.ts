@@ -125,4 +125,17 @@ export const fa: Dictionary = {
     en: "رزومه (EN)",
     fa: "رزومه (FA)",
   },
+  heroStage: {
+    displayName: "سعید محجوبی",
+    tagline: "بنیان‌گذار · معمار سیستم‌های فول‌استک و هوش مصنوعی",
+    prompt: "one-command --deploy --all",
+    pills: ["۱۰+ سال", "۶+ محصول زنده", "ناوگان عامل‌های هوش مصنوعی"],
+  },
+  evolutionStage: {
+    items: [
+      { year: "2016", title: "پایه‌ها و مهندسی وب" },
+      { year: "2020", title: "بایگانی استودیو و برند" },
+      { year: "2026", title: "بنیان‌گذار هوش مصنوعی و فرمان چندعاملی" },
+    ],
+  },
 };

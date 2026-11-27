@@ -22,15 +22,28 @@ export function SmoothScroll() {
       },
     });
     registerScroller(lenis);
-    const publish = () => {
-      const limit = lenis.dimensions.limit.y;
-      setScrollProgress(limit <= 0 ? 0 : lenis.animatedScroll / limit);
+    const measure = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      setScrollProgress(max <= 0 ? 0 : window.scrollY / max);
     };
-    publish();
-    const unsubscribe = lenis.on("scroll", publish);
+    const seek = (progress: number) => {
+      const next = Math.min(1, Math.max(0, progress));
+      lenis.scrollTo(lenis.dimensions.limit.y * next, { immediate: true });
+      measure();
+    };
+    const view = window as Window & { __oneCommandSeek?: (progress: number) => void };
+    view.__oneCommandSeek = seek;
+    let alive = true;
+    const tick = () => {
+      if (!alive) return;
+      measure();
+      requestAnimationFrame(tick);
+    };
+    tick();
     return () => {
-      unsubscribe();
+      alive = false;
       registerScroller(null);
+      delete view.__oneCommandSeek;
       lenis.destroy();
     };
   }, [dir]);

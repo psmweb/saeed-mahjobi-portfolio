@@ -10,8 +10,10 @@ const listeners = new Set<Listener>();
 let frame = 0;
 
 export function setScrollProgress(progress: number) {
-  scrollProgress.current = progress;
-  if (frame !== 0) return;
+  const next = Math.min(1, Math.max(0, progress));
+  const changed = Math.abs(next - scrollProgress.current) >= 0.0005;
+  scrollProgress.current = next;
+  if (!changed || frame !== 0) return;
   frame = requestAnimationFrame(() => {
     frame = 0;
     const value = scrollProgress.current;

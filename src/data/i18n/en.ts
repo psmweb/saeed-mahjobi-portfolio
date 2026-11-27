@@ -125,4 +125,17 @@ export const en: Dictionary = {
     en: "Resume (EN)",
     fa: "Resume (FA)",
   },
+  heroStage: {
+    displayName: "SAEED MAHJOBI",
+    tagline: "Founder · Full-Stack & AI Systems Architect",
+    prompt: "one-command --deploy --all",
+    pills: ["10+ Years", "6+ Live Ventures", "AI Agent Fleet"],
+  },
+  evolutionStage: {
+    items: [
+      { year: "2016", title: "Foundations & Web Engineering" },
+      { year: "2020", title: "Studio & Brand Archive" },
+      { year: "2026", title: "AI-Native Founder & Multi-Agent Command" },
+    ],
+  },
 };

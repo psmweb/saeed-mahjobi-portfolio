@@ -39,4 +39,13 @@ export type Dictionary = {
   emptyVentures: string;
   heroPrompt: string;
   resume: { en: string; fa: string };
+  heroStage: {
+    displayName: string;
+    tagline: string;
+    prompt: string;
+    pills: [string, string, string];
+  };
+  evolutionStage: {
+    items: [{ year: string; title: string }, { year: string; title: string }, { year: string; title: string }];
+  };
 };

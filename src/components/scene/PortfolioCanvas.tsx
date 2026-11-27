@@ -1,11 +1,28 @@
 "use client";
 
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { useRef } from "react";
+import type { Group } from "three";
 import * as THREE from "three";
+import { scrollProgress } from "@/lib/scrollProgress";
+import { readClock } from "./cinema";
+import { Act1Hero } from "./acts/Act1Hero";
+import { Act2Evolution as Act2EvolutionScene } from "./acts/Act2Evolution";
 import { AgentFigurines } from "./AgentFigurines";
-import { AmberStoryteller } from "./AmberStoryteller";
 import { CameraRig } from "./CameraRig";
 import { ObsidianAtmosphere } from "./ObsidianAtmosphere";
+
+function LaterActFigurines() {
+  const group = useRef<Group>(null);
+  useFrame(() => {
+    if (group.current) group.current.visible = readClock(scrollProgress.current).internal > 17.2;
+  });
+  return (
+    <group ref={group} visible={false}>
+      <AgentFigurines />
+    </group>
+  );
+}
 
 export function PortfolioCanvas() {
   return (
@@ -27,8 +44,9 @@ export function PortfolioCanvas() {
     >
       <ObsidianAtmosphere />
       <CameraRig />
-      <AmberStoryteller />
-      <AgentFigurines />
+      <Act1Hero />
+      <Act2EvolutionScene />
+      <LaterActFigurines />
     </Canvas>
   );
 }
