@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+:root {
+  --obsidian: #05070c;
+  --obsidian-raised: #0c1118;
+  --amber: #f59e0b;
+  --amber-soft: #fbbf24;
+  --emerald: #10b981;
+  --cyan: #38bdf8;
+  --ink: #f5f2eb;
+  --muted: #a8a29e;
+  --line: rgba(245, 158, 11, 0.28);
+  --background: var(--obsidian);
+  --foreground: var(--ink);
+}
+
+@theme inline {
+  --color-obsidian: var(--obsidian);
+  --color-obsidian-raised: var(--obsidian-raised);
+  --color-amber: var(--amber);
+  --color-amber-soft: var(--amber-soft);
+  --color-emerald: var(--emerald);
+  --color-cyan: var(--cyan);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-jakarta), sans-serif;
+  --font-display: var(--font-space), sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+  --font-fa: var(--font-vazir), sans-serif;
+}
+
+html {
+  background: var(--obsidian);
+  color: var(--ink);
+  scroll-behavior: auto;
+}
+
+body {
+  min-height: 100%;
+  background:
+    radial-gradient(ellipse at top, rgba(245, 158, 11, 0.08), transparent 42%),
+    var(--obsidian);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+html[dir="rtl"] body {
+  font-family: var(--font-fa);
+}
+
+html[dir="rtl"] .font-display,
+html[dir="rtl"] .font-sans {
+  font-family: var(--font-fa);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--amber) 35%, transparent);
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}
