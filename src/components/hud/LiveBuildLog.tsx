@@ -45,17 +45,22 @@ export function LiveBuildLog() {
   }, [lines]);
 
   const shown = lines.slice(0, visible);
+  const latest = shown.at(-1) ?? dictionary.hud.logIdle;
 
   return (
     <aside
       aria-live="polite"
-      className="fixed z-40 w-[min(100%-2rem,22rem)] overflow-hidden rounded-xl border border-white/10 bg-obsidian/80 font-mono text-[11px] leading-relaxed text-emerald shadow-2xl backdrop-blur-md inset-e-4 bottom-4"
+      className="fixed z-30 overflow-hidden border border-white/10 bg-obsidian/80 font-mono text-[11px] leading-relaxed text-emerald shadow-2xl backdrop-blur-md max-md:inset-x-0 max-md:bottom-0 max-md:border-x-0 max-md:border-b-0 md:inset-e-4 md:bottom-4 md:w-[22rem] md:rounded-xl rtl:md:bottom-16"
     >
-      <header className="flex items-center gap-2 border-b border-white/10 px-3 py-2 text-amber">
-        <Terminal className="size-3.5" aria-hidden />
-        {dictionary.hud.logTitle}
+      <header className="flex items-center gap-2 px-3 py-2 text-amber md:border-b md:border-white/10">
+        <Terminal className="size-3.5 shrink-0" aria-hidden />
+        <span className="shrink-0">{dictionary.hud.logTitle}</span>
+        <span className="min-w-0 truncate text-emerald md:hidden">
+          <span className="text-amber">› </span>
+          {latest}
+        </span>
       </header>
-      <ol className="max-h-36 space-y-1 overflow-auto px-3 py-2">
+      <ol className="hidden max-h-36 space-y-1 overflow-auto px-3 py-2 md:block">
         {shown.length === 0 ? <li className="text-muted">{dictionary.hud.logIdle}</li> : null}
         {shown.map((line, index) => (
           <li key={`${index}-${line}`} className="break-words">
