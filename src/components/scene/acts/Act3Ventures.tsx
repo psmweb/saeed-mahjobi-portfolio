@@ -47,6 +47,28 @@ const LIVE = [
       ["~50K LOC", "PYTHON"],
     ],
   },
+  {
+    texture: "/textures/ventures/honarmarket.png",
+    chips: [
+      ["1,450+", "MOLD DESIGNS"],
+      ["RESIN", "& CANDLE SUPPLIES"],
+    ],
+  },
+  {
+    texture: "/textures/ventures/yadaki-yar.png",
+    chips: [
+      ["v0.7.0", "FASTAPI + POSTGRESQL"],
+      ["80", "PULL REQUESTS"],
+      ["WIN · ANDROID", "SHARED BACKEND"],
+    ],
+  },
+  {
+    texture: "/textures/ventures/sandoq-yar.png",
+    chips: [
+      ["OFFLINE", "BARCODE POS"],
+      ["PWA", "ZXING-WASM · INDEXEDDB"],
+    ],
+  },
 ] as const;
 
 type Disposable = { dispose: () => void };
@@ -413,6 +435,12 @@ function buildStage(
     cyan.position.set(-3.8, 0.8, 2.1);
     group.add(cyan);
     accentLights.push(cyan);
+  }
+  if (index === 3) {
+    const amber = new THREE.PointLight("#F59E0B", 0, 11, 2);
+    amber.position.set(-3.5, 0.9, 2.3);
+    group.add(amber);
+    accentLights.push(amber);
   }
 
   const cells = index === 1 ? addCells(group, body, track) : [];

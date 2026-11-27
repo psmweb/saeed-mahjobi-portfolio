@@ -2,6 +2,20 @@
 
 All notable changes to this portfolio are documented here. The format follows Keep a Changelog. Versions follow Semantic Versioning.
 
+## [0.5.0] - 2026-11-27
+
+### Added
+
+- Act 3 ventures 4–6 on the same dark-glass slabs as v0.4.0: Honarmarket, Yadaki Yar, and Sandoq-Yar, with scrolling `honarmarket.png`, `yadaki-yar.png`, and `sandoq-yar.png`.
+- Honarmarket placard `1,450+` designs, rose rim with an amber companion light.
+- Yadaki Yar placard `v0.7.0 · FastAPI + PostgreSQL · 80 PRs`.
+- Sandoq-Yar offline barcode POS, demo barcode `0 123456 789012`, and the Xchange and Rap Historical glass badges.
+- Persian placards on the start edge. 3D chips mirror when the page direction is RTL.
+
+### Unchanged
+
+- Ventures 1–3, Acts 1–2, the HUD, Act 4 robots, and the Act 5 wipe.
+
 ## [0.1.0] - 2026-11-27
 
 ### Added

@@ -8,10 +8,12 @@ import type { ActId } from "@/data/i18n/types";
 export function ActFrame({
   id,
   heading = "h2",
+  concealed = false,
   children,
 }: {
   id: ActId;
   heading?: "h1" | "h2";
+  concealed?: boolean;
   children?: ReactNode;
 }) {
   const { dictionary, dir, mirrorX } = useLanguage();
@@ -27,7 +29,8 @@ export function ActFrame({
       key={dir}
       id={id}
       aria-labelledby={`${id}-title`}
-      className="relative mx-auto flex min-h-[100svh] w-full max-w-6xl flex-col justify-center px-5 py-28 sm:px-8"
+      className={`relative mx-auto flex min-h-[100svh] w-full max-w-6xl flex-col justify-center px-5 py-28 sm:px-8${concealed ? " invisible" : ""}`}
+      aria-hidden={concealed || undefined}
       initial={{ opacity: 0, x: mirrorX(28) }}
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true, amount: 0.28 }}
