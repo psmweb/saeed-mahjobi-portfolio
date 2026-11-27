@@ -8,7 +8,7 @@ Semantic versions for ONE COMMAND. Tags are annotated. Each tag ships with `CHAN
 | v0.2.0 | 1 | Obsidian atmosphere, cinema camera, persistent HUD | Released |
 | v0.3.0 | 2 | Act 1 hero and Act 2 evolution | Released |
 | v0.4.0 | 3A | Venture stages 1–3 (Mikham + Miara, Battery Store, Trader Bot) | Released |
-| v0.5.0 | 3 | Venture stages 4–6 (Honarmarket, Yadaki Yar, Sandoq-Yar) | Not started |
+| v0.5.0 | 3B | Venture stages 4–6 (Honarmarket, Yadaki Yar, Sandoq-Yar) | Released |
 | v0.6.0 | 4 | Five PBR robot figurines and the arena demo | Not started |
 | v0.7.0 | 5 | Persian RTL mirror and command-center finale | Not started |
 | v0.9.0 | 6 | Visual parity, responsive, and performance audit | Not started |
@@ -45,5 +45,15 @@ Phase 3A. Ventures 4–6 stay placeholders.
 - `src/components/acts/Act3VentureStage.tsx` — scroll landmark only. The visible copy is the overlay.
 - Metrics on the placards: `400K+` businesses, `v0.2.0 · PR #201`, `~50K LOC · 886/886 CI tests`, live trading off.
 - `public/textures/ventures/battery-store.png` and `trader-bot.png` were swapped on disk. v0.4.0 puts each UI under its own filename.
+
+## v0.5.0
+
+Phase 3B. The quiet glass for ventures 4–6 is now the real stages.
+
+- Honarmarket, Yadaki Yar, and Sandoq-Yar reuse the v0.4.0 slab, sheen, chip, and placard timing.
+- Textures `honarmarket.png`, `yadaki-yar.png`, and `sandoq-yar.png` already matched those products. No filename swap.
+- Placards: `1,450+` designs; `v0.7.0 · FastAPI + PostgreSQL · 80 PRs`; offline barcode POS with `0 123456 789012`.
+- Sandoq-Yar also carries the Xchange and Rap Historical badges.
+- Persian copy sits on the start edge. Chip positions flip with `dir`.
 
 

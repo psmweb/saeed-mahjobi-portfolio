@@ -1,14 +1,27 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { readClock } from "@/components/scene/cinema";
 import { AGENT_TINT_HEX, agents } from "@/data/agents";
 import { useLanguage } from "@/context/LanguageContext";
+import { subscribeScroll } from "@/lib/scrollProgress";
 import { ActFrame } from "./ActFrame";
 
 export function Act4AgentArena() {
   const { dictionary } = useLanguage();
+  const [revealed, setRevealed] = useState(false);
+
+  useEffect(
+    () =>
+      subscribeScroll((progress) => {
+        const next = readClock(progress).internal >= 17.7;
+        setRevealed((current) => (current === next ? current : next));
+      }),
+    [],
+  );
 
   return (
-    <ActFrame id="arena">
+    <ActFrame id="arena" concealed={!revealed}>
       <div className="flex flex-wrap items-center gap-3">
         <p className="rounded-full border border-cyan/40 bg-cyan/10 px-3 py-1 font-mono text-xs text-cyan">
           {dictionary.demoBadge}

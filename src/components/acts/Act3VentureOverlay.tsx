@@ -9,6 +9,9 @@ const ACCENT_DOTS: Record<number, readonly [string, string] | null> = {
   0: null,
   1: ["#10B981", "#F59E0B"],
   2: ["#38BDF8", "#10B981"],
+  3: ["#F472B6", "#F59E0B"],
+  4: null,
+  5: null,
 };
 
 export function Act3VentureOverlay() {
@@ -28,10 +31,13 @@ export function Act3VentureOverlay() {
   const dots = ACCENT_DOTS[index];
   const shift = (1 - opacity) * (dir === "rtl" ? 28 : -28);
   const latinChip = !/[\u0600-\u06FF]/.test(stage.chip);
+  const parked = stage.satellites
+    ? "sm:top-[clamp(4.5rem,28vh,220px)]"
+    : "sm:top-[clamp(5.25rem,38vh,300px)]";
 
   return (
     <div
-      className="pointer-events-none fixed z-20 w-[min(17.75rem,calc(100%-5.25rem))] start-3 bottom-14 top-auto sm:bottom-auto sm:start-10 sm:top-[clamp(5.25rem,38vh,300px)] sm:w-[318px]"
+      className={`pointer-events-none fixed z-20 w-[min(17.75rem,calc(100%-5.25rem))] start-3 bottom-14 top-auto sm:bottom-auto sm:start-10 sm:w-[318px] ${parked}`}
       style={{ opacity, transform: `translateX(${shift}px)` }}
       data-act="3"
       data-venture={stage.id}
@@ -65,12 +71,45 @@ export function Act3VentureOverlay() {
         <p className="mt-3.5">
           <span
             dir={latinChip ? "ltr" : undefined}
-            className="inline-flex rounded-[10px] bg-gradient-to-br from-[#FFD27A] to-[#F2B544] px-3 py-1.5 font-mono text-[11px] font-semibold tracking-[0.04em] text-[#120d02] shadow-[0_0_18px_rgba(242,181,68,0.28)] sm:text-xs"
+            className={
+              stage.chip.length > 28
+                ? "inline-block max-w-full text-pretty rounded-[10px] bg-gradient-to-br from-[#FFD27A] to-[#F2B544] px-3 py-1.5 font-mono text-[11px] font-semibold leading-snug tracking-[0.04em] text-[#120d02] shadow-[0_0_18px_rgba(242,181,68,0.28)] sm:text-xs"
+                : "inline-flex rounded-[10px] bg-gradient-to-br from-[#FFD27A] to-[#F2B544] px-3 py-1.5 font-mono text-[11px] font-semibold tracking-[0.04em] text-[#120d02] shadow-[0_0_18px_rgba(242,181,68,0.28)] sm:text-xs"
+            }
           >
             {stage.chip}
           </span>
         </p>
+        {stage.barcode ? (
+          <p
+            dir="ltr"
+            data-barcode={stage.barcode}
+            className="mt-2.5 font-mono text-[12px] tracking-[0.14em] sm:text-[13px]"
+            style={{ color: accent }}
+          >
+            {stage.barcode}
+          </p>
+        ) : null}
       </article>
+      {stage.satellites ? (
+        <div className="mt-2 flex flex-col gap-2" data-satellites={stage.id}>
+          {stage.satellites.map((item) => (
+            <div
+              key={item.id}
+              data-satellite={item.id}
+              className="flex items-center justify-between gap-2 rounded-xl border border-white/[0.13] bg-[linear-gradient(180deg,rgba(22,26,38,0.78),rgba(10,12,19,0.82))] px-3.5 py-2 shadow-[0_12px_40px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.09)] backdrop-blur-md"
+            >
+              <span className="font-display text-[13px] font-semibold leading-none text-white">{item.title}</span>
+              <span
+                dir="ltr"
+                className="max-w-[62%] text-end font-mono text-[10px] leading-snug tracking-[0.03em] text-[#8C93A3] sm:text-[11px]"
+              >
+                {item.detail}
+              </span>
+            </div>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }

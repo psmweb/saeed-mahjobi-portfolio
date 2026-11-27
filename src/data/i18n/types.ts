@@ -14,13 +14,21 @@ export type ActCopy = {
   body: string;
 };
 
+export type VentureSatellite = {
+  id: "xchange" | "rap-historical";
+  title: string;
+  detail: string;
+};
+
 export type VentureStageCopy = {
-  id: "mikham-miara" | "battery-store" | "trader-bot";
+  id: "mikham-miara" | "battery-store" | "trader-bot" | "honarmarket" | "yadaki-yar" | "sandoq-yar";
   kicker: string;
   title: string;
   body: string;
   stack: string;
   chip: string;
+  barcode?: string;
+  satellites?: readonly [VentureSatellite, VentureSatellite];
 };
 
 export type Dictionary = {
@@ -57,5 +65,12 @@ export type Dictionary = {
   evolutionStage: {
     items: [{ year: string; title: string }, { year: string; title: string }, { year: string; title: string }];
   };
-  ventureStages: readonly [VentureStageCopy, VentureStageCopy, VentureStageCopy];
+  ventureStages: readonly [
+    VentureStageCopy,
+    VentureStageCopy,
+    VentureStageCopy,
+    VentureStageCopy,
+    VentureStageCopy,
+    VentureStageCopy,
+  ];
 };
