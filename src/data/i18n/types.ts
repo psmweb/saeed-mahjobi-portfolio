@@ -31,6 +31,36 @@ export type VentureStageCopy = {
   satellites?: readonly [VentureSatellite, VentureSatellite];
 };
 
+export type ArenaTargetCopy = {
+  title: string;
+  badge: string;
+};
+
+export type ArenaCopy = {
+  skeletonNote: string;
+  slotLabel: string;
+  kicker: string;
+  headline: string;
+  shipTitle: string;
+  statusOnline: string;
+  statusBuilding: string;
+  statusConverging: string;
+  statusShipped: string;
+  shippedMark: string;
+  replay: string;
+  replaying: string;
+  toast: string;
+  queued: string;
+  building: string;
+  done: string;
+  task: string;
+  shipLine: string;
+  shipVersion: string;
+  shipped: string;
+  roles: readonly [string, string, string, string, string];
+  targets: readonly [ArenaTargetCopy, ArenaTargetCopy, ArenaTargetCopy, ArenaTargetCopy, ArenaTargetCopy];
+};
+
 export type Dictionary = {
   meta: { title: string; description: string };
   brand: { command: string; name: string };
@@ -52,7 +82,7 @@ export type Dictionary = {
     logLines: string[];
   };
   scene: { loading: string; unavailable: string };
-  arena: { skeletonNote: string; slotLabel: string };
+  arena: ArenaCopy;
   emptyVentures: string;
   heroPrompt: string;
   resume: { en: string; fa: string };
