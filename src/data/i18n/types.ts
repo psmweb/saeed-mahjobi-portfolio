@@ -14,6 +14,15 @@ export type ActCopy = {
   body: string;
 };
 
+export type VentureStageCopy = {
+  id: "mikham-miara" | "battery-store" | "trader-bot";
+  kicker: string;
+  title: string;
+  body: string;
+  stack: string;
+  chip: string;
+};
+
 export type Dictionary = {
   meta: { title: string; description: string };
   brand: { command: string; name: string };
@@ -48,4 +57,5 @@ export type Dictionary = {
   evolutionStage: {
     items: [{ year: string; title: string }, { year: string; title: string }, { year: string; title: string }];
   };
+  ventureStages: readonly [VentureStageCopy, VentureStageCopy, VentureStageCopy];
 };

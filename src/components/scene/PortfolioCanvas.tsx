@@ -8,6 +8,7 @@ import { scrollProgress } from "@/lib/scrollProgress";
 import { readClock } from "./cinema";
 import { Act1Hero } from "./acts/Act1Hero";
 import { Act2Evolution as Act2EvolutionScene } from "./acts/Act2Evolution";
+import { Act3Ventures } from "./acts/Act3Ventures";
 import { AgentFigurines } from "./AgentFigurines";
 import { CameraRig } from "./CameraRig";
 import { ObsidianAtmosphere } from "./ObsidianAtmosphere";
@@ -46,6 +47,7 @@ export function PortfolioCanvas() {
       <CameraRig />
       <Act1Hero />
       <Act2EvolutionScene />
+      <Act3Ventures />
       <LaterActFigurines />
     </Canvas>
   );

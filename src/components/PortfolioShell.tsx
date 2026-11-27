@@ -5,6 +5,7 @@ import { Act1HeroCommand } from "./acts/Act1HeroCommand";
 import { Act1HeroOverlay } from "./acts/Act1HeroOverlay";
 import { Act2Evolution } from "./acts/Act2Evolution";
 import { Act2EvolutionOverlay } from "./acts/Act2EvolutionOverlay";
+import { Act3VentureOverlay } from "./acts/Act3VentureOverlay";
 import { Act3VentureStage } from "./acts/Act3VentureStage";
 import { Act4AgentArena } from "./acts/Act4AgentArena";
 import { Act5FinaleCommandCenter } from "./acts/Act5FinaleCommandCenter";
@@ -31,6 +32,7 @@ export function PortfolioShell() {
       <GlassNavbar />
       <Act1HeroOverlay />
       <Act2EvolutionOverlay />
+      <Act3VentureOverlay />
       <BatteryScrollMeter />
       <LiveBuildLog />
       <main className="relative z-10 bg-transparent pb-12 pe-8 sm:pe-12">
