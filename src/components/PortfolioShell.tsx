@@ -29,7 +29,7 @@ export function PortfolioShell() {
       <GlassNavbar />
       <BatteryScrollMeter />
       <LiveBuildLog />
-      <main className="relative z-10 bg-gradient-to-b from-obsidian/88 via-obsidian/72 to-obsidian/90">
+      <main className="relative z-10 bg-gradient-to-b from-obsidian/55 via-transparent to-obsidian/70 pb-12 pe-8 sm:pe-12">
         <Act1HeroCommand />
         <Act2Evolution />
         <Act3VentureStage />

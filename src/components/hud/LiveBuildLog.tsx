@@ -1,74 +1,29 @@
 "use client";
 
-import { Terminal } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
-import type { Dictionary } from "@/data/i18n/types";
-import { formatMetric, ventures } from "@/data/ventures";
-
-function buildLines(dictionary: Dictionary): string[] {
-  const copy = {
-    labels: dictionary.metricLabels,
-    liveTrading: dictionary.metricValues.liveTrading,
-    form: dictionary.metricValues.form,
-  };
-  return [
-    dictionary.brand.command,
-    dictionary.brand.name,
-    dictionary.profile.english,
-    dictionary.profile.persian,
-    `${dictionary.lanes.active} · 6`,
-    ...ventures.map((venture) => {
-      const name = dictionary.ventureNames[venture.id];
-      const facts = venture.metrics.map((metric) => formatMetric(metric, copy));
-      return facts.length > 0 ? `${name} · ${facts.join(" · ")}` : `${dictionary.lanes[venture.lane]} · ${name}`;
-    }),
-  ];
-}
+import { subscribeScroll } from "@/lib/scrollProgress";
+import { LOG_AT, readClock } from "@/components/scene/cinema";
 
 export function LiveBuildLog() {
   const { dictionary } = useLanguage();
-  const lines = useMemo(() => buildLines(dictionary), [dictionary]);
-  const [visible, setVisible] = useState(0);
+  const [line, setLine] = useState(dictionary.hud.logLines[0] ?? dictionary.hud.logIdle);
 
   useEffect(() => {
-    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (media.matches) {
-      setVisible(lines.length);
-      return;
-    }
-    setVisible(1);
-    const id = window.setInterval(() => {
-      setVisible((count) => (count >= lines.length ? count : count + 1));
-    }, 700);
-    return () => window.clearInterval(id);
-  }, [lines]);
-
-  const shown = lines.slice(0, visible);
-  const latest = shown.at(-1) ?? dictionary.hud.logIdle;
+    return subscribeScroll((progress) => {
+      const index = readClock(progress).log;
+      setLine(dictionary.hud.logLines[index] ?? dictionary.hud.logLines[LOG_AT.length - 1] ?? dictionary.hud.logIdle);
+    });
+  }, [dictionary]);
 
   return (
     <aside
       aria-live="polite"
-      className="fixed z-30 overflow-hidden border border-white/10 bg-obsidian/80 font-mono text-[11px] leading-relaxed text-emerald shadow-2xl backdrop-blur-md max-md:inset-x-0 max-md:bottom-0 max-md:border-x-0 max-md:border-b-0 md:inset-e-4 md:bottom-4 md:w-[22rem] md:rounded-xl rtl:md:bottom-16"
+      className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex h-9 items-center gap-2.5 border-t border-white/10 bg-[rgba(8,10,16,0.88)] px-4 font-mono text-xs backdrop-blur-md sm:px-6"
     >
-      <header className="flex items-center gap-2 px-3 py-2 text-amber md:border-b md:border-white/10">
-        <Terminal className="size-3.5 shrink-0" aria-hidden />
-        <span className="shrink-0">{dictionary.hud.logTitle}</span>
-        <span className="min-w-0 truncate text-emerald md:hidden">
-          <span className="text-amber">› </span>
-          {latest}
-        </span>
-      </header>
-      <ol className="hidden max-h-36 space-y-1 overflow-auto px-3 py-2 md:block">
-        {shown.length === 0 ? <li className="text-muted">{dictionary.hud.logIdle}</li> : null}
-        {shown.map((line, index) => (
-          <li key={`${index}-${line}`} className="break-words">
-            <span className="text-amber">› </span>
-            {line}
-          </li>
-        ))}
-      </ol>
+      <span className="size-[7px] shrink-0 rounded-full bg-[#3DDC97] shadow-[0_0_8px_#3DDC97]" />
+      <p className="min-w-0 flex-1 truncate text-[#A9B0BE]">{line}</p>
+      <p className="hidden shrink-0 tracking-[0.12em] text-[#566070] sm:block">{dictionary.hud.logMark}</p>
     </aside>
   );
 }

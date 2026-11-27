@@ -17,3 +17,16 @@ All notable changes to this portfolio are documented here. The format follows Ke
 
 - Scroll-linked camera, PBR figurines, and act visuals. Those are v0.2.0 through v0.7.0.
 - The frameless studio portrait. The rule is locked. The file is not in the repo.
+
+## [0.2.0] - 2026-11-27
+
+### Added
+
+- Obsidian deep-space atmosphere from the reference scene: `#05070C` backdrop, exponential fog, starfield, per-chapter nebulae, dot-grid floors, and the key / rim / fill rig.
+- Cinema camera bound to Lenis scroll. Document progress `0–1` maps to the `0–52s` presentation clock, then into the reference curve.
+- Persistent HUD: glass navbar with `SM`, chapter chips `01`–`05`, and `EN | فارسی`; a vertical battery that fills with scroll and flips edge in RTL; a one-line frosted build log.
+
+### Unchanged
+
+- Act 1–5 meshes stay placeholders. Hero type, archive slabs, venture slabs, robot figurines, and the finale wipe are still later phases.
+

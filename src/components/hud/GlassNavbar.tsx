@@ -1,38 +1,58 @@
 "use client";
 
-import { Command } from "lucide-react";
 import { ACT_ORDER } from "@/data/i18n";
 import { useLanguage } from "@/context/LanguageContext";
+import { scrollToAct, subscribeScroll } from "@/lib/scrollProgress";
+import { readClock } from "@/components/scene/cinema";
+import { useEffect, useState } from "react";
 import { LanguageToggle } from "./LanguageToggle";
 
 export function GlassNavbar() {
   const { dictionary } = useLanguage();
+  const [chapter, setChapter] = useState(0);
+
+  useEffect(
+    () =>
+      subscribeScroll((progress) => {
+        const next = readClock(progress).chapter;
+        setChapter((current) => (current === next ? current : next));
+      }),
+    [],
+  );
 
   return (
-    <header className="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-obsidian/75 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-6xl items-center gap-4 px-5 py-3 sm:px-8">
-        <a href="#command" className="inline-flex items-center gap-2 font-display text-sm text-ink">
-          <Command className="size-4 text-amber" aria-hidden />
-          {dictionary.brand.command}
+    <header className="pointer-events-none fixed inset-x-0 top-0 z-40 px-3 pt-3 sm:px-6 sm:pt-[18px]">
+      <div className="pointer-events-auto mx-auto flex h-[50px] max-w-[1180px] items-center gap-2 rounded-full border border-white/10 bg-[rgba(14,17,26,0.72)] px-1.5 shadow-[0_10px_40px_rgba(0,0,0,0.5)] backdrop-blur-md sm:gap-3 sm:px-3">
+        <a href="#command" className="inline-flex shrink-0 items-center gap-2 rounded-full ps-1">
+          <span className="grid size-8 place-items-center rounded-full bg-gradient-to-br from-[#FFD27A] to-[#C98A1E] font-display text-[13px] font-semibold text-[#120d02]">
+            SM
+          </span>
+          <span className="hidden font-display text-sm tracking-[0.16em] text-ink sm:inline">
+            {dictionary.hud.brand}
+          </span>
         </a>
-        <nav aria-label={dictionary.nav.aria} className="ms-auto hidden items-center gap-5 md:flex">
-          {ACT_ORDER.map((id) => (
-            <a key={id} href={`#${id}`} className="text-sm text-muted transition-colors hover:text-ink">
-              {dictionary.acts[id].title}
-            </a>
-          ))}
+        <nav aria-label={dictionary.nav.aria} className="flex min-w-0 flex-1 items-center justify-center gap-1 overflow-x-auto">
+          {ACT_ORDER.map((id, index) => {
+            const active = chapter === index;
+            return (
+              <button
+                key={id}
+                type="button"
+                onClick={() => scrollToAct(id)}
+                aria-current={active ? "true" : undefined}
+                className={`shrink-0 rounded-full px-2 py-1.5 font-mono text-[11px] tracking-[0.08em] transition-colors sm:px-3 ${
+                  active
+                    ? "bg-[#F2B544] text-[#120d02]"
+                    : "text-[#6C7383] hover:bg-white/10 hover:text-ink"
+                }`}
+              >
+                <span>{dictionary.hud.chapters[index]}</span>
+              </button>
+            );
+          })}
         </nav>
-        <div className="ms-auto md:ms-0">
-          <LanguageToggle />
-        </div>
+        <LanguageToggle />
       </div>
-      <nav aria-label={dictionary.nav.aria} className="flex gap-4 overflow-x-auto px-5 pb-3 md:hidden">
-        {ACT_ORDER.map((id) => (
-          <a key={id} href={`#${id}`} className="shrink-0 text-sm text-muted">
-            {dictionary.acts[id].title}
-          </a>
-        ))}
-      </nav>
     </header>
   );
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { Languages } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 
 export function LanguageToggle() {
@@ -11,14 +10,17 @@ export function LanguageToggle() {
       type="button"
       onClick={toggleLocale}
       aria-label={dictionary.nav.languageToggle}
-      className="inline-flex items-center gap-2 rounded-full border border-amber/40 bg-white/5 px-3 py-1.5 font-mono text-xs text-ink"
+      className="inline-flex shrink-0 items-center gap-0.5 rounded-2xl border border-white/15 p-[3px] font-mono text-xs"
     >
-      <Languages className="size-3.5 text-amber" aria-hidden />
-      <span className={locale === "en" ? "text-amber" : "text-muted"}>EN</span>
-      <span className="text-white/25" aria-hidden>
-        /
+      <span className={`rounded-[13px] px-2.5 py-1 sm:px-3 ${locale === "en" ? "bg-white font-semibold text-[#0a0c12]" : "text-[#8C93A3] hover:text-ink"}`}>
+        EN
       </span>
-      <span className={locale === "fa" ? "text-amber" : "text-muted"}>فا</span>
+      <span className="text-white/30" aria-hidden>
+        |
+      </span>
+      <span className={`rounded-[13px] px-2.5 py-1 font-fa sm:px-3 ${locale === "fa" ? "bg-white font-semibold text-[#0a0c12]" : "text-[#8C93A3] hover:text-ink"}`}>
+        فارسی
+      </span>
     </button>
   );
 }

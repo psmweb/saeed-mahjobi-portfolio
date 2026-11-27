@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { portraitAssetsReady } from "@/data/portraits";
 
 export function Portrait({
   src,
@@ -14,7 +15,7 @@ export function Portrait({
   priority?: boolean;
   className?: string;
 }) {
-  const [failed, setFailed] = useState(false);
+  const [failed, setFailed] = useState(!portraitAssetsReady);
 
   return (
     <div

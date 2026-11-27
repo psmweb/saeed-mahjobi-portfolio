@@ -4,7 +4,7 @@ Onboarding for anyone changing the Saeed Mahjobi portfolio (`ONE COMMAND`). Read
 
 ## What this repo is
 
-A Next.js 15 App Router, React 19, TypeScript, Tailwind CSS single page. English is LTR. Persian is RTL (`Vazirmatn`). The current release is **v0.1.0**: governance, living docs, the hero font hook, and verified files. Scene and act visuals are still typed skeletons. Phases 1–5 own the 3D build.
+A Next.js 15 App Router, React 19, TypeScript, Tailwind CSS single page. English is LTR. Persian is RTL (`Vazirmatn`). The current release is **v0.2.0**: obsidian atmosphere, cinema camera, and the persistent HUD. Act meshes are still placeholders. Phases 2–5 own hero type, archive slabs, venture slabs, the five robots, and the finale wipe.
 
 Name on the page: **Saeed Mahjobi** (`سعید محجوبی`). Languages: English (Fluent / Professional) and Persian (Native).
 
@@ -12,9 +12,10 @@ Name on the page: **Saeed Mahjobi** (`سعید محجوبی`). Languages: Englis
 
 - `src/app/` — shell, fonts, tokens.
 - `src/context/LanguageContext.tsx` — instant `en` / `fa` switch. Sets `lang` and `dir`.
-- `src/components/scene/` — canvas, camera, atmosphere, storyteller, five figurines. Do not restyle these until Phase 1.
+- `src/components/scene/cinema.ts` — reference clock (scroll 0–1 → 0–52s) and camera sample. The WebGL loop reads `src/lib/scrollProgress.ts` and does not re-render React.
+- `src/components/scene/` — atmosphere, camera, storyteller placeholder, five figurine placeholders. Do not add hero type, slabs, or robots until Phases 2–4.
 - `src/components/acts/` — five scroll acts. Do not restyle these until Phases 2–5. Act 5 only links the resume PDFs.
-- `src/components/hud/` — navbar, battery meter, build log, language toggle.
+- `src/components/hud/` — glass navbar (`SM`, chapter chips, `EN | فارسی`), battery meter, one-line build log.
 - `src/data/` — ventures, agents, timeline, resumes, portraits, `i18n/en.ts`, `i18n/fa.ts`.
 - `src/lib/direction.ts` — `mirrorX` / `mirrorVector`. Vertical scroll is not reversed.
 - `public/resume/` — EN and FA resume PDFs.

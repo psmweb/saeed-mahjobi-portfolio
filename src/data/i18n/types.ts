@@ -25,7 +25,15 @@ export type Dictionary = {
   ventureNames: Record<VentureId, string>;
   metricLabels: Record<MetricKey, string>;
   metricValues: { liveTrading: string; form: string };
-  hud: { batteryLabel: string; logTitle: string; logIdle: string };
+  hud: {
+    batteryLabel: string;
+    logTitle: string;
+    logMark: string;
+    logIdle: string;
+    brand: string;
+    chapters: string[];
+    logLines: string[];
+  };
   scene: { loading: string; unavailable: string };
   arena: { skeletonNote: string; slotLabel: string };
   emptyVentures: string;
