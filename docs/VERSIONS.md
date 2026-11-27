@@ -9,7 +9,7 @@ Semantic versions for ONE COMMAND. Tags are annotated. Each tag ships with `CHAN
 | v0.3.0 | 2 | Act 1 hero and Act 2 evolution | Released |
 | v0.4.0 | 3A | Venture stages 1–3 (Mikham + Miara, Battery Store, Trader Bot) | Released |
 | v0.5.0 | 3B | Venture stages 4–6 (Honarmarket, Yadaki Yar, Sandoq-Yar) | Released |
-| v0.6.0 | 4 | Five PBR robot figurines and the arena demo | Not started |
+| v0.6.0 | 4 | Five PBR robot figurines and the arena demo | Released |
 | v0.7.0 | 5 | Persian RTL mirror and command-center finale | Not started |
 | v0.9.0 | 6 | Visual parity, responsive, and performance audit | Not started |
 | v1.0.0 | 7 | Production release | Not started |
@@ -55,5 +55,16 @@ Phase 3B. The quiet glass for ventures 4–6 is now the real stages.
 - Placards: `1,450+` designs; `v0.7.0 · FastAPI + PostgreSQL · 80 PRs`; offline barcode POS with `0 123456 789012`.
 - Sandoq-Yar also carries the Xchange and Rap Historical badges.
 - Persian copy sits on the start edge. Chip positions flip with `dir`.
+
+## v0.6.0
+
+Phase 4. Five agents replace the capsule placeholders.
+
+- `src/components/scene/acts/Act4Arena.tsx` and `act4Robot.ts` — obsidian bodies, brushed heads, iridescent visors, thrusters, and the five role props (frame, server, halo, prism, lens). Geometries and the metal stock are shared. Celebration sparks are one instanced mesh. No shadow maps.
+- Roles, in order: Frontend `#38BDF8`, Backend `#10B981`, Executive Manager `#F59E0B`, UI/UX `#A78BFA`, Video `#FB923C`. Labels follow the page language.
+- The 34.2s–44s window (internal 18.1–23.5) drives the lineup, the venture beams, the Ship release v0.8 drop, and the shipped face. Pausing on that beat plays it once. Replay plays it again.
+- Every ship status carries `Live simulation · demo` (`شبیه‌سازی زنده · دمو`).
+- `prefers-reduced-motion` skips the burst and shows the shipped pose immediately once the beat is reached.
+- Acts 1–3, the HUD, and Act 5 are unchanged. On aspect below 1, only the arena view pulls back.
 
 

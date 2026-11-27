@@ -2,6 +2,19 @@
 
 All notable changes to this portfolio are documented here. The format follows Keep a Changelog. Versions follow Semantic Versioning.
 
+## [0.6.0] - 2026-11-27
+
+### Added
+
+- Act 4 command arena in `src/components/scene/acts/Act4Arena.tsx`: five PBR humanoid agents (Frontend, Backend, Executive Manager, UI/UX, Video) on obsidian pedestals, with shared metal, visor, and thruster stock.
+- Bilingual role labels and the reference build cards (`PR #201 MERGED`, `886/886 CI TESTS PASSED`, `LIVE · 400K+`, `1,450+ DESIGNS`, `v0.7.0 ✓`), each marked `Live simulation · demo`.
+- Ship release v0.8: scroll reaches the beat and plays the drop, the agent reaction, the shipped face, and the celebration. A keyboard-operable Replay control runs it again. Reduced motion rests on the shipped pose with no particle burst.
+- Portrait viewports pull the arena camera back and tighten the row so all five figurines stay in frame. Desktop aspect keeps the reference camera.
+
+### Unchanged
+
+- Acts 1–3, the venture slabs, the HUD, and the Act 5 wipe.
+
 ## [0.5.0] - 2026-11-27
 
 ### Added
