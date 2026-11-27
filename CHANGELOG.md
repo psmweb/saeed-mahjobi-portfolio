@@ -26,6 +26,20 @@ All notable changes to this portfolio are documented here. The format follows Ke
 - Cinema camera bound to Lenis scroll. Document progress `0–1` maps to the `0–52s` presentation clock, then into the reference curve.
 - Persistent HUD: glass navbar with `SM`, chapter chips `01`–`05`, and `EN | فارسی`; a vertical battery that fills with scroll and flips edge in RTL; a one-line frosted build log.
 
+## [0.4.0] - 2026-11-27
+
+### Added
+
+- Act 3 ventures 1–3 in `src/components/scene/acts/Act3Ventures.tsx`: dark-glass slabs for Mikham + Miara, Battery Store, and Trader Bot, on the reference camera windows, with scrolling UI textures.
+- Battery Store energy cells lit emerald and amber. Trader Bot wireframe telemetry lit cyan and emerald. Live trading stays off, disarmed by default.
+- Bilingual placards in `src/components/acts/Act3VentureOverlay.tsx`, synced to the 0–52s clock and mirrored in Persian.
+- Quiet glass placeholders for ventures 4–6 so the rest of the timeline still scrolls.
+- Corrected the swapped `battery-store.png` and `trader-bot.png` plates so each filename matches that product’s UI.
+
+### Unchanged
+
+- Act 4 robots and the Act 5 wipe remain later phases.
+
 ## [0.3.0] - 2026-11-27
 
 ### Added

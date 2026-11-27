@@ -4,7 +4,7 @@ Onboarding for anyone changing the Saeed Mahjobi portfolio (`ONE COMMAND`). Read
 
 ## What this repo is
 
-A Next.js 15 App Router, React 19, TypeScript, Tailwind CSS single page. English is LTR. Persian is RTL (`Vazirmatn`). The current release is **v0.3.0**: Act 1 hero and Act 2 evolution, on top of the v0.2.0 stage. Venture slabs, robots, and the finale wipe are still later phases.
+A Next.js 15 App Router, React 19, TypeScript, Tailwind CSS single page. English is LTR. Persian is RTL (`Vazirmatn`). The current release is **v0.4.0**: Act 3 ventures 1–3 (Mikham + Miara, Battery Store, Trader Bot), on top of the v0.3.0 hero and evolution. Ventures 4–6, robots, and the finale wipe are still later phases.
 
 Name on the page: **Saeed Mahjobi** (`سعید محجوبی`). Languages: English (Fluent / Professional) and Persian (Native).
 
@@ -14,14 +14,15 @@ Name on the page: **Saeed Mahjobi** (`سعید محجوبی`). Languages: Englis
 - `src/context/LanguageContext.tsx` — instant `en` / `fa` switch. Sets `lang` and `dir`.
 - `src/components/scene/acts/Act1Hero.tsx` — frameless portrait spotlight and the storyteller gem.
 - `src/components/scene/acts/Act2Evolution.tsx` — 2016, 2020, and 2026 monoliths.
-- `src/components/acts/Act1HeroOverlay.tsx` and `Act2EvolutionOverlay.tsx` — bilingual copy synced to the 0–52s clock.
-- `src/components/scene/` — atmosphere, camera, Act 1 gem, Act 2 monoliths. Venture slabs and robots stay for later phases.
-- `src/components/acts/` — scroll landmarks plus Act 1 and Act 2 overlays. Act 3–5 visuals stay for later phases.
+- `src/components/scene/acts/Act3Ventures.tsx` — ventures 1–3 dark-glass slabs, scrolling UI textures, and quiet placeholders for ventures 4–6.
+- `src/components/acts/Act1HeroOverlay.tsx`, `Act2EvolutionOverlay.tsx`, and `Act3VentureOverlay.tsx` — bilingual copy synced to the 0–52s clock.
+- `src/components/scene/` — atmosphere, camera, Act 1 gem, Act 2 monoliths, Act 3 slabs. Robots stay for a later phase.
+- `src/components/acts/` — scroll landmarks plus Act 1–3 overlays. Act 4–5 visuals stay for later phases.
 - `src/components/hud/` — glass navbar (`SM`, chapter chips, `EN | فارسی`), battery meter, one-line build log.
 - `src/data/` — ventures, agents, timeline, resumes, portraits, `i18n/en.ts`, `i18n/fa.ts`.
 - `src/lib/direction.ts` — `mirrorX` / `mirrorVector`. Vertical scroll is not reversed.
 - `public/resume/` — EN and FA resume PDFs.
-- `public/textures/ventures/` — six scrolling UI textures for the later venture stages.
+- `public/textures/ventures/` — six scrolling UI textures. v0.4.0 mounts `mikham.png`, `battery-store.png`, and `trader-bot.png`.
 - `public/images/` — portrait slot. Empty until Saeed supplies the frameless studio portrait. Do not generate or redraw a face.
 - `docs/reference/onecommand3d_main.js` and `docs/reference/onecommand3d_index.html` — pixel reference only. The Next.js build must not import them.
 

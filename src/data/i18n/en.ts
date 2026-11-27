@@ -138,4 +138,30 @@ export const en: Dictionary = {
       { year: "2026", title: "AI-Native Founder & Multi-Agent Command" },
     ],
   },
+  ventureStages: [
+    {
+      id: "mikham-miara",
+      kicker: "01 · Mikham + Miara",
+      title: "Mikham",
+      body: "A business directory and map with 13 categories and 5 online services, plus Miara, its conversational assistant.",
+      stack: "Directory · map · assistant",
+      chip: "400K+ businesses",
+    },
+    {
+      id: "battery-store",
+      kicker: "02 · Battery Store",
+      title: "Battery Store",
+      body: "Next.js storefront and NestJS API with vehicle fitment and inventory.",
+      stack: "Next.js 15 · NestJS",
+      chip: "v0.2.0 · PR #201",
+    },
+    {
+      id: "trader-bot",
+      kicker: "03 · Trader Bot",
+      title: "Trader Bot",
+      body: "Python trading platform with a plugin architecture and event-driven backtests. Live trading stays disarmed by default.",
+      stack: "~50K LOC · 886/886 CI tests",
+      chip: "Live trading off",
+    },
+  ],
 };

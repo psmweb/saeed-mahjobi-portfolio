@@ -327,6 +327,37 @@ export function stageNebulaOpacity(internalT: number, index: number): number {
   return 0.3 * ss(seg(internalT, a - 0.5, a + 0.1)) * (1 - ss(seg(internalT, b, b + 0.5)));
 }
 
+const eo5 = (x: number) => 1 - (1 - x) ** 5;
+
+export function ventureWindow(index: number): readonly [number, number] | null {
+  return STW[index] ?? null;
+}
+
+/** How fully a venture slab is in frame. Matches the reference stage fade. */
+export function venturePresence(internalT: number, index: number): number {
+  const span = STW[index];
+  if (!span) return 0;
+  const [a, b] = span;
+  return ss(seg(internalT, a - 0.45, a + 0.1)) * (1 - ss(seg(internalT, b + 0.1, b + 0.5)));
+}
+
+/** 0–1 scroll of the UI texture across one venture window. */
+export function ventureScroll(internalT: number, index: number): number {
+  const span = STW[index];
+  if (!span) return 0;
+  const [a, b] = span;
+  return eio(seg(internalT, a - 0.15, b + 0.1));
+}
+
+/** Placard opacity for one venture. Matches the reference HUD curve. */
+export function venturePlacardOpacity(internalT: number, index: number): number {
+  const span = STW[index];
+  if (!span) return 0;
+  const [a, b] = span;
+  if (!(internalT > a + 0.02 && internalT < b + 0.1)) return 0;
+  return eo5(seg(internalT, a + 0.02, a + 0.3)) * (1 - seg(internalT, b - 0.12, b + 0.1));
+}
+
 let starSeed = 11;
 function rnd() {
   starSeed |= 0;

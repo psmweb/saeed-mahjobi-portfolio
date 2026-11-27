@@ -7,7 +7,7 @@ Semantic versions for ONE COMMAND. Tags are annotated. Each tag ships with `CHAN
 | v0.1.0 | 0 | Governance, living docs, hero font hook, resumes, venture textures | Released |
 | v0.2.0 | 1 | Obsidian atmosphere, cinema camera, persistent HUD | Released |
 | v0.3.0 | 2 | Act 1 hero and Act 2 evolution | Released |
-| v0.4.0 | 3 | Venture stages 1–3 (Mikham + Miara, Battery Store, Trader Bot) | Not started |
+| v0.4.0 | 3A | Venture stages 1–3 (Mikham + Miara, Battery Store, Trader Bot) | Released |
 | v0.5.0 | 3 | Venture stages 4–6 (Honarmarket, Yadaki Yar, Sandoq-Yar) | Not started |
 | v0.6.0 | 4 | Five PBR robot figurines and the arena demo | Not started |
 | v0.7.0 | 5 | Persian RTL mirror and command-center finale | Not started |
@@ -35,5 +35,15 @@ After v1.0.0: `v1.0.x` fixes copy or visuals, `v1.x.0` adds a venture or feature
 
 - Act 1: Bebas Neue name, Vazirmatn Persian name, command terminal, frameless portrait slot, storyteller gem.
 - Act 2: 2016, 2020, and 2026 monoliths, studio mark, and floor beams.
+
+## v0.4.0
+
+Phase 3A. Ventures 4–6 stay placeholders.
+
+- `src/components/scene/acts/Act3Ventures.tsx` — obsidian slabs, specular rim, scrolling `mikham.png`, `battery-store.png`, and `trader-bot.png`. Battery cells use emerald and amber. Trader Bot adds a cyan and emerald wireframe. Stages 4–6 are unlabeled glass so the camera path stays continuous.
+- `src/components/acts/Act3VentureOverlay.tsx` — bilingual placards on the reference venture clock. Persian sits on the start edge.
+- `src/components/acts/Act3VentureStage.tsx` — scroll landmark only. The visible copy is the overlay.
+- Metrics on the placards: `400K+` businesses, `v0.2.0 · PR #201`, `~50K LOC · 886/886 CI tests`, live trading off.
+- `public/textures/ventures/battery-store.png` and `trader-bot.png` were swapped on disk. v0.4.0 puts each UI under its own filename.
 
 
