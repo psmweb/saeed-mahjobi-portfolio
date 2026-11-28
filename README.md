@@ -59,7 +59,7 @@ src/components/acts/     scroll landmarks and bilingual overlays
 src/components/hud/      glass navbar, battery, build log
 src/data/                ventures, agents, timeline, resumes, portraits, i18n
 src/lib/                 direction mirror and scroll clock
-public/portrait/         frameless cut-out, when the file is supplied
+public/portrait/         editorial cutout WebP and the 720px mobile variant
 public/resume/           English and Persian resume PDFs
 public/textures/ventures six hashed 1024×2304 WebP plates (`npm run optimize:textures`)
 public/fonts/            Bebas Neue typeface used by the 3D hero
@@ -67,15 +67,14 @@ docs/                    living docs, QA report, pixel reference
 scripts/qa/              Playwright capture and draw-call measurement
 scripts/check-catalog-guard.mjs
 scripts/optimize-textures.mjs   dev-only WebP resize for the venture plates
+scripts/optimize-portrait.mjs   dev-only 720px variant of the editorial portrait
 ```
 
 The pixel reference in `docs/reference/` is not imported by the Next.js build.
 
-## Replace the portrait
+## Portrait
 
-Put a frameless cut-out at `public/portrait/saeed.png`. The layout checks that path at build time. When the file is present, Act 1 draws it as a soft-edged cut-out in the portrait slot. When it is absent, the slot stays the amber and obsidian glow. Do not add a frame, and do not redraw the face.
-
-`src/data/portraits.ts` still lists the older editorial paths. Those files are not requested while `portraitAssetsReady` is false.
+The hero cutout is `public/portrait/saeed-portrait-editorial.webp`, 1080×2003 WebP with alpha. Do not recompress that file or redraw the face. `npm run optimize:portrait` writes the 720px-wide mobile file beside it. The Act 1 overlay paints the picture with `object-fit: contain`, aligned to the bottom, and no frame. The amber glow in the 3D slot stays behind it.
 
 ## Edit the content
 

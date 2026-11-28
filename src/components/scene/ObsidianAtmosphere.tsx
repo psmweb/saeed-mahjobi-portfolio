@@ -70,6 +70,9 @@ function dotTexture(fill: string) {
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
   texture.anisotropy = 8;
+  texture.generateMipmaps = true;
+  texture.minFilter = THREE.LinearMipmapLinearFilter;
+  texture.magFilter = THREE.LinearFilter;
   if (!context) return texture;
   context.fillStyle = fill;
   context.fillRect(0, 0, 256, 256);
