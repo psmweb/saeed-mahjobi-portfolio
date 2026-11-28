@@ -20,6 +20,16 @@ Dates and commits are taken from `git log` and the annotated tags. v0.1.0–v0.3
 
 After v1.0.0: `v1.0.x` fixes copy or visuals, `v1.x.0` adds a venture or feature, `v2.0.0` is a redesign.
 
+## Phase 1C
+
+Not tagged. Softens the Act 2–5 heading reveal on the v1.1.0 scene. Act 1 is not split.
+
+- Each line is masked with `linear-gradient(to bottom, #000 70%, transparent)`, swept by `mask-position`, and padded `0.12em` block so ascenders, descenders, and Persian marks are not cut. No `overflow: hidden`.
+- Units animate opacity, blur (`8px` to `0`), and `translateY` (`0.5em` to `0`) on `cubic-bezier(0.22, 1, 0.36, 1)`.
+- Persian, RTL, and `fa` are one span per word (0.7s, 0.06s stagger, reading order). Latin is one span per character inside a nowrap word (0.5s, 0.015s stagger).
+- The split stays stable while it runs. `will-change` is removed when a unit finishes, the filter is set to `none`, and the resting render is the original string. The hero lockup stays Bebas Neue at `0.06em`.
+- Reduced motion is a live 0.18s opacity fade.
+
 ## v1.1.0
 
 Not tagged. Motion upgrade on the v1.0.0 scene. a, b, and c are all landed.
@@ -34,7 +44,7 @@ Not tagged. DOM micro-interactions on the v1.1.0-a scene.
 
 - `Magnetic`, `TiltCard`, and `SplitReveal` live in `src/components/motion/`.
 - Pointer follow uses the micro and ui springs and only runs for a fine hovering pointer. Reduced motion and touch leave the controls still.
-- Act headings reveal when the act becomes active. Persian is per word. Latin is per grapheme. Act 1 hero copy is left on the approved clock.
+- Act headings reveal when the act becomes active. Phase 1C replaces the hard stagger with the soft masked reveal in the section above. Act 1 hero copy is left on the approved clock.
 - Resting hold frames keep the previous layout. The scene and draw-call budget are unchanged.
 
 ## v1.1.0-a

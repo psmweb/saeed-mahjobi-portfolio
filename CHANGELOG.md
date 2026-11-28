@@ -2,6 +2,12 @@
 
 All notable changes to this portfolio are documented here. The format follows Keep a Changelog. Versions follow Semantic Versioning.
 
+## [Unreleased]
+
+### Changed
+
+- `SplitReveal` is a soft masked reveal. Each line uses `mask-image: linear-gradient(to bottom, #000 70%, transparent)`, a mask-position sweep, and `padding-block: 0.12em`, with no hard clip. Units move from opacity 0, `blur(8px)`, and `translateY(0.5em)` to rest on `cubic-bezier(0.22, 1, 0.36, 1)`. Persian, RTL, and `fa` split by word (0.7s, 0.06s stagger, reading order). Latin splits by character inside nowrap words (0.5s, 0.015s stagger). `will-change` covers only opacity, transform, and filter while a unit runs. The filter is cleared to `none`, and the resting render is the original string. Reduced motion is a live 0.18s opacity fade. Act 1 hero copy and the Bebas Neue `0.06em` lockup are unchanged.
+
 ## [1.1.0-c] - 2026-11-28
 
 Act handoff, a load-time performance tier, and a live reduced-motion path. v1.1.0-a, v1.1.0-b, and v1.1.0-c together are the v1.1.0 motion upgrade. This part is not tagged. Resting frames stay on the approved picture.

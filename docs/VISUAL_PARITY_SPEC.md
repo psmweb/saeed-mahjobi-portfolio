@@ -13,6 +13,21 @@ The reference clock runs 0–28 seconds. Progress below is `t / 28`.
 | Emerald | `#10B981` |
 | Cyan | `#38BDF8` |
 
+## Text reveal
+
+Act 2–5 headings use `SplitReveal`. Act 1 hero copy does not. The finished line is the original string, so the Bebas Neue lockup stays at `0.06em` and a hold frame matches the page.
+
+| | Persian, RTL, `fa` | Latin |
+| --- | --- | --- |
+| Split | Word only. Letters stay in one text node. | Character, inside a `white-space: nowrap` word |
+| Duration | 0.7s | 0.5s |
+| Stagger | 0.06s, reading order | 0.015s, reading order |
+| Ease | `cubic-bezier(0.22, 1, 0.36, 1)` | same |
+
+Each line wrapper sets `padding-block: 0.12em` and `mask-image: linear-gradient(to bottom, #000 70%, transparent)`, then sweeps `mask-position`. It does not set `overflow: hidden`. A unit animates only opacity `0 → 1`, `filter` `blur(8px) → blur(0)`, and `translateY` `0.5em → 0`. `will-change` lists those three properties while the unit runs and is removed after. The filter is then `none`. The container's `aria-label` is the full text and the split spans are `aria-hidden`. `prefers-reduced-motion` plays a 0.18s opacity fade and updates live.
+
+The shared curves in `src/lib/motion.ts` are unchanged. The reveal ease is local because that file also drives the scroll clock and the camera.
+
 ## Hero title
 
 Bebas Neue, weight 400, tracking `0.06em`.
