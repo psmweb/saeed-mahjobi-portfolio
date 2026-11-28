@@ -6,6 +6,7 @@ import * as THREE from "three";
 import { ARENA_ROLES, ARENA_TARGETS } from "@/data/agents";
 import { getDictionary } from "@/data/i18n";
 import type { Dictionary, Locale } from "@/data/i18n/types";
+import { sparkBudget } from "@/lib/performanceTier";
 import { scrollProgress } from "@/lib/scrollProgress";
 import { ARENA_IN, ARENA_OUT, arenaHud, sampleArenaTime } from "@/lib/arenaReplay";
 import { arenaFraming } from "../arenaFraming";
@@ -494,13 +495,15 @@ function placeLabel(
 
 function burst(runtime: Runtime, amount: number, calm: boolean, camera: THREE.Camera) {
   const show = !calm && amount > 0 && amount < 1;
+  const count = Math.max(1, Math.min(36, sparkBudget()));
+  if (runtime.sparks.count !== count) runtime.sparks.count = count;
   runtime.sparks.visible = show;
   if (!show) return;
   runtime.sparks.position.copy(CUBE);
   runtime.sparks.quaternion.copy(camera.quaternion);
   runtime.sparkMaterial.opacity = (1 - amount) * 0.9;
-  for (let i = 0; i < 36; i += 1) {
-    const angle = (i / 36) * Math.PI * 2;
+  for (let i = 0; i < count; i += 1) {
+    const angle = (i / count) * Math.PI * 2;
     const radius = 0.3 + amount * (0.7 + (i % 6) * 0.26);
     dummy.position.set(Math.cos(angle) * radius, Math.sin(angle) * radius * 0.62, 0);
     dummy.rotation.set(0, 0, angle);

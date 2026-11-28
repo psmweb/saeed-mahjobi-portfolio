@@ -1,12 +1,28 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageContext";
-import { usePresentationSeconds, windowOpacity } from "./usePresentation";
+import {
+  actHandoff,
+  blendBoundaryOpacity,
+  handoffBlur,
+  transitionFilter,
+} from "@/lib/actHandoff";
+import { usePrefersReducedMotion } from "@/components/motion/usePointerMedia";
+import { useSmoothedProgress } from "@/components/motion/useSmoothedProgress";
+import { PRESENTATION_SECONDS } from "@/components/scene/cinema";
+import { windowOpacity } from "./usePresentation";
 
 export function Act1HeroOverlay() {
   const { dictionary, locale } = useLanguage();
-  const seconds = usePresentationSeconds();
-  const opacity = windowOpacity(seconds, 0, 0.35, 6.35, 7);
+  const progress = useSmoothedProgress();
+  const reduced = usePrefersReducedMotion();
+  const seconds = progress * PRESENTATION_SECONDS;
+  const naturalAt = (time: number) => windowOpacity(time, 0, 0.35, 6.35, 7);
+  const handoff = actHandoff(progress, reduced);
+  const natural = naturalAt(seconds);
+  const naturalExit = handoff.boundary < 0 ? natural : naturalAt(Math.min(PRESENTATION_SECONDS, handoff.at + handoff.half));
+  const opacity = blendBoundaryOpacity(0, natural, naturalExit, handoff);
+  const blur = handoffBlur(0, opacity, handoff);
   const typed = Math.floor(dictionary.heroStage.prompt.length * Math.min(1, Math.max(0, (seconds - 0.4) / 1.6)));
   const command = dictionary.heroStage.prompt.slice(0, typed);
   const hidden = opacity < 0.04;
@@ -15,7 +31,7 @@ export function Act1HeroOverlay() {
   return (
     <div
       className="pointer-events-none fixed inset-0 z-20"
-      style={{ opacity }}
+      style={{ opacity, filter: transitionFilter(blur) }}
       data-act="1"
       data-opacity={opacity.toFixed(2)}
       aria-hidden={hidden}

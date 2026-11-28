@@ -66,7 +66,11 @@ Each act is a full-viewport section. Lenis (`lerp` 0.1) writes document progress
 
 `cinema.ts` builds one centripetal Catmull-Rom curve per act segment from the approved camera. Hold frames are copied exactly. Moves between holds are sampled with the cinematic ease. Reduced motion skips the damp, the roll, and the curve.
 
-DOM micro-interactions live in `src/components/motion/` and do not touch the scene. Magnetic controls and tilted cards follow a fine pointer only, and they clear their transform at rest. Split reveals play when an act heading becomes active. A seek that lands inside the act shows the finished type. Persian splits on words. Latin may split on graphemes. Act 1 hero copy stays on the approved entrance.
+The four act cuts live in `ACT_BOUNDARY_INTERNAL`. `src/lib/actHandoff.ts` turns those cuts into a window on `scrollProgress.smoothed`: `duration.scene` of the 52s clock, or `duration.micro` when reduced motion is on. Inside the window the outgoing overlay dims and blurs, the incoming overlay eases in when its own fade has arrived by the end of the window, and the key, hemisphere, fog, and arena rig lerp between the per-act presets in `ACT_LIGHTS`. Outside the window every one of those values is the approved rig, so a resting frame does not move. Depth of field is `TransitionVeil`, a DOM vignette with a small backdrop blur on the high tier only. It is not mounted at rest, and it is not a postprocessing pass.
+
+`src/lib/performanceTier.ts` picks high, medium, or low at load from viewport width, `devicePixelRatio`, `hardwareConcurrency`, `deviceMemory` when the browser exposes it, and `(pointer: coarse)`. Pixel-ratio caps are 2, 1.5, and 1.25. The ship-burst instance count is 36, 18, or 10. The starfield stays at 2600. drei `PerformanceMonitor` can lower the burst further and skip the veil if the frame rate drops. A `matchMedia` listener on `prefers-reduced-motion` updates Lenis and the shared flag while the page is open.
+
+DOM micro-interactions live in `src/components/motion/` and do not touch the scene. Magnetic controls and tilted cards follow a fine pointer only, and they clear their transform at rest. Split reveals play when an act heading becomes active. A seek that lands inside the act shows the finished type. Persian splits on words. Latin may split on graphemes. Act 1 hero copy stays on the approved entrance. Reduced motion and a coarse pointer leave those controls still.
 
 | Act | Section | What the scaffold shows | What the visual build adds |
 | --- | --- | --- | --- |

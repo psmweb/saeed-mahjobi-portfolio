@@ -12,6 +12,7 @@ import { Act5FinaleCommandCenter } from "./acts/Act5FinaleCommandCenter";
 import { BatteryScrollMeter } from "./hud/BatteryScrollMeter";
 import { GlassNavbar } from "./hud/GlassNavbar";
 import { LiveBuildLog } from "./hud/LiveBuildLog";
+import { TransitionVeil } from "./motion/TransitionVeil";
 import { SceneBoundary, SceneLoading } from "./scene/SceneBoundary";
 import { SmoothScroll } from "./SmoothScroll";
 
@@ -30,6 +31,7 @@ export function PortfolioShell() {
         </SceneBoundary>
       </div>
       <GlassNavbar />
+      <TransitionVeil />
       <Act1HeroOverlay />
       <Act2EvolutionOverlay />
       <Act3VentureOverlay />

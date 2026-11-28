@@ -2,16 +2,31 @@
 
 import { SplitReveal } from "@/components/motion/SplitReveal";
 import { TiltCard } from "@/components/motion/TiltCard";
-import { mapPresentationTime } from "@/components/scene/cinema";
+import { usePrefersReducedMotion } from "@/components/motion/usePointerMedia";
+import { useSmoothedProgress } from "@/components/motion/useSmoothedProgress";
+import { PRESENTATION_SECONDS, mapPresentationTime } from "@/components/scene/cinema";
 import { useLanguage } from "@/context/LanguageContext";
-import { usePresentationSeconds, windowOpacity } from "./usePresentation";
+import {
+  actHandoff,
+  blendBoundaryOpacity,
+  handoffBlur,
+  transitionFilter,
+} from "@/lib/actHandoff";
+import { windowOpacity } from "./usePresentation";
 
 const arabic = /[\u0600-\u06FF]/;
 
 export function Act2EvolutionOverlay() {
   const { dictionary, locale } = useLanguage();
-  const seconds = usePresentationSeconds();
-  const opacity = windowOpacity(seconds, 7, 7.45, 13.3, 14);
+  const progress = useSmoothedProgress();
+  const reduced = usePrefersReducedMotion();
+  const seconds = progress * PRESENTATION_SECONDS;
+  const naturalAt = (time: number) => windowOpacity(time, 7, 7.45, 13.3, 14);
+  const handoff = actHandoff(progress, reduced);
+  const natural = naturalAt(seconds);
+  const naturalExit = handoff.boundary < 0 ? natural : naturalAt(Math.min(PRESENTATION_SECONDS, handoff.at + handoff.half));
+  const opacity = blendBoundaryOpacity(1, natural, naturalExit, handoff);
+  const blur = handoffBlur(1, opacity, handoff);
   const hidden = opacity < 0.04;
   const internal = mapPresentationTime(seconds);
   const index = internal < 6.6 ? 0 : internal < 8.1 ? 1 : 2;
@@ -25,7 +40,7 @@ export function Act2EvolutionOverlay() {
   return (
     <div
       className="pointer-events-none fixed inset-x-0 bottom-12 z-20 px-4 sm:px-12"
-      style={{ opacity }}
+      style={{ opacity, filter: transitionFilter(blur) }}
       data-act="2"
       data-opacity={opacity.toFixed(2)}
       data-beat={beat.year}

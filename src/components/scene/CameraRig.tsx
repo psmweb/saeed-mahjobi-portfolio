@@ -3,8 +3,7 @@
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect } from "react";
 import * as THREE from "three";
-import { scrollFollow } from "@/lib/motion";
-import { scrollProgress } from "@/lib/scrollProgress";
+import { scrollProgress, stepSmoothed, syncReducedMotion } from "@/lib/scrollProgress";
 import { arenaFraming } from "./arenaFraming";
 import { readClock, sampleCamera } from "./cinema";
 
@@ -15,11 +14,7 @@ export function CameraRig() {
   const camera = useThree((state) => state.camera);
 
   useEffect(() => {
-    scrollProgress.reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (scrollProgress.reducedMotion) {
-      scrollProgress.smoothed = scrollProgress.current;
-      scrollProgress.snap = true;
-    }
+    syncReducedMotion();
     if (camera instanceof THREE.PerspectiveCamera) {
       camera.near = 0.1;
       camera.far = 500;
@@ -29,18 +24,7 @@ export function CameraRig() {
 
   // Negative priority runs before the acts and does not take over rendering.
   useFrame((state, delta) => {
-    const dt = Math.min(Math.max(delta, 0), scrollFollow.deltaCap);
-    if (scrollProgress.reducedMotion || scrollProgress.snap) {
-      scrollProgress.smoothed = scrollProgress.current;
-      scrollProgress.snap = false;
-    } else {
-      scrollProgress.smoothed = THREE.MathUtils.damp(
-        scrollProgress.smoothed,
-        scrollProgress.current,
-        scrollFollow.lambda,
-        dt,
-      );
-    }
+    stepSmoothed(delta);
     if (!(camera instanceof THREE.PerspectiveCamera)) return;
     const progress = scrollProgress.smoothed;
     const sample = sampleCamera(progress, scrollProgress.reducedMotion);

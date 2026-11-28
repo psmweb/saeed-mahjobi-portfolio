@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { easeInOutQuint } from "@/lib/motion";
-import { subscribeScroll } from "@/lib/scrollProgress";
+import { subscribeSmoothed } from "@/lib/scrollProgress";
 
+/** Presentation seconds from the damped clock. Seek lands on the same turn. */
 export function usePresentationSeconds() {
   const [seconds, setSeconds] = useState(0);
-  useEffect(() => subscribeScroll((progress) => setSeconds(progress * 52)), []);
+  useEffect(() => subscribeSmoothed((progress) => setSeconds(progress * 52)), []);
   return seconds;
 }
 
