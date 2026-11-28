@@ -150,7 +150,7 @@ export function Act1Hero() {
   useFrame(() => {
     const node = stage.current;
     if (!node || !portrait.current || !saeed.current || !mahjobi.current) return;
-    const { internal, presentation } = readClock(scrollProgress.current);
+    const { internal, presentation } = readClock(scrollProgress.smoothed);
     node.visible = internal < 5.2;
     if (!node.visible) return;
 

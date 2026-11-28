@@ -138,7 +138,7 @@ export function Act5Finale() {
     const node = root.current;
     const live = runtime.current;
     if (!node || !live) return;
-    const internal = readClock(scrollProgress.current).internal;
+    const internal = readClock(scrollProgress.smoothed).internal;
     const reduced = scrollProgress.reducedMotion;
     const visible = internal > 23.4;
     node.visible = visible;

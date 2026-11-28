@@ -20,6 +20,14 @@ Dates and commits are taken from `git log` and the annotated tags. v0.1.0–v0.3
 
 After v1.0.0: `v1.0.x` fixes copy or visuals, `v1.x.0` adds a venture or feature, `v2.0.0` is a redesign.
 
+## v1.1.0-a
+
+Not tagged. Motion on the v1.0.0 scene.
+
+- `src/lib/motion.ts` is the shared duration, easing, and spring set. `globals.css` mirrors it with `--dur-*` and `--ease-*`.
+- Lenis writes `scrollProgress.current`. The WebGL frame damps `scrollProgress.smoothed`. Seek snaps.
+- `cinema.ts` samples a centripetal Catmull-Rom curve per act segment. Approved hold knots stay exact.
+
 ## v1.0.0
 
 Phase 7. Release engineering on the approved v0.9.2 scene.

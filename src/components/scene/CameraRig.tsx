@@ -3,6 +3,7 @@
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect } from "react";
 import * as THREE from "three";
+import { scrollFollow } from "@/lib/motion";
 import { scrollProgress } from "@/lib/scrollProgress";
 import { arenaFraming } from "./arenaFraming";
 import { readClock, sampleCamera } from "./cinema";
@@ -15,6 +16,10 @@ export function CameraRig() {
 
   useEffect(() => {
     scrollProgress.reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (scrollProgress.reducedMotion) {
+      scrollProgress.smoothed = scrollProgress.current;
+      scrollProgress.snap = true;
+    }
     if (camera instanceof THREE.PerspectiveCamera) {
       camera.near = 0.1;
       camera.far = 500;
@@ -22,11 +27,25 @@ export function CameraRig() {
     }
   }, [camera]);
 
-  useFrame((state) => {
+  // Negative priority runs before the acts and does not take over rendering.
+  useFrame((state, delta) => {
+    const dt = Math.min(Math.max(delta, 0), scrollFollow.deltaCap);
+    if (scrollProgress.reducedMotion || scrollProgress.snap) {
+      scrollProgress.smoothed = scrollProgress.current;
+      scrollProgress.snap = false;
+    } else {
+      scrollProgress.smoothed = THREE.MathUtils.damp(
+        scrollProgress.smoothed,
+        scrollProgress.current,
+        scrollFollow.lambda,
+        dt,
+      );
+    }
     if (!(camera instanceof THREE.PerspectiveCamera)) return;
-    const sample = sampleCamera(scrollProgress.current, scrollProgress.reducedMotion);
+    const progress = scrollProgress.smoothed;
+    const sample = sampleCamera(progress, scrollProgress.reducedMotion);
     const aspect = state.size.width / Math.max(state.size.height, 1);
-    const internal = readClock(scrollProgress.current).internal;
+    const internal = readClock(progress).internal;
     const framing = arenaFraming(aspect, sample.fov, internal);
     camera.position.copy(sample.position);
     if (framing.fit > 1.001) {
@@ -55,7 +74,7 @@ export function CameraRig() {
     camera.rotateZ(sample.roll);
     camera.fov = sample.fov;
     camera.updateProjectionMatrix();
-  });
+  }, -1);
 
   return null;
 }

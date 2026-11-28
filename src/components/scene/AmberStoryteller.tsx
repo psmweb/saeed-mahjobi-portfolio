@@ -42,7 +42,7 @@ export function AmberStoryteller() {
   const glowMap = useMemo(() => radialGlow("#F59E0B"), []);
 
   useFrame(() => {
-    const { internal } = readClock(scrollProgress.current);
+    const { internal } = readClock(scrollProgress.smoothed);
     const root = group.current;
     if (!root || !gem.current || !core.current || !ring.current || !ringB.current || !glow.current || !spark.current) {
       return;

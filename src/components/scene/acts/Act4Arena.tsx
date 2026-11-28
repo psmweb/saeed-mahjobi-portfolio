@@ -986,7 +986,7 @@ export function Act4Arena() {
     const node = root.current;
     const live = runtime.current;
     if (!node || !live) return;
-    const { internal, presentation } = readClock(scrollProgress.current);
+    const { internal, presentation } = readClock(scrollProgress.smoothed);
     const calm = scrollProgress.reducedMotion;
     const now = performance.now();
     const sample = sampleArenaTime(internal, now, calm);

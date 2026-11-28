@@ -24,7 +24,9 @@ A Next.js 15 App Router, React 19, TypeScript, Tailwind CSS single page. English
 - `src/components/acts/` — scroll landmarks plus Act 1–5 overlays.
 - `src/components/hud/` — glass navbar (`SM`, chapter chips, `EN | فارسی`), battery meter, one-line build log.
 - `src/data/` — ventures, agents, timeline, resumes, portraits, `i18n/en.ts`, `i18n/fa.ts`.
+- `src/lib/motion.ts` — durations, easings, and critically damped springs. CSS mirrors them as `--dur-*` and `--ease-*`.
 - `src/lib/direction.ts` — `mirrorX` / `mirrorVector`. Vertical scroll is not reversed.
+- `src/lib/scrollProgress.ts` — Lenis writes `current`. The WebGL frame advances `smoothed` with `THREE.MathUtils.damp`. Seek and immediate scrolls snap `smoothed` onto `current`. Reduced motion keeps them equal.
 - `public/resume/` — EN and FA resume PDFs.
 - `public/textures/ventures/` — six scrolling UI textures, one per venture stage.
 - `public/portrait/saeed.png` — frameless studio portrait. Absent until Saeed supplies it. If the file is there, Act 1 draws it as a soft-edged cut-out. If it is not, the slot is the amber/obsidian glow only. Do not generate or redraw a face.
@@ -37,6 +39,14 @@ A Next.js 15 App Router, React 19, TypeScript, Tailwind CSS single page. English
 - The exact blocked patterns (geography, local currency names, a barcode prefix, and one personal name) live only in `scripts/check-catalog-guard.mjs`. Do not retype those patterns into docs, source, or public files. `npm run check:catalog` scans `src/`, `public/`, `docs/`, `AGENTS.md`, `CHANGELOG.md`, `README.md`, and `ARCHITECTURE.md`.
 - Any interactive agent task is labeled `Live simulation · demo` (`شبیه‌سازی زنده · دمو`).
 - Resume links: `/resume/Saeed_Mahjobi_Resume_EN.pdf` and `/resume/Saeed_Mahjobi_Resume_FA.pdf` (`src/data/resumes.ts`).
+
+## Motion
+
+Scroll and the camera share one clock, then the picture eases on top of it.
+
+- **Tokens.** `src/lib/motion.ts` is the duration, easing, and spring set (`micro` 0.18s, `ui` 0.32s, `reveal` 0.6s, `scene` 1.1s). `globals.css` exposes the same values as `--dur-*` and `--ease-*`. HUD color changes, overlay fades, and the Act frame use those tokens. Reduced motion collapses the CSS durations.
+- **Smoothed clock.** Lenis (`lerp` 0.1) writes `scrollProgress.current` from its own `scroll` event. `CameraRig` advances `scrollProgress.smoothed` every WebGL frame with `THREE.MathUtils.damp` (lambda 7, delta capped at 1/30). That callback uses frame priority `-1` so it runs before the acts and the canvas still renders itself. The camera and the five scene acts read `smoothed`. `__oneCommandSeek` and an immediate `scrollToAct` copy `current` into `smoothed` on the same turn. When reduced motion is on, `smoothed` stays equal to `current`.
+- **Camera curves.** `cinema.ts` bakes the approved camera into one centripetal `CatmullRomCurve3` per act segment. Hold segments are sampled so every approved knot is hit exactly, including progress `0`, `0.1`, `0.3`, `0.5`, `0.7`, `0.9`, and `1`. Glide segments ease scroll time with the cinematic quint and sample the curve at that eased time. Field of view and roll use the same blend. Reduced motion keeps the unsmoothed reference pose and a fixed field of view.
 
 ## Pixel parity
 
