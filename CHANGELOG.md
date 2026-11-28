@@ -2,6 +2,22 @@
 
 All notable changes to this portfolio are documented here. The format follows Keep a Changelog. Versions follow Semantic Versioning.
 
+## [1.1.0-a] - 2026-11-28
+
+Motion pass. The approved hold frames stay on the same camera pose. Scroll and the moves between those holds are what change.
+
+### Added
+
+- `src/lib/motion.ts`: durations (`micro` 0.18s, `ui` 0.32s, `reveal` 0.6s, `scene` 1.1s), cubic-bezier easings with CSS and JavaScript forms, and critically damped springs.
+- CSS custom properties `--dur-*` and `--ease-*` in `globals.css`. HUD color changes, overlay fades, and the Act frame read them.
+- A damped scroll clock. Lenis still uses `lerp` 0.1 and now publishes `scrollProgress.current` from its `scroll` event. `CameraRig` advances `scrollProgress.smoothed` with `THREE.MathUtils.damp` (lambda 7, delta capped at 1/30). The camera and scene acts read `smoothed`. Seek and immediate chapter jumps snap it. Reduced motion keeps `smoothed` equal to `current`.
+- One centripetal `CatmullRomCurve3` per act segment in `cinema.ts`. Hold knots are copied exactly. Glides sample the curve with the cinematic ease, including field of view and roll.
+
+### Unchanged
+
+- Hold-frame camera poses at the verification clocks, including progress `0`, `0.1`, `0.3`, `0.5`, `0.7`, `0.9`, and `1`.
+- Copy, layout, the Bebas Neue hero, and the frameless portrait slot.
+
 ## [1.0.0] - 2026-11-28
 
 Production release of the five-act portfolio. The scene, copy, and layout are the v0.9.2 build. This version adds the release record: README, version history, and the checks below.

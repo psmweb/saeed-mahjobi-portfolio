@@ -219,7 +219,7 @@ export function ObsidianAtmosphere() {
   useFrame(({ camera }) => {
     const live = runtime.current;
     if (!live) return;
-    const { internal } = readClock(scrollProgress.current);
+    const { internal } = readClock(scrollProgress.smoothed);
     const sky = atmosphereAt(internal);
     live.from.set(sky.from);
     live.to.set(sky.to);

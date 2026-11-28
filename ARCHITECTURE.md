@@ -56,7 +56,9 @@ scripts/
 
 ## Five-act scroll choreography
 
-Each act is a full-viewport section. Lenis smooths in-page anchor jumps from the glass navbar. The battery meter reads document scroll progress. The camera beats in `CameraRig.tsx` are the contract for the later pass. Today only the command beat is applied, plus a small idle sway that flips its X sign in RTL.
+Each act is a full-viewport section. Lenis (`lerp` 0.1) writes document progress to `scrollProgress.current`. The WebGL frame damps that into `scrollProgress.smoothed` (`THREE.MathUtils.damp`, lambda 7). The camera and scene acts read the damped clock. Seek and immediate chapter jumps snap it. `src/lib/motion.ts` holds the shared durations, easings, and springs; `globals.css` mirrors them as `--dur-*` and `--ease-*`.
+
+`cinema.ts` builds one centripetal Catmull-Rom curve per act segment from the approved camera. Hold frames are copied exactly. Moves between holds are sampled with the cinematic ease. Reduced motion skips the damp, the roll, and the curve.
 
 | Act | Section | What the scaffold shows | What the visual build adds |
 | --- | --- | --- | --- |

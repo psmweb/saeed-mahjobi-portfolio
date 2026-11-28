@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import type { ReactNode } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import type { ActId } from "@/data/i18n/types";
+import { duration, easeBezier } from "@/lib/motion";
 
 export function ActFrame({
   id,
@@ -34,7 +35,7 @@ export function ActFrame({
       initial={{ opacity: 0, x: mirrorX(28) }}
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true, amount: 0.28 }}
-      transition={{ duration: 0.7, ease: "easeOut" }}
+      transition={{ duration: duration.reveal, ease: easeBezier.easeOutExpo }}
     >
       <p className={kickerClass}>{act.kicker}</p>
       <Title id={`${id}-title`} className="mt-3 max-w-4xl font-display text-4xl leading-[1.05] text-ink sm:text-6xl">

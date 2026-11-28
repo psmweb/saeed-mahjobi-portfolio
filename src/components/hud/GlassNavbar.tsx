@@ -40,7 +40,7 @@ export function GlassNavbar() {
                 type="button"
                 onClick={() => scrollToAct(id)}
                 aria-current={active ? "true" : undefined}
-                className={`inline-flex min-h-10 shrink-0 items-center rounded-full px-2.5 text-xs transition-colors sm:min-h-0 sm:px-3 sm:py-1.5 sm:text-[13px] ${
+                className={`inline-flex min-h-10 shrink-0 items-center rounded-full px-2.5 text-xs transition-colors duration-[var(--dur-ui)] ease-[var(--ease-out-expo)] sm:min-h-0 sm:px-3 sm:py-1.5 sm:text-[13px] ${
                   locale === "fa" ? "font-fa" : "font-mono tracking-[0.08em]"
                 } ${
                   active

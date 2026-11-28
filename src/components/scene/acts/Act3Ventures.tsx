@@ -544,7 +544,7 @@ export function Act3Ventures() {
   useFrame(() => {
     const node = root.current;
     if (!node) return;
-    const { internal, presentation } = readClock(scrollProgress.current);
+    const { internal, presentation } = readClock(scrollProgress.smoothed);
     node.visible = internal > 9.5 && internal < 18.3;
     if (!node.visible) return;
     const calm = scrollProgress.reducedMotion;

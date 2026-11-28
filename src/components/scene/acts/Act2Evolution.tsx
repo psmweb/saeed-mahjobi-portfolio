@@ -397,7 +397,7 @@ export function Act2Evolution() {
   useFrame(() => {
     const node = root.current;
     if (!node) return;
-    const { internal: t } = readClock(scrollProgress.current);
+    const { internal: t } = readClock(scrollProgress.smoothed);
     node.visible = t > 4.4 && t < 10.4;
     if (!node.visible) return;
 

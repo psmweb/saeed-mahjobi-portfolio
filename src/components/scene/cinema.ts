@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { easeInOutQuint } from "@/lib/motion";
 
 /** Presentation clock in the reference. Scroll 0–1 maps onto this. */
 export const PRESENTATION_SECONDS = 52;
@@ -102,6 +103,7 @@ const path = new THREE.CatmullRomCurve3([
 const position = new THREE.Vector3();
 const target = new THREE.Vector3();
 let roll = 0;
+let fov = 40;
 
 const vA = new THREE.Vector3();
 const vB = new THREE.Vector3();
@@ -258,6 +260,201 @@ export type CameraSample = {
   fov: number;
 };
 
+type CameraKnot = {
+  time: number;
+  position: THREE.Vector3;
+  target: THREE.Vector3;
+  roll: number;
+  fov: number;
+};
+
+type CameraSegment = {
+  glide: boolean;
+  times: number[];
+  knots: CameraKnot[];
+  positionCurve: THREE.CatmullRomCurve3;
+  targetCurve: THREE.CatmullRomCurve3;
+};
+
+const HOLD_STEP = 0.05;
+const GLIDE_STEP = 0.04;
+const KNOT_EPSILON = 1e-4;
+
+function captureKnot(time: number): CameraKnot {
+  camAt(time);
+  return {
+    time,
+    position: position.clone(),
+    target: target.clone(),
+    roll,
+    fov: fovAt(time),
+  };
+}
+
+function dedupeTimes(times: number[]): number[] {
+  const sorted = [...times].sort((a, b) => a - b);
+  const unique: number[] = [];
+  for (const time of sorted) {
+    if (unique.length === 0 || time - unique[unique.length - 1] > KNOT_EPSILON) unique.push(time);
+  }
+  return unique;
+}
+
+function timesBetween(start: number, end: number, step: number, extras: readonly number[]): number[] {
+  const times = [start, end];
+  if (end - start > step) {
+    for (let time = start + step; time < end - KNOT_EPSILON; time += step) times.push(time);
+  }
+  for (const extra of extras) {
+    if (extra > start + KNOT_EPSILON && extra < end - KNOT_EPSILON) times.push(extra);
+  }
+  return dedupeTimes(times);
+}
+
+function buildSegment(glide: boolean, start: number, end: number, extras: readonly number[]): CameraSegment {
+  const times = timesBetween(start, end, glide ? GLIDE_STEP : HOLD_STEP, glide ? [] : extras);
+  const knots = times.map((time) => captureKnot(time));
+  return {
+    glide,
+    times,
+    knots,
+    positionCurve: new THREE.CatmullRomCurve3(
+      knots.map((knot) => knot.position),
+      false,
+      "centripetal",
+    ),
+    targetCurve: new THREE.CatmullRomCurve3(
+      knots.map((knot) => knot.target),
+      false,
+      "centripetal",
+    ),
+  };
+}
+
+/**
+ * Hold spans reconstruct the approved camera. Every baked knot, including the
+ * verification clocks, is copied exactly, so those compositions stay put.
+ * Glide spans are the moves between holds. Each span is one centripetal
+ * Catmull-Rom curve. Scroll time is eased with the cinematic quint, then the
+ * curve is sampled at that eased time so the move still follows the approved
+ * path and both endpoints land on the approved pose.
+ */
+function buildCameraSegments(): CameraSegment[] {
+  const ventureHolds = STW.flatMap(([start]) => [start + 0.45, start + 0.5]);
+  const verify = [0, 0.1, 0.3, 0.5, 0.7, 0.9, 1].map((progress) =>
+    mapPresentationTime(progress * PRESENTATION_SECONDS),
+  );
+  const extras = [
+    ...verify,
+    2, 2.2, 7.2, 20.4, 22.3, 23.1, 23.15, 26.2,
+    ...ventureHolds,
+  ];
+  const glideSpans: Array<readonly [number, number]> = [
+    [0, 1.8],
+    [4, 5],
+    [9.7, 10.15],
+    ...STW.slice(0, 5).map((span, index) => [span[1], STW[index + 1][0]] as const),
+    [STW[5][1], 18.1],
+    [23.5, 24.5],
+  ];
+  const regions: Array<{ glide: boolean; start: number; end: number }> = [];
+  let cursor = 0;
+  for (const [start, end] of glideSpans) {
+    if (start - cursor > KNOT_EPSILON) regions.push({ glide: false, start: cursor, end: start });
+    regions.push({ glide: true, start, end });
+    cursor = end;
+  }
+  if (27.5 - cursor > KNOT_EPSILON) regions.push({ glide: false, start: cursor, end: 27.5 });
+  return regions.map((region) => buildSegment(region.glide, region.start, region.end, extras));
+}
+
+const cameraSegments = buildCameraSegments();
+
+function copyKnot(knot: CameraKnot) {
+  position.copy(knot.position);
+  target.copy(knot.target);
+  roll = knot.roll;
+  fov = knot.fov;
+}
+
+function sampleSegment(segment: CameraSegment, time: number) {
+  const last = segment.times.length - 1;
+  const start = segment.times[0];
+  const end = segment.times[last];
+  if (time <= start + KNOT_EPSILON) {
+    copyKnot(segment.knots[0]);
+    return;
+  }
+  if (time >= end - KNOT_EPSILON) {
+    copyKnot(segment.knots[last]);
+    return;
+  }
+  const glideSpan = end - start;
+  const clock = segment.glide ? start + glideSpan * easeInOutQuint((time - start) / glideSpan) : time;
+  let index = 0;
+  while (index < last - 1 && clock > segment.times[index + 1]) index += 1;
+  const span = segment.times[index + 1] - segment.times[index];
+  const local = span > 1e-8 ? Math.min(1, Math.max(0, (clock - segment.times[index]) / span)) : 0;
+  if (local <= 1e-6) {
+    copyKnot(segment.knots[index]);
+    return;
+  }
+  if (local >= 1 - 1e-6) {
+    copyKnot(segment.knots[index + 1]);
+    return;
+  }
+  const parameter = (index + local) / last;
+  segment.positionCurve.getPoint(parameter, position);
+  segment.targetCurve.getPoint(parameter, target);
+  roll = lerp(segment.knots[index].roll, segment.knots[index + 1].roll, local);
+  fov = lerp(segment.knots[index].fov, segment.knots[index + 1].fov, local);
+}
+
+function sampleCinematic(time: number) {
+  const clamped = Math.min(27.5, Math.max(0, time));
+  for (let index = 0; index < cameraSegments.length; index += 1) {
+    const segment = cameraSegments[index];
+    const finalSegment = index === cameraSegments.length - 1;
+    if (finalSegment || clamped <= segment.times[segment.times.length - 1]) {
+      sampleSegment(segment, clamped);
+      return;
+    }
+  }
+}
+
+function holdDrift(time: number): number {
+  sampleCinematic(time);
+  const sampledPosition = position.clone();
+  const sampledTarget = target.clone();
+  const sampledRoll = roll;
+  const sampledFov = fov;
+  camAt(time);
+  const drift = Math.max(
+    sampledPosition.distanceTo(position),
+    sampledTarget.distanceTo(target),
+    Math.abs(sampledRoll - roll),
+    Math.abs(sampledFov - fovAt(time)),
+  );
+  position.copy(sampledPosition);
+  target.copy(sampledTarget);
+  roll = sampledRoll;
+  fov = sampledFov;
+  return drift;
+}
+
+const guardedHolds = [
+  ...[0, 0.1, 0.3, 0.5, 0.7, 0.9, 1].map((progress) => mapPresentationTime(progress * PRESENTATION_SECONDS)),
+  2, 2.2, 7.2, 20.4, 22.3, 23.1, 23.15, 26.2,
+  ...STW.flatMap(([start]) => [start + 0.45, start + 0.5]),
+];
+
+for (const time of guardedHolds) {
+  const drift = holdDrift(time);
+  if (drift > 1e-3) {
+    throw new Error(`Camera hold drifted at internal ${time.toFixed(4)} by ${drift}`);
+  }
+}
+
 /** Sample the reference camera. `progress` is document scroll, 0–1. */
 export function sampleCamera(progress: number, reducedMotion: boolean): CameraSample {
   const presentation = clamp01(progress) * PRESENTATION_SECONDS;
@@ -265,15 +462,11 @@ export function sampleCamera(progress: number, reducedMotion: boolean): CameraSa
   if (reducedMotion) {
     camRaw(internal);
     roll = 0;
+    fov = 40;
   } else {
-    camAt(internal);
+    sampleCinematic(internal);
   }
-  return {
-    position,
-    target,
-    roll,
-    fov: reducedMotion ? 40 : fovAt(internal),
-  };
+  return { position, target, roll, fov };
 }
 
 export function readClock(progress: number) {
