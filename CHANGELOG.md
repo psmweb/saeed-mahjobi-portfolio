@@ -2,6 +2,19 @@
 
 All notable changes to this portfolio are documented here. The format follows Keep a Changelog. Versions follow Semantic Versioning.
 
+## [0.7.0] - 2026-11-27
+
+### Added
+
+- Act 5 command center on the 44s–52s window (reference internal 23.5–27.5). The amber beam sweeps at 23.45–24.15, then the finale copy locks to Persian RTL.
+- Frameless portrait light, gold stage, and the five agents settled on that stage. No arched frame and no face.
+- Finale lockup: Bebas Neue at `0.06em` in English, Vazirmatn in Persian. Closing line: `۱۰ سال ساختن، فرماندهی با ۵ ایجنت`.
+- Resume downloads for both PDFs, `github.com/psmweb`, and Approve & Deploy. Keyboard focus rings, hover, and active states. Reduced motion skips the beam and shows the settled finale.
+
+### Unchanged
+
+- Acts 1–4, the venture slabs, the robot kit, and the HUD.
+
 ## [0.6.0] - 2026-11-27
 
 ### Added

@@ -4,7 +4,7 @@ Onboarding for anyone changing the Saeed Mahjobi portfolio (`ONE COMMAND`). Read
 
 ## What this repo is
 
-A Next.js 15 App Router, React 19, TypeScript, Tailwind CSS single page. English is LTR. Persian is RTL (`Vazirmatn`). The current release is **v0.6.0**: Act 4 agent arena, on top of the v0.5.0 venture slabs. The finale wipe is still a later phase.
+A Next.js 15 App Router, React 19, TypeScript, Tailwind CSS single page. English is LTR. Persian is RTL (`Vazirmatn`). The current release is **v0.7.0**: Act 5 golden wipe and command-center finale, on top of the v0.6.0 agent arena.
 
 Name on the page: **Saeed Mahjobi** (`سعید محجوبی`). Languages: English (Fluent / Professional) and Persian (Native).
 
@@ -16,9 +16,10 @@ Name on the page: **Saeed Mahjobi** (`سعید محجوبی`). Languages: Englis
 - `src/components/scene/acts/Act2Evolution.tsx` — 2016, 2020, and 2026 monoliths.
 - `src/components/scene/acts/Act3Ventures.tsx` — six dark-glass venture slabs with scrolling UI textures.
 - `src/components/scene/acts/Act4Arena.tsx` — five PBR robot figurines, role labels, and the ship-release cube.
-- `src/components/acts/Act1HeroOverlay.tsx`, `Act2EvolutionOverlay.tsx`, `Act3VentureOverlay.tsx`, and `Act4AgentArena.tsx` — bilingual copy synced to the 0–52s clock. Act 4 also carries the replay control.
-- `src/components/scene/` — atmosphere, camera, Act 1 gem, Act 2 monoliths, Act 3 slabs, Act 4 arena. The finale wipe stays for a later phase.
-- `src/components/acts/` — scroll landmarks plus Act 1–4 overlays. Act 5 visuals stay for a later phase.
+- `src/components/scene/acts/Act5Finale.tsx` — command-center glow, frameless portrait light, gold stage, and the five agents at rest.
+- `src/components/acts/Act1HeroOverlay.tsx`, `Act2EvolutionOverlay.tsx`, `Act3VentureOverlay.tsx`, `Act4AgentArena.tsx`, and `Act5FinaleCommandCenter.tsx` — bilingual copy synced to the 0–52s clock. Act 4 also carries the replay control. Act 5 carries the wipe, the Persian finale, and the resume and GitHub controls.
+- `src/components/scene/` — atmosphere, camera, Act 1 gem, Act 2 monoliths, Act 3 slabs, Act 4 arena, Act 5 finale.
+- `src/components/acts/` — scroll landmarks plus Act 1–5 overlays.
 - `src/components/hud/` — glass navbar (`SM`, chapter chips, `EN | فارسی`), battery meter, one-line build log.
 - `src/data/` — ventures, agents, timeline, resumes, portraits, `i18n/en.ts`, `i18n/fa.ts`.
 - `src/lib/direction.ts` — `mirrorX` / `mirrorVector`. Vertical scroll is not reversed.

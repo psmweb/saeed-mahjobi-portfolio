@@ -33,7 +33,7 @@ const bebas = Bebas_Neue({
 
 const vazir = Vazirmatn({
   subsets: ["arabic", "latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "900"],
   variable: "--font-vazir",
   display: "swap",
 });

@@ -61,6 +61,17 @@ export type ArenaCopy = {
   targets: readonly [ArenaTargetCopy, ArenaTargetCopy, ArenaTargetCopy, ArenaTargetCopy, ArenaTargetCopy];
 };
 
+export type FinaleStageCopy = {
+  kicker: string;
+  name: string;
+  closingLead: string;
+  closingAccent: string;
+  github: string;
+  resumeEn: string;
+  resumeFa: string;
+  approve: string;
+};
+
 export type Dictionary = {
   meta: { title: string; description: string };
   brand: { command: string; name: string };
@@ -86,6 +97,7 @@ export type Dictionary = {
   emptyVentures: string;
   heroPrompt: string;
   resume: { en: string; fa: string };
+  finaleStage: FinaleStageCopy;
   heroStage: {
     displayName: string;
     tagline: string;
