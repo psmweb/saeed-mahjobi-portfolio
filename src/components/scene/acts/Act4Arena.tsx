@@ -8,6 +8,7 @@ import { getDictionary } from "@/data/i18n";
 import type { Dictionary, Locale } from "@/data/i18n/types";
 import { sparkBudget } from "@/lib/performanceTier";
 import { scrollProgress } from "@/lib/scrollProgress";
+import { watchVentureTextures } from "@/lib/ventureTextureLoad";
 import { ARENA_IN, ARENA_OUT, arenaHud, sampleArenaTime } from "@/lib/arenaReplay";
 import { arenaFraming } from "../arenaFraming";
 import { WORLD, readClock } from "../cinema";
@@ -754,6 +755,7 @@ export function Act4Arena() {
     const parent = root.current;
     if (!parent) return;
     let cancelled = false;
+    let stopTextures = () => {};
     parent.position.copy(WORLD.arena);
     const disposables: Array<THREE.BufferGeometry | THREE.Material | THREE.Texture> = [];
     const kit = createRobotKit();
@@ -958,16 +960,19 @@ export function Act4Arena() {
       paintCube(live);
       gl.domElement.dataset.act4Robots = "5";
 
-      ARENA_TARGETS.forEach((spec, index) => {
-        const image = new Image();
-        image.decoding = "async";
-        image.onload = () => {
-          const record = runtime.current?.targets[index];
-          if (!record) return;
-          record.image = image;
-          record.key = "";
-        };
-        image.src = spec.texture;
+      stopTextures = watchVentureTextures(() => {
+        if (cancelled) return;
+        ARENA_TARGETS.forEach((spec, index) => {
+          const image = new Image();
+          image.decoding = "async";
+          image.onload = () => {
+            const record = runtime.current?.targets[index];
+            if (!record) return;
+            record.image = image;
+            record.key = "";
+          };
+          image.src = spec.texture;
+        });
       });
     };
 
@@ -975,6 +980,7 @@ export function Act4Arena() {
 
     return () => {
       cancelled = true;
+      stopTextures();
       runtime.current = null;
       parent.clear();
       kit.dispose();
