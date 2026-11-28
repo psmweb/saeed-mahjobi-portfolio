@@ -10,7 +10,7 @@ import { sparkBudget } from "@/lib/performanceTier";
 import { scrollProgress } from "@/lib/scrollProgress";
 import { ARENA_IN, ARENA_OUT, arenaHud, sampleArenaTime } from "@/lib/arenaReplay";
 import { arenaFraming } from "../arenaFraming";
-import { WORLD, readClock } from "../cinema";
+import { WORLD, presentationForInternal, readClock } from "../cinema";
 import { createRobotKit, poseRobot, type RobotRig } from "./act4Robot";
 
 const HOME_X = [-3.7, -1.85, 0, 1.85, 3.7];
@@ -1018,7 +1018,7 @@ export function Act4Arena() {
     const fov = perspective ? perspective.fov : 40;
     const framing = arenaFraming(perspective ? perspective.aspect : 1, fov, internal);
     const mirrored = document.documentElement.dir === "rtl";
-    const idle = calm ? 0 : sample.mode === "scroll" ? presentation : sample.mode === "play" ? 34.2 + ((sample.t - 18.1) * 9.8) / 5.4 : now / 1000;
+    const idle = calm ? 0 : sample.mode === "scroll" ? presentation : sample.mode === "play" ? presentationForInternal(sample.t) : now / 1000;
 
     if (sample.mode === "hold" || calm) {
       const stage = sample.mode === "hold" || internal >= 20.7 ? "shipped" : internal >= 19.6 ? "built" : "arrival";

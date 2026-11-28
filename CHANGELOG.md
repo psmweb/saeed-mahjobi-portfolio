@@ -2,6 +2,24 @@
 
 All notable changes to this portfolio are documented here. The format follows Keep a Changelog. Versions follow Semantic Versioning.
 
+## [Unreleased]
+
+Phase 1A. Longer scroll, one Lenis clock, continuous camera speed at the 14.2s knot.
+
+### Changed
+
+- Scroll travel is 13 viewports. Act travels are about 1.68 / 1.80 / 5.05 / 2.48 / 2.00 viewports, sized in `svh` from `ACT_SCROLL_VIEWPORTS`. At a 900px viewport that is 11,700px of scroll. Act 3 venture slots land between about 710px and 761px. The act handoff window is 0.35 viewport.
+- Lenis uses `lerp` 0.075, `wheelMultiplier` 0.6, `touchMultiplier` 1, and `autoRaf: false`. `CameraRig` calls `lenis.raf` on the WebGL frame and copies progress onto the scene clock. The old lambda-7 damp is gone. A wheel frame cannot jump farther than the shortest act.
+- `mapPresentationTime` is a monotone cubic. The venture run from 14.2s to 34.0s stays linear, so speed no longer steps from 0.90 to 0.38. Glide sampling and the handoff mix use `easeInOutCubic`.
+- The canvas no longer sets `preserveDrawingBuffer`. QA capture uses page screenshots, which do not read the drawing buffer.
+- First Load JS is 325 kB. The route chunk is 178 kB. The previous build was 324 kB and 177 kB.
+
+### Unchanged
+
+- Hero at progress 0: Bebas Neue at `0.06em`, frameless portrait slot.
+- `prefers-reduced-motion` still updates live: native wheel, `lerp` 1, short handoff, no blur.
+- Copy, textures, and colors.
+
 ## [1.1.0-c] - 2026-11-28
 
 Act handoff, a load-time performance tier, and a live reduced-motion path. v1.1.0-a, v1.1.0-b, and v1.1.0-c together are the v1.1.0 motion upgrade. This part is not tagged. Resting frames stay on the approved picture.

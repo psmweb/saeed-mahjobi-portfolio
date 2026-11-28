@@ -6,8 +6,8 @@
  * JavaScript function. The CSS custom properties in `src/app/globals.css`
  * (`--dur-*`, `--ease-*`) mirror the numbers below.
  *
- * `cinematic` is an ease-in-out quint: slow at the hold, quicker through the
- * middle of a move. Springs are critically damped (no bounce).
+ * `cinematic` is an ease-in-out quint kept as a reference curve. Scroll-mapped
+ * motion uses `easeInOutCubic`. Springs are critically damped (no bounce).
  */
 
 export const duration = {
@@ -62,11 +62,11 @@ export const springPreset = {
 };
 
 /**
- * Critically damped follow for the scroll clock, advanced with
- * `THREE.MathUtils.damp` inside the WebGL frame. Lambda ~7 settles in
- * about two-thirds of a second. Delta is capped so a stalled frame cannot jump.
+ * Lenis is the only scroll smoother. The scene clock copies Lenis progress
+ * on the same WebGL frame. There is no second damp on top of this lerp.
  */
-export const scrollFollow = {
-  lambda: 7,
-  deltaCap: 1 / 30,
+export const scrollTuning = {
+  lerp: 0.075,
+  wheelMultiplier: 0.6,
+  touchMultiplier: 1,
 } as const;

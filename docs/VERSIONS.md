@@ -20,6 +20,15 @@ Dates and commits are taken from `git log` and the annotated tags. v0.1.0–v0.3
 
 After v1.0.0: `v1.0.x` fixes copy or visuals, `v1.x.0` adds a venture or feature, `v2.0.0` is a redesign.
 
+## Phase 1A
+
+Not tagged. Scroll and clock pass on the v1.1.0 scene.
+
+- Scroll travel is 13 viewports (`SCROLL_VIEWPORTS`). Act travels are about 1.68 / 1.80 / 5.05 / 2.48 / 2.00 viewports.
+- Lenis: `lerp` 0.075, `wheelMultiplier` 0.6, `touchMultiplier` 1, `autoRaf: false`. One WebGL frame drives Lenis and the scene. No second damp.
+- `mapPresentationTime` eases through the 14.2s knot. The venture run stays linear. Handoff window is 0.35 viewport. Glides and the handoff mix use a cubic.
+- `preserveDrawingBuffer` is off.
+
 ## v1.1.0
 
 Not tagged. Motion upgrade on the v1.0.0 scene. a, b, and c are all landed.
