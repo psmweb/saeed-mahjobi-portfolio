@@ -51,7 +51,7 @@ export function Act3VentureOverlay() {
         <p
           className={
             locale === "fa"
-              ? "font-mono text-xs text-balance sm:text-[13px]"
+              ? "font-fa text-xs text-balance sm:text-[13px]"
               : "font-mono text-xs tracking-[0.14em] sm:text-[13px] sm:tracking-[0.16em]"
           }
           style={{ color: accent }}
@@ -67,14 +67,20 @@ export function Act3VentureOverlay() {
         </p>
         <h2 className="mt-2.5 font-display text-[1.65rem] leading-[1.05] text-white sm:text-[2.15rem]">{stage.title}</h2>
         <p className="mt-2.5 text-[13px] leading-snug text-pretty text-[#B4BAC6] sm:text-[13.5px] sm:leading-relaxed">{stage.body}</p>
-        <p className="mt-2.5 font-mono text-xs leading-relaxed tracking-[0.04em] text-pretty text-[#8C93A3] sm:text-[13px]">{stage.stack}</p>
+        <p
+          className={`mt-2.5 text-xs leading-relaxed text-pretty text-[#8C93A3] sm:text-[13px] ${
+            locale === "fa" && /[\u0600-\u06FF]/.test(stage.stack) ? "font-fa" : "font-mono tracking-[0.04em]"
+          }`}
+        >
+          {stage.stack}
+        </p>
         <p className="mt-3.5">
           <span
             dir={latinChip ? "ltr" : undefined}
             className={
               stage.chip.length > 28
-                ? "inline-block max-w-full text-pretty rounded-[10px] bg-gradient-to-br from-[#FFD27A] to-[#F2B544] px-3 py-1.5 font-mono text-[11px] font-semibold leading-snug tracking-[0.04em] text-[#120d02] shadow-[0_0_18px_rgba(242,181,68,0.28)] sm:text-xs"
-                : "inline-flex rounded-[10px] bg-gradient-to-br from-[#FFD27A] to-[#F2B544] px-3 py-1.5 font-mono text-[11px] font-semibold tracking-[0.04em] text-[#120d02] shadow-[0_0_18px_rgba(242,181,68,0.28)] sm:text-xs"
+                ? `inline-block max-w-full text-pretty rounded-[10px] bg-gradient-to-br from-[#FFD27A] to-[#F2B544] px-3 py-1.5 text-[11px] font-semibold leading-snug text-[#120d02] shadow-[0_0_18px_rgba(242,181,68,0.28)] sm:text-xs ${latinChip ? "font-mono tracking-[0.04em]" : "font-fa"}`
+                : `inline-flex rounded-[10px] bg-gradient-to-br from-[#FFD27A] to-[#F2B544] px-3 py-1.5 text-[11px] font-semibold text-[#120d02] shadow-[0_0_18px_rgba(242,181,68,0.28)] sm:text-xs ${latinChip ? "font-mono tracking-[0.04em]" : "font-fa"}`
             }
           >
             {stage.chip}

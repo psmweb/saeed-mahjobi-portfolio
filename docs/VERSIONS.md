@@ -12,6 +12,7 @@ Semantic versions for ONE COMMAND. Tags are annotated. Each tag ships with `CHAN
 | v0.6.0 | 4 | Five PBR robot figurines and the arena demo | Released |
 | v0.7.0 | 5 | Persian RTL mirror and command-center finale | Released |
 | v0.9.0 | 6 | Visual parity, responsive, and performance audit | Released |
+| v0.9.1 | 6.1 | Targeted parity: extruded hero, Act 2 archive, Persian type, framing | Released |
 | v1.0.0 | 7 | Production release | Not started |
 
 After v1.0.0: `v1.0.x` fixes copy or visuals, `v1.x.0` adds a venture or feature, `v2.0.0` is a redesign.
@@ -78,6 +79,19 @@ Phase 5. The 44s–52s window is the command center.
 - `prefers-reduced-motion` hides the beam and shows the settled copy, glow, and agents.
 - Portrait viewports pull the finale camera back and tighten the agent row. Desktop aspect keeps the reference camera.
 - Acts 1–4, the venture slabs, the robot kit, and the HUD are unchanged.
+
+## v0.9.1
+
+Phase 6.1. The v0.9.0 draw-call budget stays in force. Detail is in `docs/QA_REPORT.md`.
+
+- Act 1 English name is extruded Bebas Neue (`Text3D`, `0.06em` tracking): SAEED in chrome, MAHJOBI in amber-gold, scaled to the reference width. The HTML heading remains for accessibility and is the mobile fallback. Persian shows `سعید محجوبی` in Vazirmatn, not as 3D type.
+- The dark hero slab is gone. The frameless portrait slot sits at the reference arch pose. `public/portrait/saeed.png`, when present, is a soft-edged cut-out. Otherwise the slot is the glow only.
+- The storyteller stays, parked clear of the name and the tagline in both languages and on a phone.
+- Act 2 is the reference archive: extruded 2016 with the first-lines plate, extruded 2020 over three archive screens, extruded gold 2026 over the four stack cards. The overlay follows the same beats in EN and FA.
+- Persian UI copy uses Vazirmatn. Monospace stays on Latin tokens such as `one-command --deploy --all` and `v0.8`. The Act 5 Persian primary action is `تأیید و استقرار ✓`.
+- Act 4 desktop camera eases back so the five cards clear the battery and the nameplates sit above the build log. Mobile nameplates stay inside the gap to their neighbors.
+- On a phone, the venture camera pulls back so each slab is framed above the placard and clear of the battery. Desktop Act 3 framing is unchanged.
+- Peak draw calls at 1440×900: Act 1 is 32, Act 2 is 18, Act 4 shipped is 145, Act 5 is 127. All under 150.
 
 ## v0.9.0
 

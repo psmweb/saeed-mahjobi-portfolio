@@ -28,7 +28,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-jakarta), sans-serif;
   --font-display: var(--font-space), sans-serif;
-  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+  --font-mono: var(--font-jetbrains), var(--font-vazir), ui-monospace, monospace;
   --font-fa: var(--font-vazir), sans-serif;
 }
 

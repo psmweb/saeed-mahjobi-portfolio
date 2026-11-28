@@ -374,7 +374,8 @@ function paintCube(runtime: Runtime) {
   if (!front || !back || !side) return;
   if (runtime.cubeKey === locale) return;
   const display = locale === "fa" ? fontOf("--font-vazir") : fontOf("--font-space");
-  const mono = locale === "fa" ? fontOf("--font-vazir") : fontOf("--font-jetbrains");
+  const mono = fontOf("--font-jetbrains");
+  const script = locale === "fa" ? display : mono;
   front.clearRect(0, 0, 512, 512);
   front.fillStyle = "#0B0E16";
   front.fillRect(0, 0, 512, 512);
@@ -384,17 +385,18 @@ function paintCube(runtime: Runtime) {
   front.textAlign = "center";
   front.textBaseline = "alphabetic";
   front.fillStyle = "#F2B544";
-  front.font = `700 30px ${mono}`;
+  front.font = `700 30px ${script}`;
   front.fillText(copy.arena.task, 256, 118);
   front.fillStyle = "#ffffff";
   front.font = `700 64px ${display}`;
   front.fillText(copy.arena.shipLine, 256, 230);
+  front.font = `700 64px ${mono}`;
   front.fillText(copy.arena.shipVersion, 256, 310);
   front.fillStyle = "#F2B544";
   roundRect(front, 48, 360, 416, 78, 16);
   front.fill();
   front.fillStyle = "#120d02";
-  front.font = `700 24px ${mono}`;
+  front.font = `700 24px ${script}`;
   front.fillText(copy.demoBadge, 256, 408);
 
   back.clearRect(0, 0, 512, 512);
@@ -409,7 +411,7 @@ function paintCube(runtime: Runtime) {
   back.fillText(copy.arena.shipped, 256, 230);
   back.font = `700 110px ${display}`;
   back.fillText("✓", 256, 360);
-  back.font = `700 22px ${mono}`;
+  back.font = `700 22px ${script}`;
   back.fillText(copy.demoBadge, 256, 450);
 
   side.clearRect(0, 0, 256, 256);
@@ -422,7 +424,7 @@ function paintCube(runtime: Runtime) {
   side.font = `700 28px ${mono}`;
   side.textAlign = "center";
   side.fillText(copy.arena.shipVersion, 128, 132);
-  side.font = `700 16px ${mono}`;
+  side.font = `700 16px ${script}`;
   side.fillText(copy.demoBadge, 128, 176);
   runtime.cubeTextures.forEach((texture) => {
     texture.needsUpdate = true;
@@ -439,11 +441,33 @@ function syncLabels(runtime: Runtime) {
   });
 }
 
-function placeLabel(label: Paint, x: number, z: number, opacity: number, row: number, camera: THREE.Camera) {
-  label.mesh.position.set(x, -1.7, z + 0.75);
+const gapA = new THREE.Vector3();
+const gapB = new THREE.Vector3();
+
+function neighborGap(index: number, row: number, mirrored: boolean, onRing: boolean) {
+  if (!onRing) return 1.85 * row;
+  ringAt(index, row, mirrored, gapA);
+  let nearest = 4;
+  for (let other = 0; other < 5; other += 1) {
+    if (other === index) continue;
+    ringAt(other, row, mirrored, gapB);
+    nearest = Math.min(nearest, gapA.distanceTo(gapB));
+  }
+  return nearest;
+}
+
+function placeLabel(
+  label: Paint,
+  x: number,
+  z: number,
+  opacity: number,
+  camera: THREE.Camera,
+  gap: number,
+) {
+  label.mesh.position.set(x, -1.32, z + 0.38);
   label.mesh.quaternion.copy(camera.quaternion);
-  const width = Math.min(1.6, 1.85 * row * 0.92);
-  label.mesh.scale.set(width / 1.6, 1, 1);
+  const width = Math.min(1.38, Math.max(0.62, gap * 0.78));
+  label.mesh.scale.set(width / 1.6, 0.88, 1);
   label.material.opacity = opacity;
   label.mesh.visible = opacity > 0.01;
 }
@@ -528,7 +552,7 @@ function layoutReference(
     const label = runtime.labels[index];
     if (label) {
       const fade = Math.min(1, seg(t, 19.3, 19.6) * (1 - seg(t, 21.2, 21.4)) + seg(t, 22.95, 23.2));
-      placeLabel(label, x, z, fade, row, camera);
+      placeLabel(label, x, z, fade, camera, neighborGap(index, row, mirrored, leap > 0.35));
     }
   });
 
@@ -650,7 +674,9 @@ function layoutCalm(
       calm: idle === 0,
     });
     const label = runtime.labels[index];
-    if (label) placeLabel(label, ringScratch.x, ringScratch.z, 1, row, camera);
+    if (label) {
+      placeLabel(label, ringScratch.x, ringScratch.z, 1, camera, neighborGap(index, row, mirrored, shipped));
+    }
   });
   placePedestals(
     runtime,

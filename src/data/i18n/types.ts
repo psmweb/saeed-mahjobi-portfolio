@@ -105,7 +105,12 @@ export type Dictionary = {
     pills: [string, string, string];
   };
   evolutionStage: {
-    items: [{ year: string; title: string }, { year: string; title: string }, { year: string; title: string }];
+    kicker: string;
+    beats: readonly [
+      { year: string; title: string; detail: string; accent?: boolean },
+      { year: string; title: string; detail: string; accent?: boolean },
+      { year: string; title: string; detail: string; accent?: boolean },
+    ];
   };
   ventureStages: readonly [
     VentureStageCopy,
