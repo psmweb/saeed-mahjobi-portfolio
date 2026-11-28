@@ -1,8 +1,19 @@
 import * as THREE from "three";
-import { easeInOutQuint } from "@/lib/motion";
+import { easeInOutCubic } from "@/lib/motion";
 
 /** Presentation clock in the reference. Scroll 0–1 maps onto this. */
 export const PRESENTATION_SECONDS = 52;
+
+/**
+ * Scroll travel of the whole show, in viewports.
+ * Section heights are this travel plus the viewport already on screen at the end,
+ * so `scrollHeight - innerHeight` is `SCROLL_VIEWPORTS` times the viewport.
+ * Heights use `svh`, not raw pixels.
+ */
+export const SCROLL_VIEWPORTS = 13;
+
+/** Act-cut crossfade, in viewports of that travel. 0.35 / 13 of the 52s clock. */
+export const HANDOFF_VIEWPORTS = 0.35;
 
 const KN: ReadonlyArray<readonly [number, number]> = [
   [0, 0],
@@ -10,8 +21,8 @@ const KN: ReadonlyArray<readonly [number, number]> = [
   [7, 5],
   [13.7, 9.7],
   [14.2, 10.15],
-  [33.5, 17.55],
-  [34.2, 18.1],
+  [34.0, 17.55],
+  [34.7, 18.1],
   [44, 23.5],
   [52, 27.5],
 ];
@@ -28,14 +39,68 @@ const eo = (x: number) => 1 - (1 - x) ** 3;
 const eio = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - (-2 * x + 2) ** 3 / 2);
 const ss = (x: number) => x * x * (3 - 2 * x);
 
+const secants = KN.slice(0, -1).map((_, index) => {
+  const [x0, y0] = KN[index];
+  const [x1, y1] = KN[index + 1];
+  return (y1 - y0) / (x1 - x0);
+});
+
+/**
+ * One slope per knot, so internal speed has no step.
+ * The venture run (14.2s → 34.0s) keeps its secant at both ends, which leaves
+ * that span linear and gives each Act 3 slot 700–800px at a 900px viewport.
+ * The 13.7s–14.2s join is a monotone cubic from the previous slope down onto
+ * that venture slope, replacing the old 0.90 → 0.38 step.
+ */
+const openingSlope = secants[0];
+const ventureSlope = secants[4];
+const knotSlope = [
+  openingSlope,
+  openingSlope,
+  openingSlope,
+  secants[2],
+  ventureSlope,
+  ventureSlope,
+  secants[6],
+  secants[6],
+  secants[7],
+];
+
+function segmentIsLinear(index: number): boolean {
+  const slope = secants[index];
+  return Math.abs(knotSlope[index] - slope) < 1e-9 && Math.abs(knotSlope[index + 1] - slope) < 1e-9;
+}
+
+/** Cubic Hermite on a segment. `t` is 0–1. Endpoint slopes are per second. */
+function hermite(t: number, y0: number, y1: number, m0: number, m1: number, span: number): number {
+  const t2 = t * t;
+  const t3 = t2 * t;
+  return (
+    (2 * t3 - 3 * t2 + 1) * y0 +
+    (t3 - 2 * t2 + t) * span * m0 +
+    (-2 * t3 + 3 * t2) * y1 +
+    (t3 - t2) * span * m1
+  );
+}
+
+function samplePresentation(index: number, tr: number): number {
+  const [x0, y0] = KN[index];
+  const [x1, y1] = KN[index + 1];
+  const span = x1 - x0;
+  if (span === 0) return y0;
+  const t = (tr - x0) / span;
+  if (segmentIsLinear(index)) return y0 + (y1 - y0) * t;
+  return hermite(t, y0, y1, knotSlope[index], knotSlope[index + 1], span);
+}
+
 /** Map a 0–52s presentation time onto the reference scene clock. */
 export function mapPresentationTime(tr: number): number {
-  for (let i = 0; i < KN.length - 1; i += 1) {
-    const [a, start] = KN[i];
-    const [b, end] = KN[i + 1];
-    if (tr <= b) return start + ((end - start) * (tr - a)) / (b - a);
+  if (tr <= 0) return 0;
+  if (tr >= PRESENTATION_SECONDS) return KN[KN.length - 1][1];
+  for (let index = 0; index < KN.length - 1; index += 1) {
+    if (tr <= KN[index + 1][0]) return samplePresentation(index, tr);
   }
-  return 27.5;
+  return KN[KN.length - 1][1];
 }
 
 /** Internal-clock cuts between the five acts. `chapterIndex` reads these. */
@@ -49,18 +114,61 @@ export function chapterIndex(internalT: number): number {
   return 4;
 }
 
-/** Inverse of `mapPresentationTime` on the piecewise 0–52s clock. */
+/** Inverse of `mapPresentationTime`. Linear spans are closed-form. Cubic joins are searched. */
 export function presentationForInternal(internal: number): number {
-  const time = Math.min(27.5, Math.max(0, internal));
-  for (let i = 0; i < KN.length - 1; i += 1) {
-    const [presentA, internalA] = KN[i];
-    const [presentB, internalB] = KN[i + 1];
-    if (time <= internalB) {
-      const span = internalB - internalA;
-      return span === 0 ? presentA : presentA + ((presentB - presentA) * (time - internalA)) / span;
+  const end = KN[KN.length - 1][1];
+  const time = Math.min(end, Math.max(0, internal));
+  for (let index = 0; index < KN.length - 1; index += 1) {
+    const [x0, y0] = KN[index];
+    const [x1, y1] = KN[index + 1];
+    if (time > y1) continue;
+    const span = y1 - y0;
+    if (span === 0 || segmentIsLinear(index)) {
+      return span === 0 ? x0 : x0 + ((x1 - x0) * (time - y0)) / span;
     }
+    let lo = 0;
+    let hi = 1;
+    const width = x1 - x0;
+    for (let step = 0; step < 48; step += 1) {
+      const mid = (lo + hi) / 2;
+      const y = hermite(mid, y0, y1, knotSlope[index], knotSlope[index + 1], width);
+      if (y < time) lo = mid;
+      else hi = mid;
+    }
+    return x0 + hi * width;
   }
   return PRESENTATION_SECONDS;
+}
+
+const presentationMarks = [
+  0,
+  ...ACT_BOUNDARY_INTERNAL.map((internal) => presentationForInternal(internal)),
+  PRESENTATION_SECONDS,
+];
+
+/**
+ * Scroll progress where Act 3 opens.
+ * The cut is `ACT_BOUNDARY_INTERNAL[1]` (internal 9.9), inverted through the
+ * monotone time map and divided by the 52s show.
+ */
+export const ACT3_SCROLL_START =
+  presentationForInternal(ACT_BOUNDARY_INTERNAL[1]) / PRESENTATION_SECONDS;
+
+/** Scroll travel of each act, in viewports. Sum is `SCROLL_VIEWPORTS`. */
+export const ACT_SCROLL_VIEWPORTS: readonly number[] = presentationMarks.slice(0, -1).map((start, index) => {
+  return ((presentationMarks[index + 1] - start) / PRESENTATION_SECONDS) * SCROLL_VIEWPORTS;
+});
+
+/** Section block size. The last act includes the viewport already visible at rest. */
+export function actSectionHeight(index: number): string {
+  const travel = ACT_SCROLL_VIEWPORTS[index] ?? 0;
+  const screens = travel + (index === ACT_SCROLL_VIEWPORTS.length - 1 ? 1 : 0);
+  return `${screens * 100}svh`;
+}
+
+/** Shortest act, as a fraction of the scroll. One wheel frame cannot jump past it. */
+export function shortestActProgress(): number {
+  return Math.min(...ACT_SCROLL_VIEWPORTS) / SCROLL_VIEWPORTS;
 }
 
 const PRODUCT_LOG_AT = STW.map(([start]) => start - 0.05);
@@ -352,9 +460,9 @@ function buildSegment(glide: boolean, start: number, end: number, extras: readon
  * Hold spans reconstruct the approved camera. Every baked knot, including the
  * verification clocks, is copied exactly, so those compositions stay put.
  * Glide spans are the moves between holds. Each span is one centripetal
- * Catmull-Rom curve. Scroll time is eased with the cinematic quint, then the
- * curve is sampled at that eased time so the move still follows the approved
- * path and both endpoints land on the approved pose.
+ * Catmull-Rom curve. Scroll time is eased with a cubic, then the curve is
+ * sampled at that eased time so the move still follows the approved path and
+ * both endpoints land on the approved pose. Lenis is the scroll smoother.
  */
 function buildCameraSegments(): CameraSegment[] {
   const ventureHolds = STW.flatMap(([start]) => [start + 0.45, start + 0.5]);
@@ -407,7 +515,7 @@ function sampleSegment(segment: CameraSegment, time: number) {
     return;
   }
   const glideSpan = end - start;
-  const clock = segment.glide ? start + glideSpan * easeInOutQuint((time - start) / glideSpan) : time;
+  const clock = segment.glide ? start + glideSpan * easeInOutCubic((time - start) / glideSpan) : time;
   let index = 0;
   while (index < last - 1 && clock > segment.times[index + 1]) index += 1;
   const span = segment.times[index + 1] - segment.times[index];
@@ -470,6 +578,41 @@ for (const time of guardedHolds) {
   if (drift > 1e-3) {
     throw new Error(`Camera hold drifted at internal ${time.toFixed(4)} by ${drift}`);
   }
+}
+
+if (KN.length !== knotSlope.length || KN[4][0] !== 14.2) {
+  throw new Error("Presentation knots and slopes are out of step.");
+}
+
+for (const [present, internal] of KN) {
+  if (Math.abs(mapPresentationTime(present) - internal) > 1e-6) {
+    throw new Error(`Presentation knot missed at ${present}s`);
+  }
+}
+
+function presentationSlope(tr: number): number {
+  const dt = 1e-4;
+  const left = Math.max(0, tr - dt);
+  const right = Math.min(PRESENTATION_SECONDS, tr + dt);
+  return (mapPresentationTime(right) - mapPresentationTime(left)) / (right - left);
+}
+
+for (let index = 1; index < KN.length - 1; index += 1) {
+  const at = KN[index][0];
+  const before = presentationSlope(at - 5e-4);
+  const after = presentationSlope(at + 5e-4);
+  if (Math.abs(before - after) > 0.03) {
+    throw new Error(`Camera speed steps at ${at}s (${before.toFixed(3)} to ${after.toFixed(3)})`);
+  }
+}
+
+let previousInternal = 0;
+for (let step = 1; step <= 200; step += 1) {
+  const internal = mapPresentationTime((step / 200) * PRESENTATION_SECONDS);
+  if (internal + 1e-6 < previousInternal) {
+    throw new Error("Presentation map went backwards.");
+  }
+  previousInternal = internal;
 }
 
 /** Sample the reference camera. `progress` is document scroll, 0–1. */

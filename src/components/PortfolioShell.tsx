@@ -37,7 +37,7 @@ export function PortfolioShell() {
       <Act3VentureOverlay />
       <BatteryScrollMeter />
       <LiveBuildLog />
-      <main className="relative z-10 bg-transparent pb-12 pe-8 sm:pe-12">
+      <main className="relative z-10 bg-transparent pe-8 sm:pe-12">
         <Act1HeroCommand />
         <Act2Evolution />
         <Act3VentureStage />

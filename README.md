@@ -61,11 +61,12 @@ src/data/                ventures, agents, timeline, resumes, portraits, i18n
 src/lib/                 direction mirror and scroll clock
 public/portrait/         frameless cut-out, when the file is supplied
 public/resume/           English and Persian resume PDFs
-public/textures/ventures six scrolling UI textures
+public/textures/ventures six hashed 1024×2304 WebP plates (`npm run optimize:textures`)
 public/fonts/            Bebas Neue typeface used by the 3D hero
 docs/                    living docs, QA report, pixel reference
 scripts/qa/              Playwright capture and draw-call measurement
 scripts/check-catalog-guard.mjs
+scripts/optimize-textures.mjs   dev-only WebP resize for the venture plates
 ```
 
 The pixel reference in `docs/reference/` is not imported by the Next.js build.

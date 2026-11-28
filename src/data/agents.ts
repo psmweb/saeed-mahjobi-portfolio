@@ -5,6 +5,8 @@
  * ARENA_ROLES matches the reference Act 4 roster (color, prop, order).
  */
 
+import { VENTURE_TEXTURES } from "@/data/ventureTextures";
+
 export const ARENA_ROLES = [
   { id: "frontend", color: "#38BDF8", prop: "frame" },
   { id: "backend", color: "#10B981", prop: "server" },
@@ -16,11 +18,11 @@ export const ARENA_ROLES = [
 export type ArenaProp = (typeof ARENA_ROLES)[number]["prop"];
 
 export const ARENA_TARGETS = [
-  { id: "battery-store", color: "#38BDF8", texture: "/textures/ventures/battery-store.png" },
-  { id: "trader-bot", color: "#10B981", texture: "/textures/ventures/trader-bot.png" },
-  { id: "mikham-miara", color: "#F59E0B", texture: "/textures/ventures/mikham.png" },
-  { id: "honarmarket", color: "#A78BFA", texture: "/textures/ventures/honarmarket.png" },
-  { id: "yadaki-yar", color: "#FB923C", texture: "/textures/ventures/yadaki-yar.png" },
+  { id: "battery-store", color: "#38BDF8", texture: VENTURE_TEXTURES["battery-store"].src },
+  { id: "trader-bot", color: "#10B981", texture: VENTURE_TEXTURES["trader-bot"].src },
+  { id: "mikham-miara", color: "#F59E0B", texture: VENTURE_TEXTURES.mikham.src },
+  { id: "honarmarket", color: "#A78BFA", texture: VENTURE_TEXTURES.honarmarket.src },
+  { id: "yadaki-yar", color: "#FB923C", texture: VENTURE_TEXTURES["yadaki-yar"].src },
 ] as const;
 
 export const DEMO_BADGE = {

@@ -47,7 +47,6 @@ export function PortfolioCanvas() {
       gl={{
         antialias: true,
         alpha: false,
-        preserveDrawingBuffer: true,
         toneMapping: THREE.ACESFilmicToneMapping,
         toneMappingExposure: 1.05,
         outputColorSpace: THREE.SRGBColorSpace,

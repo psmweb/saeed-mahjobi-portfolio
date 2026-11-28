@@ -13,6 +13,21 @@ The reference clock runs 0–28 seconds. Progress below is `t / 28`.
 | Emerald | `#10B981` |
 | Cyan | `#38BDF8` |
 
+## Text reveal
+
+Act 2–5 headings use `SplitReveal`. Act 1 hero copy does not. The finished line is the original string, so the Bebas Neue lockup stays at `0.06em` and a hold frame matches the page.
+
+| | Persian, RTL, `fa` | Latin |
+| --- | --- | --- |
+| Split | Word only. Letters stay in one text node. | Character, inside a `white-space: nowrap` word |
+| Duration | 0.7s | 0.5s |
+| Stagger | 0.06s, reading order | 0.015s, reading order |
+| Ease | `cubic-bezier(0.22, 1, 0.36, 1)` | same |
+
+Each line wrapper sets `padding-block: 0.12em` and `mask-image: linear-gradient(to bottom, #000 70%, transparent)`, then sweeps `mask-position`. It does not set `overflow: hidden`. A unit animates only opacity `0 → 1`, `filter` `blur(8px) → blur(0)`, and `translateY` `0.5em → 0`. `will-change` lists those three properties while the unit runs and is removed after. The filter is then `none`. The container's `aria-label` is the full text and the split spans are `aria-hidden`. `prefers-reduced-motion` plays a 0.18s opacity fade and updates live.
+
+The shared curves in `src/lib/motion.ts` are unchanged. The reveal ease is local because that file also drives the scroll clock and the camera.
+
 ## Hero title
 
 Bebas Neue, weight 400, tracking `0.06em`.
@@ -48,16 +63,16 @@ Chapter labels in the reference HUD: `01 COMMAND`, `02 EVOLUTION`, `03 VENTURES`
 
 ## Six venture stages
 
-Order and accent colors from the reference placards. Textures for the scrolling UI live in `public/textures/ventures/`.
+Order and accent colors from the reference placards. The scrolling UI plates live in `public/textures/ventures/` as 1024×2304 WebP. The filename hash is the first 8 hex characters of the file's SHA-256. Current URLs are in `src/data/ventureTextures.ts`. `npm run optimize:textures` rebuilds them from the 1600×3600 PNGs in git history. The crop matches the old plates because both sizes are 4:9.
 
 | Stage | Product | Accent | Texture |
 | --- | --- | --- | --- |
-| 01 | Mikham + Miara | `#F59E0B` | `mikham.png` |
-| 02 | Battery Store | `#38BDF8` | `battery-store.png` |
-| 03 | Trader Bot | `#10B981` | `trader-bot.png` |
-| 04 | Honarmarket | `#F472B6` | `honarmarket.png` |
-| 05 | Yadaki Yar | `#60A5FA` | `yadaki-yar.png` |
-| 06 | Sandoq-Yar | `#2DD4BF` | `sandoq-yar.png` |
+| 01 | Mikham + Miara | `#F59E0B` | `mikham-344b77c6.webp` |
+| 02 | Battery Store | `#38BDF8` | `battery-store-46d7005c.webp` |
+| 03 | Trader Bot | `#10B981` | `trader-bot-7dad712e.webp` |
+| 04 | Honarmarket | `#F472B6` | `honarmarket-16335853.webp` |
+| 05 | Yadaki Yar | `#60A5FA` | `yadaki-yar-4d0b03c2.webp` |
+| 06 | Sandoq-Yar | `#2DD4BF` | `sandoq-yar-885be780.webp` |
 
 Xchange and Rap Historical stay badges on the Sandoq-Yar stage in the reference HUD. They are not a seventh slab.
 

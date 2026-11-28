@@ -1,6 +1,6 @@
 import { scrollProgress } from "@/lib/scrollProgress";
 
-/** Reference Act 4 clock, internal seconds. Scroll maps 34.2s–44s onto this. */
+/** Reference Act 4 clock, internal seconds. Scroll time for this range comes from `cinema.ts`. */
 export const ARENA_IN = 17.3;
 export const ARENA_OUT = 24.6;
 const REPLAY_FROM = 20.55;

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { SplitReveal } from "@/components/motion/SplitReveal";
 import {
+  actSectionHeight,
   finaleApprovePulse,
   finaleLineOpacity,
   finaleLocaleLock,
@@ -125,7 +126,7 @@ export function Act5FinaleCommandCenter() {
 
   return (
     <>
-      <section id="finale" aria-label={dictionary.acts.finale.title} className="min-h-[100svh]">
+      <section id="finale" aria-label={dictionary.acts.finale.title} style={{ height: actSectionHeight(4) }}>
         <h2 className="sr-only">{dictionary.acts.finale.title}</h2>
         <p className="sr-only">{dictionary.acts.finale.body}</p>
       </section>

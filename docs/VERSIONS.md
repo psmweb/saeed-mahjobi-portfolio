@@ -20,6 +20,29 @@ Dates and commits are taken from `git log` and the annotated tags. v0.1.0–v0.3
 
 After v1.0.0: `v1.0.x` fixes copy or visuals, `v1.x.0` adds a venture or feature, `v2.0.0` is a redesign.
 
+## Phase 1
+
+Not tagged. Motion and performance on the v1.1.0 scene. The three parts below landed together.
+
+### Scroll and clock
+
+- Scroll travel is 13 viewports (`SCROLL_VIEWPORTS`). Act travels are about 1.68 / 1.80 / 5.05 / 2.48 / 2.00 viewports.
+- Lenis: `lerp` 0.075, `wheelMultiplier` 0.6, `touchMultiplier` 1, `autoRaf: false`. One WebGL frame drives Lenis and the scene. No second damp.
+- `mapPresentationTime` eases through the 14.2s knot. The venture run stays linear. Handoff window is 0.35 viewport. Glides and the handoff mix use a cubic.
+- `preserveDrawingBuffer` is off.
+
+### Heading reveal
+
+- Each line is masked with `linear-gradient(to bottom, #000 70%, transparent)`, swept by `mask-position`, and padded `0.12em` block so ascenders, descenders, and Persian marks are not cut. No `overflow: hidden`.
+- Units animate opacity, blur (`8px` to `0`), and `translateY` (`0.5em` to `0`) on `cubic-bezier(0.22, 1, 0.36, 1)`.
+- Persian, RTL, and `fa` are one span per word (0.7s, 0.06s stagger, reading order). Latin is one span per character inside a nowrap word (0.5s, 0.015s stagger).
+- The split stays stable while it runs. `will-change` is removed when a unit finishes, the filter is set to `none`, and the resting render is the original string. The hero lockup stays Bebas Neue at `0.06em`.
+- Reduced motion is a live 0.18s opacity fade. Reveal triggers still read overlay opacity on the 52s clock, so the longer travel does not change when a heading starts.
+
+### Portrait
+
+The frameless Act 1 slot is unchanged. The approved editorial cutout was not in the stores this integration could read, so no portrait file was added and no face was drawn. The slot stays the amber and obsidian glow until `public/portrait/saeed.png` is supplied.
+
 ## v1.1.0
 
 Not tagged. Motion upgrade on the v1.0.0 scene. a, b, and c are all landed.
@@ -28,13 +51,17 @@ Not tagged. Motion upgrade on the v1.0.0 scene. a, b, and c are all landed.
 - **b.** Magnetic controls, card tilt, and split text reveals. Pointer follow is off for touch and reduced motion. Act 1 hero copy is not split.
 - **c.** Act handoff from `scrollProgress.smoothed` (overlay crossfade, light lerp, DOM depth veil), a high/medium/low performance tier, and a live `prefers-reduced-motion` path. Act 4 stays at 145 draw calls. Act 5 stays at 127. Resting frames stay on the approved picture.
 
+## Venture textures
+
+Not a version tag. The six Act 3 plates shipped as 1600×3600 PNGs (2,628,341 bytes). They are now 1024×2304 WebP at quality 82 (467,902 bytes), content-hashed, and fetched at `ACT3_SCROLL_START - 0.1` on the 13-viewport clock. `next.config.ts` `headers()` marks `/textures/:path*` and `/images/:path*` `public, max-age=31536000, immutable`. The pipeline is `npm run optimize:textures`. Detail is in `AGENTS.md`.
+
 ## v1.1.0-b
 
 Not tagged. DOM micro-interactions on the v1.1.0-a scene.
 
 - `Magnetic`, `TiltCard`, and `SplitReveal` live in `src/components/motion/`.
 - Pointer follow uses the micro and ui springs and only runs for a fine hovering pointer. Reduced motion and touch leave the controls still.
-- Act headings reveal when the act becomes active. Persian is per word. Latin is per grapheme. Act 1 hero copy is left on the approved clock.
+- Act headings reveal when the act becomes active. Phase 1C replaces the hard stagger with the soft masked reveal in the section above. Act 1 hero copy is left on the approved clock.
 - Resting hold frames keep the previous layout. The scene and draw-call budget are unchanged.
 
 ## v1.1.0-a

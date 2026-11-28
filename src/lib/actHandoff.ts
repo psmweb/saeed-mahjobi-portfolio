@@ -1,18 +1,20 @@
 import {
   ACT_BOUNDARY_INTERNAL,
+  HANDOFF_VIEWPORTS,
   PRESENTATION_SECONDS,
+  SCROLL_VIEWPORTS,
   presentationForInternal,
 } from "@/components/scene/cinema";
-import { duration, easeInOutQuint } from "@/lib/motion";
+import { duration, easeInOutCubic } from "@/lib/motion";
 
 /**
  * Scroll-driven handoff between consecutive acts.
  *
- * The window is `duration.scene` (1.1s) of the 52s presentation clock, or
- * `duration.micro` when reduced motion is on. Nothing here uses a timer:
- * `pulse` is 0 outside the window and 1 on the boundary, and `mix` runs
- * 0 → 1 across that window with the cinematic quint. Hold frames sit outside
- * every window, so they keep the approved opacity, light, and focus.
+ * The window is `HANDOFF_VIEWPORTS` (0.35 viewport) of the scroll, which is
+ * 1.4s of the 52s clock, or `duration.micro` when reduced motion is on.
+ * Nothing here uses a timer: `pulse` is 0 outside the window and 1 on the
+ * boundary, and `mix` runs 0 → 1 across that window with a cubic. Hold frames
+ * sit outside every window, so they keep the approved opacity, light, and focus.
  */
 
 export type ActHandoff = {
@@ -45,7 +47,10 @@ const clamp01 = (value: number) => (value <= 0 ? 0 : value >= 1 ? 1 : value);
 
 export function actHandoff(progress: number, reduced: boolean): ActHandoff {
   const presentation = clamp01(progress) * PRESENTATION_SECONDS;
-  const half = (reduced ? duration.micro : duration.scene) / 2;
+  const windowSeconds = reduced
+    ? duration.micro
+    : (HANDOFF_VIEWPORTS / SCROLL_VIEWPORTS) * PRESENTATION_SECONDS;
+  const half = windowSeconds / 2;
   let boundary = -1;
   let nearest = half;
   for (let index = 0; index < ACT_BOUNDARY_INTERNAL.length; index += 1) {
@@ -62,7 +67,7 @@ export function actHandoff(progress: number, reduced: boolean): ActHandoff {
   const unit = clamp01(along);
   return {
     pulse: Math.sin(Math.PI * unit),
-    mix: easeInOutQuint(unit),
+    mix: easeInOutCubic(unit),
     from: boundary,
     to: boundary + 1,
     at,

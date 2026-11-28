@@ -3,7 +3,7 @@
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect } from "react";
 import * as THREE from "three";
-import { scrollProgress, stepSmoothed, syncReducedMotion } from "@/lib/scrollProgress";
+import { driveScroll, scrollProgress, syncReducedMotion } from "@/lib/scrollProgress";
 import { arenaFraming } from "./arenaFraming";
 import { readClock, sampleCamera } from "./cinema";
 
@@ -22,9 +22,13 @@ export function CameraRig() {
     }
   }, [camera]);
 
+  // Same WebGL frame as the camera, one priority earlier, so Lenis settles first.
+  useFrame(() => {
+    driveScroll(performance.now());
+  }, -2);
+
   // Negative priority runs before the acts and does not take over rendering.
-  useFrame((state, delta) => {
-    stepSmoothed(delta);
+  useFrame((state) => {
     if (!(camera instanceof THREE.PerspectiveCamera)) return;
     const progress = scrollProgress.smoothed;
     const sample = sampleCamera(progress, scrollProgress.reducedMotion);
