@@ -219,7 +219,9 @@ export function Act5FinaleCommandCenter() {
               data-finale-approve={approved ? "on" : "ready"}
               aria-pressed={approved}
               onClick={() => setApproved((current) => !current)}
-              className={`inline-flex h-10 items-center rounded-full bg-gradient-to-br from-[#FFD27A] to-[#F2B544] px-3 font-display text-[13px] font-semibold text-[#120d02] transition-[filter,transform] hover:brightness-110 active:scale-[0.98] active:brightness-95 sm:h-11 sm:px-4 ${
+              className={`inline-flex h-10 items-center rounded-full bg-gradient-to-br from-[#FFD27A] to-[#F2B544] px-3 text-[13px] font-semibold text-[#120d02] transition-[filter,transform] hover:brightness-110 active:scale-[0.98] active:brightness-95 sm:h-11 sm:px-4 ${
+                locale === "fa" ? "font-fa" : "font-display"
+              } ${
                 state.pulse ? "finale-approve-pulse" : ""
               } ${approved ? "ring-2 ring-[#fff3d6] ring-offset-2 ring-offset-[#05070C]" : ""} ${focusRing}`}
             >
@@ -229,7 +231,9 @@ export function Act5FinaleCommandCenter() {
           <p
             dir="ltr"
             data-finale="languages"
-            className="mt-3 w-full text-pretty text-right font-mono text-xs tracking-[0.04em] text-[#A9B0BE] [text-shadow:0_1px_8px_#05070C] sm:mt-4 sm:text-[13px] sm:tracking-[0.06em]"
+            className={`mt-3 w-full text-pretty text-right text-xs text-[#A9B0BE] [text-shadow:0_1px_8px_#05070C] sm:mt-4 sm:text-[13px] ${
+              locale === "fa" ? "font-fa" : "font-mono tracking-[0.04em] sm:tracking-[0.06em]"
+            }`}
             style={lineStyle(languages)}
           >
             {dictionary.profile.english} · {dictionary.profile.persian}

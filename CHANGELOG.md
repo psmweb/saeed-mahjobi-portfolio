@@ -2,6 +2,20 @@
 
 All notable changes to this portfolio are documented here. The format follows Keep a Changelog. Versions follow Semantic Versioning.
 
+## [0.9.1] - 2026-11-28
+
+### Changed
+
+- Act 1 English name is extruded Bebas Neue at `0.06em` tracking (chrome over amber-gold). The accessible heading stays in the page. Persian uses Vazirmatn in that slot. The stray hero slab is gone. The frameless portrait glow occupies the reference arch pose, and `public/portrait/saeed.png` is used only when that file exists.
+- Act 2 matches the reference beats: extruded `2016`, `2020` with three archive screens, and gold `2026` over four stack cards. Overlay copy follows the beat in both languages.
+- Persian nav chips, pills, eyebrows, and the languages line use Vazirmatn. The Act 5 Persian primary button reads `تأیید و استقرار ✓`.
+- Act 4 desktop framing keeps the five cards and nameplates clear of the battery and the build log. Mobile venture slabs sit fully in frame above the placard.
+- Draw calls at 1440×900 stay under 150. Act 4 shipped is 145. Act 5 is 127.
+
+### Added
+
+- `public/fonts/bebas-neue.json` (Bebas Neue, OFL) for drei `Text3D`.
+
 ## [0.9.0] - 2026-11-28
 
 ### Changed

@@ -4,7 +4,7 @@ Onboarding for anyone changing the Saeed Mahjobi portfolio (`ONE COMMAND`). Read
 
 ## What this repo is
 
-A Next.js 15 App Router, React 19, TypeScript, Tailwind CSS single page. English is LTR. Persian is RTL (`Vazirmatn`). The current release is **v0.9.0**: full QA, draw-call pass, and polish on the five-act scene. Act 4 and Act 5 stay under 150 draw calls. Evidence frames live in `docs/qa-screenshots/`.
+A Next.js 15 App Router, React 19, TypeScript, Tailwind CSS single page. English is LTR. Persian is RTL (`Vazirmatn`). The current release is **v0.9.1**: targeted parity fixes on Act 1, Act 2, Persian type, Act 4 framing, and the mobile venture camera. Every act stays under 150 draw calls. Evidence frames live in `docs/qa-screenshots/`.
 
 Name on the page: **Saeed Mahjobi** (`سعید محجوبی`). Languages: English (Fluent / Professional) and Persian (Native).
 
@@ -12,8 +12,8 @@ Name on the page: **Saeed Mahjobi** (`سعید محجوبی`). Languages: Englis
 
 - `src/app/` — shell, fonts, tokens.
 - `src/context/LanguageContext.tsx` — instant `en` / `fa` switch. Sets `lang` and `dir`.
-- `src/components/scene/acts/Act1Hero.tsx` — frameless portrait spotlight and the storyteller gem.
-- `src/components/scene/acts/Act2Evolution.tsx` — 2016, 2020, and 2026 monoliths.
+- `src/components/scene/acts/Act1Hero.tsx` — extruded Bebas Neue name, frameless portrait slot, and the storyteller gem.
+- `src/components/scene/acts/Act2Evolution.tsx` — extruded 2016, 2020, and 2026 with the archive screens and the 2026 stack.
 - `src/components/scene/acts/Act3Ventures.tsx` — six dark-glass venture slabs with scrolling UI textures.
 - `src/components/scene/acts/Act4Arena.tsx` — five PBR robot figurines, role labels, and the ship-release cube.
 - `src/components/scene/acts/Act5Finale.tsx` — command-center glow, frameless portrait light, gold stage, and the five agents at rest.
@@ -25,7 +25,7 @@ Name on the page: **Saeed Mahjobi** (`سعید محجوبی`). Languages: Englis
 - `src/lib/direction.ts` — `mirrorX` / `mirrorVector`. Vertical scroll is not reversed.
 - `public/resume/` — EN and FA resume PDFs.
 - `public/textures/ventures/` — six scrolling UI textures, one per venture stage.
-- `public/images/` — portrait slot. Empty until Saeed supplies the frameless studio portrait. Do not generate or redraw a face.
+- `public/portrait/saeed.png` — frameless studio portrait. Absent until Saeed supplies it. If the file is there, Act 1 draws it as a soft-edged cut-out. If it is not, the slot is the amber/obsidian glow only. Do not generate or redraw a face.
 - `docs/reference/onecommand3d_main.js` and `docs/reference/onecommand3d_index.html` — pixel reference only. The Next.js build must not import them.
 
 ## Hard rules
@@ -42,8 +42,8 @@ Match `docs/reference/onecommand3d_main.js` and `docs/reference/onecommand3d_ind
 
 Two approved deviations, already locked:
 
-1. Hero title font is **Bebas Neue**, weight 400, tracking `0.06em`, via `--font-bebas` and `.font-hero-display`. It is applied to the Act 1 English name and the Act 5 English lockup.
-2. The portrait is frameless. No arched obsidian-gold frame. Do not alter the face when the file arrives.
+1. Hero title font is **Bebas Neue**, weight 400, tracking `0.06em`. English Act 1 is a 3D extrusion (`public/fonts/bebas-neue.json`, drei `Text3D`). The HTML `h1` stays for accessibility, visually hidden on desktop and shown on small screens. Persian Act 1 is HTML Vazirmatn, not 3D. Act 5 English lockup stays Bebas Neue.
+2. The portrait is frameless. No arched obsidian-gold frame. The slot sits where the reference arch sits. Do not alter the face when the file arrives.
 
 ## SemVer
 

@@ -4,6 +4,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import type { Group, Mesh, PointLight } from "three";
 import * as THREE from "three";
+import { useLanguage } from "@/context/LanguageContext";
 import { scrollProgress } from "@/lib/scrollProgress";
 import { readClock } from "./cinema";
 
@@ -36,6 +37,8 @@ export function AmberStoryteller() {
   const spark = useRef<Mesh>(null);
   const light = useRef<PointLight>(null);
   const camera = useThree((state) => state.camera);
+  const viewport = useThree((state) => state.size);
+  const { locale } = useLanguage();
   const glowMap = useMemo(() => radialGlow("#F59E0B"), []);
 
   useFrame(() => {
@@ -50,8 +53,18 @@ export function AmberStoryteller() {
     const enter = Math.min(1, Math.max(0, (internal - 1.4) / 0.7));
     const c1 = 1.7;
     const sprung = enter <= 0 ? 0 : enter >= 1 ? 1 : 1 + (c1 + 1) * (enter - 1) ** 3 + c1 * (enter - 1) ** 2;
-    root.scale.setScalar(Math.max(0.001, sprung));
-    root.position.set(0.3, 2.35 + Math.sin(internal * 2) * 0.08, 1.6);
+    const narrow = viewport.width < 768;
+    const bob = Math.sin(internal * 2) * 0.08;
+    if (narrow) {
+      root.position.set(-1.15, 0.35 + bob * 0.4, 2.6);
+      root.scale.setScalar(Math.max(0.001, sprung * 0.48));
+    } else if (locale === "fa") {
+      root.position.set(-2.6, 1.55 + bob, 2.2);
+      root.scale.setScalar(Math.max(0.001, sprung * 0.72));
+    } else {
+      root.position.set(1.55, 3.15 + bob * 0.35, 1.35);
+      root.scale.setScalar(Math.max(0.001, sprung * 0.82));
+    }
     gem.current.rotation.set(internal * 0.7, internal * 1.1, 0);
     core.current.rotation.set(-internal, internal * 0.6, 0);
     ring.current.rotation.set(Math.PI / 2.4 + Math.sin(internal) * 0.2, internal * 0.5, 0);

@@ -159,7 +159,7 @@ export const fa: Dictionary = {
     github: "github.com/psmweb",
     resumeEn: "رزومه EN ↓",
     resumeFa: "رزومه FA ↓",
-    approve: "Approve & Deploy ✓",
+    approve: "تأیید و استقرار ✓",
   },
   heroStage: {
     displayName: "سعید محجوبی",
@@ -168,10 +168,20 @@ export const fa: Dictionary = {
     pills: ["۱۰+ سال", "۶+ محصول زنده", "ناوگان عامل‌های هوش مصنوعی"],
   },
   evolutionStage: {
-    items: [
-      { year: "2016", title: "پایه‌ها و مهندسی وب" },
-      { year: "2020", title: "بایگانی استودیو و برند" },
-      { year: "2026", title: "بنیان‌گذار هوش مصنوعی و فرمان چندعاملی" },
+    kicker: "۰۲ · تکامل · ۲۰۱۶ → ۲۰۲۶",
+    beats: [
+      { year: "۲۰۱۶", title: "نخستین خط‌های کد", detail: "HTML · CSS · خط به خط" },
+      {
+        year: "۲۰۲۰",
+        title: "Bootstrap 4 · SCSS · jQuery",
+        detail: "PSM Web Developer · Fitness Point · Brewery",
+      },
+      {
+        year: "۲۰۲۶",
+        title: "پشتهٔ بومی هوش مصنوعی",
+        detail: "Next.js 15 · NestJS · ~50K LOC Python · ۸۸۶ تست CI",
+        accent: true,
+      },
     ],
   },
   ventureStages: [

@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { LanguageToggle } from "./LanguageToggle";
 
 export function GlassNavbar() {
-  const { dictionary } = useLanguage();
+  const { dictionary, locale } = useLanguage();
   const [chapter, setChapter] = useState(0);
 
   useEffect(
@@ -40,7 +40,9 @@ export function GlassNavbar() {
                 type="button"
                 onClick={() => scrollToAct(id)}
                 aria-current={active ? "true" : undefined}
-                className={`inline-flex min-h-10 shrink-0 items-center rounded-full px-2.5 font-mono text-xs tracking-[0.08em] transition-colors sm:min-h-0 sm:px-3 sm:py-1.5 sm:text-[13px] ${
+                className={`inline-flex min-h-10 shrink-0 items-center rounded-full px-2.5 text-xs transition-colors sm:min-h-0 sm:px-3 sm:py-1.5 sm:text-[13px] ${
+                  locale === "fa" ? "font-fa" : "font-mono tracking-[0.08em]"
+                } ${
                   active
                     ? "bg-[#F2B544] text-[#120d02]"
                     : "text-[#6C7383] hover:bg-white/10 hover:text-ink"

@@ -2,6 +2,7 @@
 
 import { AdaptiveDpr, PerformanceMonitor } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Suspense } from "react";
 import * as THREE from "three";
 import { Act1Hero } from "./acts/Act1Hero";
 import { Act2Evolution as Act2EvolutionScene } from "./acts/Act2Evolution";
@@ -52,8 +53,10 @@ export function PortfolioCanvas() {
       </PerformanceMonitor>
       <ObsidianAtmosphere />
       <CameraRig />
-      <Act1Hero />
-      <Act2EvolutionScene />
+      <Suspense fallback={null}>
+        <Act1Hero />
+        <Act2EvolutionScene />
+      </Suspense>
       <Act3Ventures />
       <Act4Arena />
       <Act5Finale />

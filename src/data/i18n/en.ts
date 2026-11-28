@@ -168,10 +168,20 @@ export const en: Dictionary = {
     pills: ["10+ Years", "6+ Live Ventures", "AI Agent Fleet"],
   },
   evolutionStage: {
-    items: [
-      { year: "2016", title: "Foundations & Web Engineering" },
-      { year: "2020", title: "Studio & Brand Archive" },
-      { year: "2026", title: "AI-Native Founder & Multi-Agent Command" },
+    kicker: "02 · Evolution · 2016 → 2026",
+    beats: [
+      { year: "2016", title: "First lines of code", detail: "HTML · CSS · hand-written, line by line" },
+      {
+        year: "2020",
+        title: "Bootstrap 4 · SCSS · jQuery",
+        detail: "PSM Web Developer · Fitness Point · Brewery",
+      },
+      {
+        year: "2026",
+        title: "AI-native stack",
+        detail: "Next.js 15 · NestJS · ~50K LOC Python · 886 CI tests",
+        accent: true,
+      },
     ],
   },
   ventureStages: [
