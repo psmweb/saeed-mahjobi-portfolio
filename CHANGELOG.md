@@ -8,7 +8,7 @@ Phase 1, not tagged. Motion and performance on the v1.1.0 scene: a longer scroll
 
 ### Added
 
-- The Act 1 slot shows `public/portrait/saeed-portrait-editorial.webp` (1080×2003 WebP with alpha, byte-identical to the approved file). Mobile uses the 720×1335 variant from `npm run optimize:portrait`. The overlay uses `<picture>`, `fetchpriority="high"`, `object-fit: contain`, and bottom alignment. No frame, border, radius, shadow, or CSS crop. The amber glow stays behind the cutout. Bebas Neue at `0.06em`, the layout, and the copy are unchanged. Headless Chrome reports that image as LCP: 212 ms on desktop and 108 ms on mobile. First Load JS is 327 kB. The route chunk stays 179 kB.
+- The Act 1 slot shows `public/portrait/saeed-portrait-editorial.webp` (1080×2003 WebP with alpha, byte-identical to the approved file). Mobile uses the 720×1335 variant from `npm run optimize:portrait`. The overlay uses `<picture>`, `fetchpriority="high"`, `object-fit: contain`, and bottom alignment. No frame, border, radius, shadow, or CSS crop. The amber glow is an additive radial with a clear margin, so the plane has no rectangular edge. The extruded name stays hidden until it has risen clear of the subtitle, and the settled lockup is unchanged. Bebas Neue at `0.06em`, the layout, and the copy are unchanged. Headless Chrome reports that image as LCP: 212 ms on desktop and 108 ms on mobile. First Load JS is 327 kB. The route chunk stays 179 kB.
 
 ### Changed
 

@@ -6,7 +6,7 @@ import { heroPortrait } from "@/data/portraits";
  */
 export function HeroPortrait() {
   return (
-    <picture className="pointer-events-none absolute bottom-[28%] right-3 w-[min(46vw,200px)] sm:bottom-[11%] sm:right-[6%] sm:w-[min(26vw,360px)]">
+    <picture className="pointer-events-none absolute bottom-[28%] end-3 w-[min(46vw,200px)] sm:bottom-[11%] sm:end-[6%] sm:w-[min(26vw,360px)]">
       <source
         media="(max-width: 639px)"
         srcSet={heroPortrait.mobileSrc}
