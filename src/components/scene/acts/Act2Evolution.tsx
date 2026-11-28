@@ -122,73 +122,180 @@ function codePlate() {
   });
 }
 
-function archiveScreen(title: string, mark: boolean) {
+type ArchiveMood = "portfolio" | "fitness" | "brewery";
+
+function fitSize(context: CanvasRenderingContext2D, text: string, face: string, maxWidth: number, size: number) {
+  let next = size;
+  context.font = `700 ${next}px ${face}`;
+  while (next > 28 && context.measureText(text).width > maxWidth) {
+    next -= 2;
+    context.font = `700 ${next}px ${face}`;
+  }
+  return next;
+}
+
+function browserChrome(context: CanvasRenderingContext2D, width: number) {
+  context.fillStyle = "rgba(255,255,255,0.06)";
+  context.fillRect(0, 0, width, 52);
+  for (const [index, color] of ["#FF5F57", "#FEBC2E", "#28C840"].entries()) {
+    context.fillStyle = color;
+    context.beginPath();
+    context.arc(36 + index * 26, 26, 7, 0, Math.PI * 2);
+    context.fill();
+  }
+}
+
+function paintMark(context: CanvasRenderingContext2D, cx: number, cy: number, scale: number, color: string) {
+  context.save();
+  context.translate(cx, cy);
+  context.scale(scale, scale);
+  context.strokeStyle = color;
+  context.fillStyle = color;
+  context.lineWidth = 10;
+  context.lineJoin = "round";
+  context.lineCap = "round";
+  context.beginPath();
+  context.arc(0, -8, 78, Math.PI * 1.08, Math.PI * 1.92);
+  context.stroke();
+  roundRect(context, -54, 8, 108, 86, 8);
+  context.stroke();
+  context.beginPath();
+  context.moveTo(0, -96);
+  context.lineTo(46, -28);
+  context.lineTo(-46, -28);
+  context.closePath();
+  context.stroke();
+  context.restore();
+}
+
+/** Mini site on the archive glass. The name stays on this texture; there is no under-placard. */
+function archiveScreen(title: string, mood: ArchiveMood) {
   return canvasTexture(1280, 820, (context, width, height) => {
     const display = displayFace();
     const mono = monoFace();
-    const wash = context.createLinearGradient(0, 0, 0, height);
-    wash.addColorStop(0, "#121826");
-    wash.addColorStop(1, "#07090F");
+    const wash = context.createLinearGradient(0, 0, width, height);
+    if (mood === "fitness") {
+      wash.addColorStop(0, "#141A14");
+      wash.addColorStop(1, "#070A08");
+    } else if (mood === "brewery") {
+      wash.addColorStop(0, "#24170F");
+      wash.addColorStop(1, "#100C09");
+    } else {
+      wash.addColorStop(0, "#121722");
+      wash.addColorStop(1, "#080A10");
+    }
     context.fillStyle = wash;
     context.fillRect(0, 0, width, height);
-    context.fillStyle = "rgba(255,255,255,0.08)";
-    context.fillRect(0, 0, width, 54);
-    for (const [index, color] of ["#FF5F57", "#FEBC2E", "#28C840"].entries()) {
-      context.fillStyle = color;
-      context.beginPath();
-      context.arc(36 + index * 28, 27, 7, 0, Math.PI * 2);
-      context.fill();
-    }
-    if (mark) {
-      context.strokeStyle = "#F59E0B";
-      context.lineWidth = 10;
-      context.lineJoin = "round";
-      context.beginPath();
-      context.arc(width / 2, height * 0.42, 92, Math.PI * 1.05, Math.PI * 1.95);
-      context.stroke();
-      context.strokeRect(width / 2 - 78, height * 0.42 + 8, 156, 118);
-      context.beginPath();
-      context.moveTo(width / 2, height * 0.2);
-      context.lineTo(width / 2 + 64, height * 0.36);
-      context.lineTo(width / 2 - 64, height * 0.36);
-      context.closePath();
-      context.stroke();
+    const glow = context.createRadialGradient(width * 0.78, height * 0.42, 40, width * 0.78, height * 0.42, 420);
+    glow.addColorStop(0, mood === "fitness" ? "rgba(61,220,151,0.16)" : "rgba(242,181,68,0.16)");
+    glow.addColorStop(1, "rgba(0,0,0,0)");
+    context.fillStyle = glow;
+    context.fillRect(0, 0, width, height);
+    browserChrome(context, width);
+
+    const accent = mood === "fitness" ? "#F5C451" : mood === "brewery" ? "#E7A15A" : "#F2B544";
+    const accentInk = "#1A1206";
+    context.fillStyle = accent;
+    roundRect(context, 56, 74, 22, 22, 5);
+    context.fill();
+    context.fillStyle = "#F4F6FB";
+    context.font = `700 26px ${display}`;
+    const brand = mood === "fitness" ? "FITNESS POINT" : mood === "brewery" ? "STUDIO" : "PSM";
+    context.fillText(brand, 92, 93);
+    context.fillStyle = "rgba(255,255,255,0.42)";
+    context.font = `600 18px ${mono}`;
+    const links = mood === "fitness" ? ["Train", "Studio"] : mood === "brewery" ? ["Mark", "Work"] : ["Work", "Studio"];
+    links.forEach((link, index) => {
+      context.fillText(link, width - 250 + index * 112, 92);
+    });
+
+    const lines =
+      mood === "fitness" ? ["FITNESS", "POINT"] : mood === "brewery" ? ["BREWERY"] : ["PSM WEB", "DEVELOPER"];
+    let cursor = 210;
+    lines.forEach((line) => {
+      const size = fitSize(context, line, display, 620, mood === "brewery" ? 92 : 78);
+      context.fillStyle = "#F7F8FB";
+      context.font = `700 ${size}px ${display}`;
+      context.fillText(line, 64, cursor);
+      cursor += size + 8;
+    });
+    context.fillStyle = "rgba(255,255,255,0.62)";
+    context.font = `400 26px ${display}`;
+    const sub =
+      mood === "fitness" ? "A bold training page." : mood === "brewery" ? "Warm studio mark." : "Website design.";
+    context.fillText(sub, 68, cursor + 18);
+    const cta = mood === "fitness" ? "Start" : "View work";
+    context.font = `700 24px ${display}`;
+    const ctaWidth = Math.ceil(context.measureText(cta).width) + 56;
+    context.fillStyle = accent;
+    roundRect(context, 64, cursor + 48, ctaWidth, 58, 29);
+    context.fill();
+    context.fillStyle = accentInk;
+    context.fillText(cta, 92, cursor + 86);
+
+    const panelX = 760;
+    const panelY = 168;
+    const panelW = 456;
+    const panelH = 520;
+    context.fillStyle = mood === "brewery" ? "rgba(42,28,18,0.92)" : "rgba(8,10,16,0.72)";
+    roundRect(context, panelX, panelY, panelW, panelH, 28);
+    context.fill();
+    context.strokeStyle = accent;
+    context.lineWidth = 3;
+    roundRect(context, panelX, panelY, panelW, panelH, 28);
+    context.stroke();
+
+    if (mood === "brewery") {
+      paintMark(context, panelX + panelW / 2, panelY + 230, 1.35, accent);
+      context.fillStyle = "rgba(255,255,255,0.7)";
+      context.font = `700 22px ${mono}`;
+      context.textAlign = "center";
+      context.fillText(title.toUpperCase(), panelX + panelW / 2, panelY + panelH - 56);
+      context.textAlign = "left";
+    } else if (mood === "fitness") {
+      const tiles = [
+        { label: "TRAIN", tint: "#F5C451" },
+        { label: "MOVE", tint: "#3DDC97" },
+        { label: "FOCUS", tint: "#F7F8FB" },
+      ];
+      tiles.forEach((tile, index) => {
+        const y = panelY + 36 + index * 156;
+        context.fillStyle = "rgba(255,255,255,0.05)";
+        roundRect(context, panelX + 28, y, panelW - 56, 136, 18);
+        context.fill();
+        context.fillStyle = tile.tint;
+        roundRect(context, panelX + 48, y + 28, 18, 80, 9);
+        context.fill();
+        context.fillStyle = "#F7F8FB";
+        context.font = `700 36px ${display}`;
+        context.fillText(tile.label, panelX + 88, y + 64);
+        context.fillStyle = "rgba(255,255,255,0.28)";
+        roundRect(context, panelX + 88, y + 84, 220, 14, 7);
+        context.fill();
+      });
     } else {
-      context.fillStyle = "rgba(255,255,255,0.06)";
-      for (let row = 0; row < 5; row += 1) {
-        roundRect(context, 72, 110 + row * 92, width - 144, 58, 12);
+      for (let index = 0; index < 3; index += 1) {
+        const y = panelY + 36 + index * 156;
+        context.fillStyle = "rgba(255,255,255,0.04)";
+        roundRect(context, panelX + 28, y, panelW - 56, 140, 16);
+        context.fill();
+        context.fillStyle = index === 0 ? accent : "rgba(242,181,68,0.28)";
+        roundRect(context, panelX + 48, y + 28, 120, 84, 12);
+        context.fill();
+        context.fillStyle = "rgba(255,255,255,0.7)";
+        roundRect(context, panelX + 188, y + 36, 180, 16, 8);
+        context.fill();
+        context.fillStyle = "rgba(255,255,255,0.22)";
+        roundRect(context, panelX + 188, y + 68, 140, 12, 6);
         context.fill();
       }
-      context.fillStyle = "rgba(56,189,248,0.35)";
-      roundRect(context, 96, 128, 280, 22, 8);
-      context.fill();
     }
-    context.fillStyle = "#F2B544";
-    context.font = `700 42px ${display}`;
-    context.fillText(title, 72, height - 56);
-    context.font = `24px ${mono}`;
-    context.fillStyle = "#8C93A3";
-    context.fillText("2020", width - 180, height - 56);
-  });
-}
 
-function glassLabel(title: string) {
-  return canvasTexture(1024, 180, (context, width, height) => {
-    const display = displayFace();
-    const mono = monoFace();
-    context.fillStyle = "rgba(12,15,24,0.94)";
-    roundRect(context, 0, 0, width, height, 24);
-    context.fill();
-    context.strokeStyle = "rgba(255,255,255,0.22)";
-    context.lineWidth = 2;
-    roundRect(context, 1, 1, width - 2, height - 2, 23);
-    context.stroke();
-    context.fillStyle = "#ffffff";
-    context.font = `700 ${Math.round(height * 0.3)}px ${display}`;
-    context.fillText(title, 32, height * 0.46);
-    context.fillStyle = "#F2B544";
-    context.font = `700 ${Math.round(height * 0.18)}px ${mono}`;
-    context.fillText("2020 · BOOTSTRAP 4 · SCSS · JQUERY", 32, height * 0.8);
+    context.fillStyle = accent;
+    context.font = `700 22px ${mono}`;
+    context.fillText(title, 68, height - 36);
+    context.fillStyle = "rgba(255,255,255,0.45)";
+    context.fillText("2020", width - 140, height - 36);
   });
 }
 
@@ -279,8 +386,9 @@ export function Act2Evolution() {
   const plates = useMemo(
     () => ({
       code: codePlate(),
-      screens: ARCHIVE.map((item) => archiveScreen(item.title, item.title === "Brewery")),
-      labels: ARCHIVE.map((item) => glassLabel(item.title)),
+      screens: ARCHIVE.map((item) =>
+        archiveScreen(item.title, item.title === "Brewery" ? "brewery" : item.title === "Fitness Point" ? "fitness" : "portfolio"),
+      ),
       cards: STACK.map((item) => stackCard(item.title, item.line, item.detail)),
     }),
     [],
@@ -300,19 +408,19 @@ export function Act2Evolution() {
       year16.current.visible = t > 4.85 && t < 7.05 && y > -3.2;
     }
     if (code.current) {
-      const y = lerp(-6, -0.55, eo5(seg(t, 5, 5.8))) - 6 * eio(seg(t, 6.4, 7));
+      const y = lerp(-6, -1.15, eo5(seg(t, 5, 5.8))) - 6 * eio(seg(t, 6.4, 7));
       code.current.position.set(CODE16.x, y, CODE16.z);
       code.current.rotation.y = 0;
       code.current.visible = t > 4.95 && t < 7.05 && y > -3.4;
     }
     if (year20.current) {
-      const y = lerp(-3, 1.28, eo5(seg(t, 6.2, 6.9))) + 7 * eio(seg(t, 7.6, 8.4));
+      const y = lerp(-3, 1.78, eo5(seg(t, 6.2, 6.9))) + 7 * eio(seg(t, 7.6, 8.4));
       year20.current.position.set(P20.x, y, P20.z);
       year20.current.rotation.y = 1;
       year20.current.visible = t > 6.2 && t < 8.4 && y < 6;
     }
     if (year26.current) {
-      const y = lerp(-3, 2.05, eo5(seg(t, 8, 8.7)));
+      const y = lerp(-3, 2.5, eo5(seg(t, 8, 8.7)));
       year26.current.position.set(P26.x, y, P26.z);
       year26.current.rotation.y = 2;
       year26.current.visible = t > 8 && y > -2.6;
@@ -337,7 +445,7 @@ export function Act2Evolution() {
       if (!item) return;
       const p = eo5(seg(t, 8.05 + index * 0.1, 8.8 + index * 0.1));
       group.position.copy(BASE26).addScaledVector(TAN26, item.x);
-      group.position.y = lerp(-7, 0.42, p);
+      group.position.y = lerp(-7, 0.15, p);
       group.rotation.y = 2 + (1 - p) * 0.8;
       group.visible = t > 8.05 && p > 0.02;
     });
@@ -346,13 +454,13 @@ export function Act2Evolution() {
   return (
     <group ref={root} name="act-2-evolution" visible={false}>
       <group ref={year16}>
-        <YearWord text="2016" width={4.6} />
+        <YearWord text="2016" width={3.68} />
       </group>
       <group ref={code}>
         <ScreenFace map={plates.code} args={[3.2, 1.6]} position={[0, 0, 0]} />
       </group>
       <group ref={year20}>
-        <YearWord text="2020" width={3.85} />
+        <YearWord text="2020" width={2.15} />
       </group>
       {ARCHIVE.map((item, index) => (
         <group
@@ -363,11 +471,10 @@ export function Act2Evolution() {
         >
           <mesh dispose={null} geometry={panelGeometry} material={obsidianMetal} />
           <ScreenFace map={plates.screens[index]!} args={[3.22, 2.02]} position={[0, 0, 0.08]} />
-          <ScreenFace map={plates.labels[index]!} args={[2.5, 0.42]} position={[-0.35, -1.32, 0.12]} />
         </group>
       ))}
       <group ref={year26}>
-        <YearWord text="2026" gold width={4.05} />
+        <YearWord text="2026" gold width={2.61} />
       </group>
       {STACK.map((item, index) => (
         <group

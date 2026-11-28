@@ -16,6 +16,9 @@ const HOME_X = [-3.7, -1.85, 0, 1.85, 3.7];
 const TARGET_X = [-4.9, -2.45, 0, 2.45, 4.9];
 const RING = [Math.PI / 2, Math.PI * 0.78, Math.PI, Math.PI * 1.22, Math.PI * 1.5];
 const CUBE = new THREE.Vector3(0, -1, 1.9);
+/** Celebration ring. The beams beat still uses the reference radius of 1. */
+const RING_SHIPPED = 1.4;
+const CRATE_SHIPPED = 0.7;
 
 const seg = (t: number, a: number, b: number) => Math.min(1, Math.max(0, (t - a) / (b - a)));
 const lerp = (a: number, b: number, x: number) => a + (b - a) * x;
@@ -168,10 +171,24 @@ function cardPlacement(index: number, row: number, mirrored: boolean) {
   return { x: axis((TARGET_X[index] ?? 0) * squeeze, row, mirrored), scale };
 }
 
-function ringAt(index: number, row: number, mirrored: boolean, out: THREE.Vector3) {
+function ringAt(index: number, row: number, mirrored: boolean, out: THREE.Vector3, spread = 1) {
   const angle = RING[index] ?? 0;
-  out.set(axis(Math.sin(angle) * 2.05, row, mirrored), CUBE.y + 0.35, CUBE.z + Math.cos(angle) * 1.45);
+  const xSpread = row < 0.98 ? 1 + (spread - 1) * 0.58 : spread;
+  out.set(
+    axis(Math.sin(angle) * 2.05 * xSpread, row, mirrored),
+    CUBE.y + 0.35,
+    CUBE.z + Math.cos(angle) * 1.45 * spread,
+  );
   return out;
+}
+
+/** Beams (internal 22.3) stay on the tight ring. The shipped pose eases out after that window. */
+function ringSpread(t: number) {
+  return lerp(1, RING_SHIPPED, eo(seg(t, 22.75, 23.05)));
+}
+
+function crateScale(t: number) {
+  return lerp(1, CRATE_SHIPPED, eo(seg(t, 22.75, 23.05)));
 }
 
 const beamDummy = new THREE.Object3D();
@@ -444,13 +461,13 @@ function syncLabels(runtime: Runtime) {
 const gapA = new THREE.Vector3();
 const gapB = new THREE.Vector3();
 
-function neighborGap(index: number, row: number, mirrored: boolean, onRing: boolean) {
+function neighborGap(index: number, row: number, mirrored: boolean, onRing: boolean, spread = 1) {
   if (!onRing) return 1.85 * row;
-  ringAt(index, row, mirrored, gapA);
+  ringAt(index, row, mirrored, gapA, spread);
   let nearest = 4;
   for (let other = 0; other < 5; other += 1) {
     if (other === index) continue;
-    ringAt(other, row, mirrored, gapB);
+    ringAt(other, row, mirrored, gapB, spread);
     nearest = Math.min(nearest, gapA.distanceTo(gapB));
   }
   return nearest;
@@ -463,11 +480,14 @@ function placeLabel(
   opacity: number,
   camera: THREE.Camera,
   gap: number,
+  belowFeet: boolean,
 ) {
-  label.mesh.position.set(x, -1.32, z + 0.38);
+  const width = belowFeet ? Math.min(0.86, Math.max(0.68, gap * 0.4)) : Math.min(1.38, Math.max(0.62, gap * 0.78));
+  const center = belowFeet && Math.abs(x) < 0.45;
+  const zFront = !belowFeet ? z + 0.38 : center ? CUBE.z + 0.72 : Math.max(z, 1.15) + 0.35;
+  label.mesh.position.set(x, center ? -1.5 : belowFeet ? -1.9 : -1.32, zFront);
   label.mesh.quaternion.copy(camera.quaternion);
-  const width = Math.min(1.38, Math.max(0.62, gap * 0.78));
-  label.mesh.scale.set(width / 1.6, 0.88, 1);
+  label.mesh.scale.set(width / 1.6, belowFeet ? 0.76 : 0.88, 1);
   label.material.opacity = opacity;
   label.mesh.visible = opacity > 0.01;
 }
@@ -504,6 +524,7 @@ function layoutReference(
   const raiseC = eio(seg(t, 21.8, 22));
   const flip = eio(seg(t, 22.55, 22.85));
   const celeb = seg(t, 22.85, 23.5);
+  const spread = ringSpread(t);
   syncLabels(runtime);
 
   runtime.robots.forEach((robot, index) => {
@@ -519,7 +540,7 @@ function layoutReference(
     let z = 0.6;
     const leap = seg(t, 21.3 + index * 0.05, 21.85 + index * 0.05);
     if (leap > 0) {
-      ringAt(index, row, mirrored, ringScratch);
+      ringAt(index, row, mirrored, ringScratch, spread);
       const k = eio(leap);
       x = lerp(homeX, ringScratch.x, k);
       y = lerp(-0.55, ringScratch.y, k) + Math.sin(Math.PI * leap) * 1.3;
@@ -552,7 +573,8 @@ function layoutReference(
     const label = runtime.labels[index];
     if (label) {
       const fade = Math.min(1, seg(t, 19.3, 19.6) * (1 - seg(t, 21.2, 21.4)) + seg(t, 22.95, 23.2));
-      placeLabel(label, x, z, fade, camera, neighborGap(index, row, mirrored, leap > 0.35));
+      const settled = spread > 1.05;
+      placeLabel(label, x, z, fade, camera, neighborGap(index, row, mirrored, leap > 0.35, spread), settled);
     }
   });
 
@@ -592,7 +614,9 @@ function layoutReference(
   );
   const pulse = 1 + 0.08 * Math.sin(Math.PI * seg(t, 22, 22.55)) * Math.sin(t * 30) * 0.5;
   const flipPulse = flip > 0 && flip < 1 ? 0.1 * Math.sin(Math.PI * flip) : 0;
-  runtime.cube.scale.setScalar(pulse + flipPulse);
+  const shippedFit = crateScale(t);
+  runtime.cube.scale.setScalar((pulse + flipPulse) * shippedFit);
+  runtime.cubeGlow.scale.setScalar(shippedFit);
   runtime.cubeGlow.position.set(0, CUBE.y, CUBE.z - 0.7);
   runtime.cubeGlow.quaternion.copy(camera.quaternion);
   runtime.cubeGlowMaterial.opacity = seg(t, 21, 21.3) * 0.35 + seg(t, 22, 22.55) * 0.4 + (t > 22.6 ? 0.25 : 0);
@@ -656,7 +680,7 @@ function layoutCalm(
   runtime.robots.forEach((robot, index) => {
     robot.root.visible = arrived;
     if (!arrived) return;
-    if (shipped) ringAt(index, row, mirrored, ringScratch);
+    if (shipped) ringAt(index, row, mirrored, ringScratch, RING_SHIPPED);
     else ringScratch.set(axis(HOME_X[index] ?? 0, row, mirrored), -0.55, 0.6);
     robot.root.position.copy(ringScratch);
     robot.root.scale.setScalar(1);
@@ -675,7 +699,15 @@ function layoutCalm(
     });
     const label = runtime.labels[index];
     if (label) {
-      placeLabel(label, ringScratch.x, ringScratch.z, 1, camera, neighborGap(index, row, mirrored, shipped));
+      placeLabel(
+        label,
+        ringScratch.x,
+        ringScratch.z,
+        1,
+        camera,
+        neighborGap(index, row, mirrored, shipped, shipped ? RING_SHIPPED : 1),
+        shipped,
+      );
     }
   });
   placePedestals(
@@ -696,7 +728,8 @@ function layoutCalm(
   runtime.cube.visible = shipped;
   runtime.cube.position.set(0, CUBE.y + (idle === 0 ? 0 : Math.sin(idle * 2) * 0.04), CUBE.z);
   runtime.cube.rotation.set(0, Math.PI + (idle === 0 ? 0 : Math.sin(idle * 2) * 0.08), 0);
-  runtime.cube.scale.setScalar(1);
+  runtime.cube.scale.setScalar(shipped ? CRATE_SHIPPED : 1);
+  runtime.cubeGlow.scale.setScalar(shipped ? CRATE_SHIPPED : 1);
   runtime.cubeGlow.position.set(0, CUBE.y, CUBE.z - 0.7);
   runtime.cubeGlow.quaternion.copy(camera.quaternion);
   runtime.cubeGlowMaterial.opacity = shipped ? 0.35 : 0;

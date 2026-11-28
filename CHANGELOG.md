@@ -2,6 +2,14 @@
 
 All notable changes to this portfolio are documented here. The format follows Keep a Changelog. Versions follow Semantic Versioning.
 
+## [0.9.2] - 2026-11-28
+
+### Changed
+
+- Act 2 archive screens no longer sit on a second placard. The site name stays on the screen texture. Each screen is a mini site: PSM Web Developer (dark, amber), Fitness Point (bold), and a warm brewery studio mark.
+- Extruded `2016`, `2020`, and `2026` are smaller and sit clear of the code plate, the archive screens, and the stack cards.
+- After the Act 4 beams beat, the five robots ease apart so the shipped pose keeps a gap. The crate is 30% smaller. Nameplates sit clear of the robots, the crate, and each other.
+
 ## [0.9.1] - 2026-11-28
 
 ### Changed

@@ -13,6 +13,7 @@ Semantic versions for ONE COMMAND. Tags are annotated. Each tag ships with `CHAN
 | v0.7.0 | 5 | Persian RTL mirror and command-center finale | Released |
 | v0.9.0 | 6 | Visual parity, responsive, and performance audit | Released |
 | v0.9.1 | 6.1 | Targeted parity: extruded hero, Act 2 archive, Persian type, framing | Released |
+| v0.9.2 | 6.2 | Act 2 screen mockups and year scale, Act 4 shipped spacing | Released |
 | v1.0.0 | 7 | Production release | Not started |
 
 After v1.0.0: `v1.0.x` fixes copy or visuals, `v1.x.0` adds a venture or feature, `v2.0.0` is a redesign.
@@ -92,6 +93,15 @@ Phase 6.1. The v0.9.0 draw-call budget stays in force. Detail is in `docs/QA_REP
 - Act 4 desktop camera eases back so the five cards clear the battery and the nameplates sit above the build log. Mobile nameplates stay inside the gap to their neighbors.
 - On a phone, the venture camera pulls back so each slab is framed above the placard and clear of the battery. Desktop Act 3 framing is unchanged.
 - Peak draw calls at 1440×900: Act 1 is 32, Act 2 is 18, Act 4 shipped is 145, Act 5 is 127. All under 150.
+
+## v0.9.2
+
+Phase 6.2. Micro-polish on Act 2 and the Act 4 shipped pose. Detail is in `docs/QA_REPORT.md`.
+
+- Archive screens drop the under-placard. The name stays on the screen. Each screen is a mini site in its own mood: PSM Web Developer, Fitness Point, and a warm brewery mark.
+- Extruded `2016`, `2020`, and `2026` are smaller and clear the plate, the screens, and the stack cards.
+- The shipped ring eases out after the beams beat. Robots keep a gap, the crate is 30% smaller, and nameplates sit clear of the robots and each other. Building and beams poses are unchanged.
+- Every measured sample stays under 150 draw calls. Act 4 shipped is 145. Act 2 at the archive beat is 15.
 
 ## v0.9.0
 

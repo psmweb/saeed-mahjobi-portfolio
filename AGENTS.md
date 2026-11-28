@@ -4,7 +4,7 @@ Onboarding for anyone changing the Saeed Mahjobi portfolio (`ONE COMMAND`). Read
 
 ## What this repo is
 
-A Next.js 15 App Router, React 19, TypeScript, Tailwind CSS single page. English is LTR. Persian is RTL (`Vazirmatn`). The current release is **v0.9.1**: targeted parity fixes on Act 1, Act 2, Persian type, Act 4 framing, and the mobile venture camera. Every act stays under 150 draw calls. Evidence frames live in `docs/qa-screenshots/`.
+A Next.js 15 App Router, React 19, TypeScript, Tailwind CSS single page. English is LTR. Persian is RTL (`Vazirmatn`). The current release is **v0.9.2**: Act 2 archive screens and year scale, plus the Act 4 shipped spacing. Every act stays under 150 draw calls. Evidence frames live in `docs/qa-screenshots/`.
 
 Name on the page: **Saeed Mahjobi** (`سعید محجوبی`). Languages: English (Fluent / Professional) and Persian (Native).
 
