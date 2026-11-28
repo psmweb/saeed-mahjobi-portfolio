@@ -105,6 +105,38 @@ Locked differences:
 - The portrait is frameless. The reference arch is not in the scene, and no face was invented.
 - Act 2 years are Bebas Neue extrusions fitted to the reference scale. The reference comparison face for those numerals is Space Grotesk.
 
+## Overlay scroll paint
+
+Act 1, Act 2, Act 3, and `TransitionVeil` used to copy `scrollProgress.smoothed` into React state, so each one rendered on every published frame. They now write `opacity`, `filter`, and `transform` from the subscription. React state remains for discrete changes only.
+
+Dev server, 1440×900, `deviceScaleFactor` 1. A script sought progress from 0 to 1 in equal steps and counted render-function calls. React strict mode in dev calls the render function twice per commit, so a per-frame render shows up as 2.
+
+| Overlay | 49 steps, before | 49 steps, after | 97 steps, after |
+| --- | ---: | ---: | ---: |
+| `Act1HeroOverlay` | 98 | 8 | 12 |
+| `Act2EvolutionOverlay` | 98 | 12 | 10 |
+| `Act3VentureOverlay` | 98 | 56 | 78 |
+| `TransitionVeil` | 98 | 12 | 14 |
+
+The 97-step pass was measured after the fix only. Act 1, Act 2, and the veil stay near the 49-step counts. Act 3 rises because a finer grid crosses more venture-card thresholds (index, reveal, settle, pointer, hidden), not because opacity is stored in state.
+
+Pixel diff of the same 10 stops, before against after, 1440×900, `pixelmatch` threshold 0.1:
+
+| Progress | Different pixels | Share |
+| --- | ---: | ---: |
+| 0.000 | 128 | 0.0099% |
+| 0.080 | 0 | 0% |
+| 0.125 | 127 | 0.0098% |
+| 0.132 | 1,292 | 0.0997% |
+| 0.190 | 44 | 0.0034% |
+| 0.268 | 0 | 0% |
+| 0.300 | 0 | 0% |
+| 0.420 | 0 | 0% |
+| 0.620 | 0 | 0% |
+| 0.880 | 198 | 0.0153% |
+
+1,789 of 12,960,000 pixels differ (0.0138%). Computed `opacity`, `filter`, and `transform` matched at every stop, including the Act 1/2 handoff (`0.125`, `0.132`) and the Act 3 placard at `0.268` (opacity `0.578074`, `blur(3.36px)`, `translateX` landing on `matrix(1, 0, 0, 1, -11.8139, 0)`). The leftover pixels sit on the blinking command caret, an in-flight split reveal, and the Act 5 line reveal, which keep their own clocks.
+
 ## Evidence
 
 Each act, including all six ventures and the Act 4 shipped pose, at 1440×900 English, 1440×900 Persian, 390×844 English, and 390×844 Persian. Names follow `act{N}[-venture{M}]-{desktop|mobile}-{en|fa}.png`.

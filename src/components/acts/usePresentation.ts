@@ -1,14 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
+import { PRESENTATION_SECONDS } from "@/components/scene/cinema";
 import { easeInOutQuint } from "@/lib/motion";
 import { subscribeSmoothed } from "@/lib/scrollProgress";
 
-/** Presentation seconds from the damped clock. Seek lands on the same turn. */
-export function usePresentationSeconds() {
-  const [seconds, setSeconds] = useState(0);
-  useEffect(() => subscribeSmoothed((progress) => setSeconds(progress * 52)), []);
-  return seconds;
+/**
+ * Presentation seconds from the damped clock, without React state.
+ * Seek notifies on the same turn. Store a discrete result only when it changes.
+ */
+export function usePresentationSeconds(onSeconds: (seconds: number) => void) {
+  const onSecondsRef = useRef(onSeconds);
+  onSecondsRef.current = onSeconds;
+  useEffect(
+    () => subscribeSmoothed((progress) => onSecondsRef.current(progress * PRESENTATION_SECONDS)),
+    [],
+  );
 }
 
 export function windowOpacity(time: number, start: number, fadeInEnd: number, fadeOutStart: number, end: number) {

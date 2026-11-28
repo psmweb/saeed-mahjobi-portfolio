@@ -27,6 +27,7 @@ Not tagged. Motion upgrade on the v1.0.0 scene. a, b, and c are all landed.
 - **a.** Motion tokens, the damped scroll clock, and one Catmull-Rom camera curve per act segment. Hold knots stay exact.
 - **b.** Magnetic controls, card tilt, and split text reveals. Pointer follow is off for touch and reduced motion. Act 1 hero copy is not split.
 - **c.** Act handoff from `scrollProgress.smoothed` (overlay crossfade, light lerp, DOM depth veil), a high/medium/low performance tier, and a live `prefers-reduced-motion` path. Act 4 stays at 145 draw calls. Act 5 stays at 127. Resting frames stay on the approved picture.
+- Act 1–3 and `TransitionVeil` paint opacity, blur, and transform from the smoothed subscription. The clock is not React state. The venture card, the Act 2 beat, and the typed command still render when those discrete values change.
 
 ## v1.1.0-b
 

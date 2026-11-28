@@ -2,6 +2,13 @@
 
 All notable changes to this portfolio are documented here. The format follows Keep a Changelog. Versions follow Semantic Versioning.
 
+## [Unreleased]
+
+### Changed
+
+- Act 1, Act 2, Act 3, and `TransitionVeil` no longer store the smoothed clock in React state. `useSmoothedProgress` and `usePresentationSeconds` subscribe, and the callback writes `opacity`, `filter`, and `transform` on the overlay node. React renders only when a discrete value changes: typed command length, the Act 2 beat, the active venture card, and whether the veil is mounted.
+- The opacity, blur, and transform curves are unchanged. A 49-step scroll at 1440×900 rendered each of those four overlays 98 times before (twice per step under dev strict mode) and 8, 12, 56, and 12 times after. Pixel difference across 10 progress stops was 0.0138%. Detail is in `docs/QA_REPORT.md`.
+
 ## [1.1.0-c] - 2026-11-28
 
 Act handoff, a load-time performance tier, and a live reduced-motion path. v1.1.0-a, v1.1.0-b, and v1.1.0-c together are the v1.1.0 motion upgrade. This part is not tagged. Resting frames stay on the approved picture.

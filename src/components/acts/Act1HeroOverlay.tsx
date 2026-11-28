@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import {
   actHandoff,
@@ -8,32 +9,57 @@ import {
   transitionFilter,
 } from "@/lib/actHandoff";
 import { usePrefersReducedMotion } from "@/components/motion/usePointerMedia";
-import { useSmoothedProgress } from "@/components/motion/useSmoothedProgress";
+import { useSmoothedProgress, writeOverlayFrame } from "@/components/motion/useSmoothedProgress";
 import { PRESENTATION_SECONDS } from "@/components/scene/cinema";
-import { windowOpacity } from "./usePresentation";
+import { scrollProgress } from "@/lib/scrollProgress";
+import { usePresentationSeconds, windowOpacity } from "./usePresentation";
 
 export function Act1HeroOverlay() {
   const { dictionary, locale } = useLanguage();
-  const progress = useSmoothedProgress();
   const reduced = usePrefersReducedMotion();
-  const seconds = progress * PRESENTATION_SECONDS;
-  const naturalAt = (time: number) => windowOpacity(time, 0, 0.35, 6.35, 7);
-  const handoff = actHandoff(progress, reduced);
-  const natural = naturalAt(seconds);
-  const naturalExit = handoff.boundary < 0 ? natural : naturalAt(Math.min(PRESENTATION_SECONDS, handoff.at + handoff.half));
-  const opacity = blendBoundaryOpacity(0, natural, naturalExit, handoff);
-  const blur = handoffBlur(0, opacity, handoff);
-  const typed = Math.floor(dictionary.heroStage.prompt.length * Math.min(1, Math.max(0, (seconds - 0.4) / 1.6)));
-  const command = dictionary.heroStage.prompt.slice(0, typed);
-  const hidden = opacity < 0.04;
+  const rootRef = useRef<HTMLDivElement>(null);
+  const frameStyle = useRef<CSSProperties>({ opacity: 1 });
+  const promptRef = useRef(dictionary.heroStage.prompt);
+  const reducedRef = useRef(reduced);
+  promptRef.current = dictionary.heroStage.prompt;
+  reducedRef.current = reduced;
+  const [typed, setTyped] = useState(0);
+  const [hidden, setHidden] = useState(false);
+
+  const paintRef = useRef<(progress: number) => void>(() => {});
+  paintRef.current = (progress) => {
+    const seconds = progress * PRESENTATION_SECONDS;
+    const naturalAt = (time: number) => windowOpacity(time, 0, 0.35, 6.35, 7);
+    const handoff = actHandoff(progress, reducedRef.current);
+    const natural = naturalAt(seconds);
+    const naturalExit =
+      handoff.boundary < 0 ? natural : naturalAt(Math.min(PRESENTATION_SECONDS, handoff.at + handoff.half));
+    const opacity = blendBoundaryOpacity(0, natural, naturalExit, handoff);
+    const blur = handoffBlur(0, opacity, handoff);
+    writeOverlayFrame(rootRef.current, frameStyle.current, { opacity, filter: transitionFilter(blur) });
+    const nextHidden = opacity < 0.04;
+    setHidden((current) => (current === nextHidden ? current : nextHidden));
+  };
+
+  useSmoothedProgress((progress) => paintRef.current(progress));
+  usePresentationSeconds((seconds) => {
+    const length = promptRef.current.length;
+    const next = Math.floor(length * Math.min(1, Math.max(0, (seconds - 0.4) / 1.6)));
+    setTyped((current) => (current === next ? current : next));
+  });
+  useEffect(() => {
+    paintRef.current(scrollProgress.smoothed);
+  }, [reduced, locale]);
+
+  const command = promptRef.current.slice(0, typed);
   const persian = locale === "fa";
 
   return (
     <div
+      ref={rootRef}
       className="pointer-events-none fixed inset-0 z-20"
-      style={{ opacity, filter: transitionFilter(blur) }}
+      style={{ ...frameStyle.current }}
       data-act="1"
-      data-opacity={opacity.toFixed(2)}
       aria-hidden={hidden}
     >
       <h1
