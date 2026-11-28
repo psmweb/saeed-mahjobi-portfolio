@@ -2,6 +2,17 @@
 
 All notable changes to this portfolio are documented here. The format follows Keep a Changelog. Versions follow Semantic Versioning.
 
+## [Unreleased] - 2026-11-28
+
+Phase 1B. Lighter venture plates and a long cache for those files. Not tagged.
+
+### Changed
+
+- The six Act 3 UI plates are 1024×2304 WebP at quality 82, named with a content hash. File size went from 2,628,341 bytes to 467,902 bytes. Level-0 GPU memory went from 138,240,000 bytes to 56,623,104 bytes. With the mip chain the new plates are 75,497,448 bytes.
+- Act 3 and the Act 4 target cards fetch those files only when scroll progress is within 0.1 of Act 3. The slab shows the plate's average color, then fades the image in. Upload uses sRGB, WebGL2 mipmaps, anisotropy of at most 4, and `gl.initTexture` right after load.
+- `next.config.ts` `headers()` sets `Cache-Control: public, max-age=31536000, immutable` on `/textures/:path*` and `/images/:path*`. `output` is still unset so the deploy script can insert `standalone`.
+- `npm run optimize:textures` rebuilds the plates. The 1600×3600 PNGs are deleted from `public/` and remain in git history.
+
 ## [1.1.0-c] - 2026-11-28
 
 Act handoff, a load-time performance tier, and a live reduced-motion path. v1.1.0-a, v1.1.0-b, and v1.1.0-c together are the v1.1.0 motion upgrade. This part is not tagged. Resting frames stay on the approved picture.

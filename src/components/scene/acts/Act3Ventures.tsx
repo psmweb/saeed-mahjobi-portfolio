@@ -4,7 +4,10 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
+import { VENTURE_TEXTURES } from "@/data/ventureTextures";
+import { duration } from "@/lib/motion";
 import { scrollProgress } from "@/lib/scrollProgress";
+import { watchVentureTextures } from "@/lib/ventureTextureLoad";
 import {
   STAGE_ACCENTS,
   readClock,
@@ -14,8 +17,12 @@ import {
   ventureWindow,
 } from "../cinema";
 
-/** Reference window on the 1600×3600 venture plates: (1600 / 1.6) / 3600. */
-const UI_REPEAT_Y = 1600 / 1.6 / 3600;
+/**
+ * Visible window on the 1024×2304 plate. The source plates were 1600×3600.
+ * Both are 4:9, so (1024 / 1.6) / 2304 equals (1600 / 1.6) / 3600 and the crop stays put.
+ */
+const UI_REPEAT_Y = 1024 / 1.6 / 2304;
+const PLATE_ANISOTROPY = 4;
 
 const CHIP_AT: ReadonlyArray<readonly [number, number, number]> = [
   [2.05, 1.72, 0.82],
@@ -25,7 +32,8 @@ const CHIP_AT: ReadonlyArray<readonly [number, number, number]> = [
 
 const LIVE = [
   {
-    texture: "/textures/ventures/mikham.png",
+    texture: VENTURE_TEXTURES.mikham.src,
+    color: VENTURE_TEXTURES.mikham.color,
     chips: [
       ["400K+", "BUSINESSES"],
       ["MIARA", "ASSISTANT"],
@@ -33,14 +41,16 @@ const LIVE = [
     ],
   },
   {
-    texture: "/textures/ventures/battery-store.png",
+    texture: VENTURE_TEXTURES["battery-store"].src,
+    color: VENTURE_TEXTURES["battery-store"].color,
     chips: [
       ["201", "PULL REQUESTS"],
       ["v0.2.0", "NEXT.JS 15 · NESTJS"],
     ],
   },
   {
-    texture: "/textures/ventures/trader-bot.png",
+    texture: VENTURE_TEXTURES["trader-bot"].src,
+    color: VENTURE_TEXTURES["trader-bot"].color,
     chips: [
       ["886/886", "CI TESTS"],
       ["LIVE: OFF", "DISARMED BY DEFAULT"],
@@ -48,14 +58,16 @@ const LIVE = [
     ],
   },
   {
-    texture: "/textures/ventures/honarmarket.png",
+    texture: VENTURE_TEXTURES.honarmarket.src,
+    color: VENTURE_TEXTURES.honarmarket.color,
     chips: [
       ["1,450+", "MOLD DESIGNS"],
       ["RESIN", "& CANDLE SUPPLIES"],
     ],
   },
   {
-    texture: "/textures/ventures/yadaki-yar.png",
+    texture: VENTURE_TEXTURES["yadaki-yar"].src,
+    color: VENTURE_TEXTURES["yadaki-yar"].color,
     chips: [
       ["v0.7.0", "FASTAPI + POSTGRESQL"],
       ["80", "PULL REQUESTS"],
@@ -63,7 +75,8 @@ const LIVE = [
     ],
   },
   {
-    texture: "/textures/ventures/sandoq-yar.png",
+    texture: VENTURE_TEXTURES["sandoq-yar"].src,
+    color: VENTURE_TEXTURES["sandoq-yar"].color,
     chips: [
       ["OFFLINE", "BARCODE POS"],
       ["PWA", "ZXING-WASM · INDEXEDDB"],
@@ -88,6 +101,10 @@ type StageRecord = {
   keyLight: THREE.PointLight;
   accentLights: THREE.PointLight[];
   screen: THREE.Texture | null;
+  placeholder: THREE.Mesh | null;
+  fadeMaterial: THREE.MeshBasicMaterial | null;
+  reflectionMaterial: THREE.MeshBasicMaterial | null;
+  screenFade: number;
   sheen: THREE.Texture | null;
   chips: THREE.Mesh[];
   cells: CellRecord[];
@@ -202,18 +219,30 @@ function chipTexture(title: string, label: string, color: string) {
   return texture;
 }
 
-function prepareUiTexture(texture: THREE.Texture, anisotropy: number) {
+function prepareUiTexture(texture: THREE.Texture, anisotropy: number, mipmaps: boolean) {
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.wrapS = THREE.ClampToEdgeWrapping;
   texture.wrapT = THREE.ClampToEdgeWrapping;
-  texture.anisotropy = anisotropy;
-  texture.minFilter = THREE.LinearFilter;
+  texture.anisotropy = Math.min(PLATE_ANISOTROPY, Math.max(1, anisotropy));
   texture.magFilter = THREE.LinearFilter;
-  texture.generateMipmaps = false;
+  texture.generateMipmaps = mipmaps;
+  texture.minFilter = mipmaps ? THREE.LinearMipmapLinearFilter : THREE.LinearFilter;
   texture.repeat.set(1, UI_REPEAT_Y);
   texture.offset.y = 1 - UI_REPEAT_Y;
   texture.needsUpdate = true;
   return texture;
+}
+
+function settlePlate(stage: StageRecord) {
+  const material = stage.fadeMaterial;
+  if (!material) return;
+  material.opacity = 1;
+  material.transparent = false;
+  material.depthWrite = true;
+  material.needsUpdate = true;
+  if (stage.reflectionMaterial) stage.reflectionMaterial.opacity = 0.1;
+  if (stage.placeholder) stage.placeholder.visible = false;
+  stage.screenFade = 1;
 }
 
 function addChart(group: THREE.Group, track: <T extends Disposable>(item: T) => T) {
@@ -358,7 +387,7 @@ function buildStage(
   const live = LIVE[index];
   const screenMaterial = track(
     new THREE.MeshBasicMaterial({
-      color: "#05070c",
+      color: live?.color ?? "#05070c",
       toneMapped: false,
       fog: false,
       polygonOffset: true,
@@ -454,6 +483,10 @@ function buildStage(
     keyLight,
     accentLights,
     screen: null,
+    placeholder: live ? screenMesh : null,
+    fadeMaterial: null,
+    reflectionMaterial: null,
+    screenFade: 1,
     sheen,
     chips,
     cells,
@@ -471,6 +504,7 @@ export function Act3Ventures() {
     const parent = root.current;
     if (!parent) return;
     let cancelled = false;
+    let stopTextures = () => {};
     const disposables: Disposable[] = [];
     const track = <T extends Disposable>(item: T) => {
       disposables.push(item);
@@ -493,57 +527,99 @@ export function Act3Ventures() {
       built.forEach((stage) => parent.add(stage.group));
       stages.current = built;
       const loader = new THREE.TextureLoader();
-      const anisotropy = gl.capabilities.getMaxAnisotropy();
-      built.forEach((stage) => {
-        const spec = LIVE[stage.index];
-        if (!spec) return;
-        loader.load(spec.texture, (texture) => {
-          if (cancelled) {
-            texture.dispose();
-            return;
-          }
-          prepareUiTexture(texture, anisotropy);
-          track(texture);
-          stage.screen = texture;
-          const screenMesh = stage.group.children.find((child) => child.name.startsWith("ui-"));
-          if (screenMesh instanceof THREE.Mesh && screenMesh.material instanceof THREE.MeshBasicMaterial) {
-            screenMesh.material.map = texture;
-            screenMesh.material.color.set("#ffffff");
-            screenMesh.material.needsUpdate = true;
-          }
-          const reflection = new THREE.Mesh(
-            track(new THREE.PlaneGeometry(7.62, 4.76)),
-            track(
-              new THREE.MeshBasicMaterial({
-                map: texture,
-                transparent: true,
-                opacity: 0.1,
-                toneMapped: false,
-                fog: false,
-                depthWrite: false,
-              }),
-            ),
+      const anisotropy = Math.min(PLATE_ANISOTROPY, gl.capabilities.getMaxAnisotropy());
+      const mipmaps = gl.capabilities.isWebGL2;
+      let requested = false;
+      const loadTextures = () => {
+        if (cancelled || requested) return;
+        requested = true;
+        built.forEach((stage) => {
+          const spec = LIVE[stage.index];
+          if (!spec) return;
+          loader.load(
+            spec.texture,
+            (texture) => {
+              if (cancelled) {
+                texture.dispose();
+                return;
+              }
+              prepareUiTexture(texture, anisotropy, mipmaps);
+              gl.initTexture(texture);
+              track(texture);
+              stage.screen = texture;
+              const fadeMaterial = track(
+                new THREE.MeshBasicMaterial({
+                  map: texture,
+                  color: "#ffffff",
+                  transparent: true,
+                  opacity: 0,
+                  toneMapped: false,
+                  fog: false,
+                  depthWrite: false,
+                  polygonOffset: true,
+                  polygonOffsetFactor: -3,
+                  polygonOffsetUnits: -6,
+                }),
+              );
+              const fadeMesh = new THREE.Mesh(track(new THREE.PlaneGeometry(7.62, 4.76)), fadeMaterial);
+              fadeMesh.position.z = 0.19;
+              fadeMesh.name = `ui-live-${stage.index}`;
+              stage.group.add(fadeMesh);
+              const reflectionMaterial = track(
+                new THREE.MeshBasicMaterial({
+                  map: texture,
+                  transparent: true,
+                  opacity: 0,
+                  toneMapped: false,
+                  fog: false,
+                  depthWrite: false,
+                }),
+              );
+              const reflection = new THREE.Mesh(track(new THREE.PlaneGeometry(7.62, 4.76)), reflectionMaterial);
+              reflection.scale.y = -1;
+              reflection.position.set(0, -5.6, 0.19);
+              stage.group.add(reflection);
+              stage.fadeMaterial = fadeMaterial;
+              stage.reflectionMaterial = reflectionMaterial;
+              stage.screenFade = 0;
+              if (scrollProgress.reducedMotion) settlePlate(stage);
+            },
+            undefined,
+            () => {
+              /* The average-color plate stays. */
+            },
           );
-          reflection.scale.y = -1;
-          reflection.position.set(0, -5.6, 0.19);
-          stage.group.add(reflection);
         });
-      });
+      };
+      stopTextures = watchVentureTextures(loadTextures);
     };
 
     void mount();
 
     return () => {
       cancelled = true;
+      stopTextures();
       stages.current = [];
       parent.clear();
       disposables.forEach((item) => item.dispose());
     };
   }, [gl]);
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     const node = root.current;
     if (!node) return;
+    const calmMotion = scrollProgress.reducedMotion;
+    stages.current.forEach((stage) => {
+      if (!stage.fadeMaterial || stage.screenFade >= 1) return;
+      const next = calmMotion ? 1 : Math.min(1, stage.screenFade + delta / duration.ui);
+      if (next < 1) {
+        stage.screenFade = next;
+        stage.fadeMaterial.opacity = next;
+        if (stage.reflectionMaterial) stage.reflectionMaterial.opacity = 0.1 * next;
+        return;
+      }
+      settlePlate(stage);
+    });
     const { internal, presentation } = readClock(scrollProgress.smoothed);
     node.visible = internal > 9.5 && internal < 18.3;
     if (!node.visible) return;

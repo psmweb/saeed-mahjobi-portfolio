@@ -28,6 +28,10 @@ Not tagged. Motion upgrade on the v1.0.0 scene. a, b, and c are all landed.
 - **b.** Magnetic controls, card tilt, and split text reveals. Pointer follow is off for touch and reduced motion. Act 1 hero copy is not split.
 - **c.** Act handoff from `scrollProgress.smoothed` (overlay crossfade, light lerp, DOM depth veil), a high/medium/low performance tier, and a live `prefers-reduced-motion` path. Act 4 stays at 145 draw calls. Act 5 stays at 127. Resting frames stay on the approved picture.
 
+## Venture textures
+
+Not a version tag. The six Act 3 plates shipped as 1600×3600 PNGs (2,628,341 bytes). They are now 1024×2304 WebP at quality 82 (467,902 bytes), content-hashed, and fetched only within 0.1 scroll progress of Act 3. `next.config.ts` `headers()` marks `/textures/:path*` and `/images/:path*` `public, max-age=31536000, immutable`. The pipeline is `npm run optimize:textures`. Detail is in `AGENTS.md`.
+
 ## v1.1.0-b
 
 Not tagged. DOM micro-interactions on the v1.1.0-a scene.

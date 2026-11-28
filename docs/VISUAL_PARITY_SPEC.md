@@ -48,16 +48,16 @@ Chapter labels in the reference HUD: `01 COMMAND`, `02 EVOLUTION`, `03 VENTURES`
 
 ## Six venture stages
 
-Order and accent colors from the reference placards. Textures for the scrolling UI live in `public/textures/ventures/`.
+Order and accent colors from the reference placards. The scrolling UI plates live in `public/textures/ventures/` as 1024×2304 WebP. The filename hash is the first 8 hex characters of the file's SHA-256. Current URLs are in `src/data/ventureTextures.ts`. `npm run optimize:textures` rebuilds them from the 1600×3600 PNGs in git history. The crop matches the old plates because both sizes are 4:9.
 
 | Stage | Product | Accent | Texture |
 | --- | --- | --- | --- |
-| 01 | Mikham + Miara | `#F59E0B` | `mikham.png` |
-| 02 | Battery Store | `#38BDF8` | `battery-store.png` |
-| 03 | Trader Bot | `#10B981` | `trader-bot.png` |
-| 04 | Honarmarket | `#F472B6` | `honarmarket.png` |
-| 05 | Yadaki Yar | `#60A5FA` | `yadaki-yar.png` |
-| 06 | Sandoq-Yar | `#2DD4BF` | `sandoq-yar.png` |
+| 01 | Mikham + Miara | `#F59E0B` | `mikham-344b77c6.webp` |
+| 02 | Battery Store | `#38BDF8` | `battery-store-46d7005c.webp` |
+| 03 | Trader Bot | `#10B981` | `trader-bot-7dad712e.webp` |
+| 04 | Honarmarket | `#F472B6` | `honarmarket-16335853.webp` |
+| 05 | Yadaki Yar | `#60A5FA` | `yadaki-yar-4d0b03c2.webp` |
+| 06 | Sandoq-Yar | `#2DD4BF` | `sandoq-yar-885be780.webp` |
 
 Xchange and Rap Historical stay badges on the Sandoq-Yar stage in the reference HUD. They are not a seventh slab.
 
