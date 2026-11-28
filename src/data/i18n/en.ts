@@ -151,6 +151,16 @@ export const en: Dictionary = {
     en: "Resume (EN)",
     fa: "Resume (FA)",
   },
+  finaleStage: {
+    kicker: "05 · Command center · Owner sign-off",
+    name: "SAEED MAHJOBI",
+    closingLead: "10 years of building,",
+    closingAccent: "command with 5 agents",
+    github: "github.com/psmweb",
+    resumeEn: "Resume EN ↓",
+    resumeFa: "Resume FA ↓",
+    approve: "Approve & Deploy ✓",
+  },
   heroStage: {
     displayName: "SAEED MAHJOBI",
     tagline: "Founder · Full-Stack & AI Systems Architect",

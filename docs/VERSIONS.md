@@ -10,7 +10,7 @@ Semantic versions for ONE COMMAND. Tags are annotated. Each tag ships with `CHAN
 | v0.4.0 | 3A | Venture stages 1–3 (Mikham + Miara, Battery Store, Trader Bot) | Released |
 | v0.5.0 | 3B | Venture stages 4–6 (Honarmarket, Yadaki Yar, Sandoq-Yar) | Released |
 | v0.6.0 | 4 | Five PBR robot figurines and the arena demo | Released |
-| v0.7.0 | 5 | Persian RTL mirror and command-center finale | Not started |
+| v0.7.0 | 5 | Persian RTL mirror and command-center finale | Released |
 | v0.9.0 | 6 | Visual parity, responsive, and performance audit | Not started |
 | v1.0.0 | 7 | Production release | Not started |
 
@@ -66,5 +66,17 @@ Phase 4. Five agents replace the capsule placeholders.
 - Every ship status carries `Live simulation · demo` (`شبیه‌سازی زنده · دمو`).
 - `prefers-reduced-motion` skips the burst and shows the shipped pose immediately once the beat is reached.
 - Acts 1–3, the HUD, and Act 5 are unchanged. On aspect below 1, only the arena view pulls back.
+
+## v0.7.0
+
+Phase 5. The 44s–52s window is the command center.
+
+- Golden beam in `Act5FinaleCommandCenter.tsx`, reference internal 23.45–24.15. After internal 23.9 the finale block is `dir=rtl` with the Persian headline and closing line.
+- English keeps a Bebas Neue lockup at `0.06em`. Persian uses Vazirmatn.
+- `Act5Finale.tsx` reuses the Act 4 robot kit, obsidian metal, and the shared finale origin. The portrait light is frameless. The group stays hidden until internal 23.4, so earlier acts do not draw it.
+- Resume links: `/resume/Saeed_Mahjobi_Resume_EN.pdf` and `/resume/Saeed_Mahjobi_Resume_FA.pdf`. GitHub: `https://github.com/psmweb`.
+- `prefers-reduced-motion` hides the beam and shows the settled copy, glow, and agents.
+- Portrait viewports pull the finale camera back and tighten the agent row. Desktop aspect keeps the reference camera.
+- Acts 1–4, the venture slabs, the robot kit, and the HUD are unchanged.
 
 

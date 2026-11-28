@@ -390,3 +390,36 @@ export const WORLD = {
   arena: arenaOrigin.clone(),
   finale: finaleOrigin.clone(),
 };
+
+const spring = (x: number) => (x <= 0 ? 0 : x >= 1 ? 1 : 1 - Math.exp(-6 * x) * Math.cos(10 * x));
+
+/** Amber beam, reference internal 23.45–24.15. Opacity is the sine envelope. */
+export function finaleWipe(internalT: number) {
+  const progress = seg(internalT, 23.45, 24.15);
+  const opacity = progress > 0 && progress < 1 ? Math.sin(Math.PI * progress) : 0;
+  return { progress, opacity };
+}
+
+/** Staggered finale lines: 0 kicker, 1 name, 2 closing, 3 actions, 4 languages. */
+export function finaleLineOpacity(internalT: number, index: number) {
+  return eo(seg(internalT, 24.1 + index * 0.16, 24.6 + index * 0.16));
+}
+
+/** Portrait and stage glow, reference internal 24.0–24.9. */
+export function finalePortrait(internalT: number) {
+  return eo(seg(internalT, 24, 24.9));
+}
+
+/** Reference switches the finale block to Persian once the beam has crossed. */
+export function finaleLocaleLock(internalT: number) {
+  return internalT > 23.9;
+}
+
+export function finaleApprovePulse(internalT: number) {
+  return internalT > 25.9;
+}
+
+/** Pop-in for finale agent `index`, reference internal 24.5 onward. */
+export function finaleRobotPop(internalT: number, index: number) {
+  return spring(seg(internalT, 24.5 + index * 0.08, 25.1 + index * 0.08));
+}

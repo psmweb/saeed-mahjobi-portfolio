@@ -151,6 +151,16 @@ export const fa: Dictionary = {
     en: "رزومه (EN)",
     fa: "رزومه (FA)",
   },
+  finaleStage: {
+    kicker: "۰۵ · مرکز فرماندهی · تأیید نهایی با مالک",
+    name: "سعید محجوبی",
+    closingLead: "۱۰ سال ساختن،",
+    closingAccent: "فرماندهی با ۵ ایجنت",
+    github: "github.com/psmweb",
+    resumeEn: "رزومه EN ↓",
+    resumeFa: "رزومه FA ↓",
+    approve: "Approve & Deploy ✓",
+  },
   heroStage: {
     displayName: "سعید محجوبی",
     tagline: "بنیان‌گذار · معمار سیستم‌های فول‌استک و هوش مصنوعی",
