@@ -1,8 +1,11 @@
 "use client";
 
-import { useMemo } from "react";
+import { useFrame } from "@react-three/fiber";
+import { useMemo, useRef } from "react";
 import * as THREE from "three";
+import { scrollProgress } from "@/lib/scrollProgress";
 import { AmberStoryteller } from "../AmberStoryteller";
+import { readClock } from "../cinema";
 
 function spotlightTexture() {
   const canvas = document.createElement("canvas");
@@ -25,9 +28,17 @@ function spotlightTexture() {
 /** Frameless studio light and the storyteller gem. No portrait frame and no face. */
 export function Act1Hero() {
   const spot = useMemo(() => spotlightTexture(), []);
+  const stage = useRef<THREE.Group>(null);
+
+  useFrame(() => {
+    const node = stage.current;
+    if (!node) return;
+    node.visible = readClock(scrollProgress.current).internal < 5.2;
+  });
 
   return (
     <group name="act-1-hero">
+      <group ref={stage}>
       <mesh name="portrait-slot" position={[3.75, 0.35, 0]}>
         <planeGeometry args={[3.4, 4.6]} />
         <meshBasicMaterial map={spot} transparent depthWrite={false} toneMapped={false} />
@@ -43,6 +54,7 @@ export function Act1Hero() {
           opacity={0.72}
         />
       </mesh>
+      </group>
       <AmberStoryteller />
     </group>
   );

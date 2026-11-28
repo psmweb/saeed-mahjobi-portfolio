@@ -124,11 +124,19 @@ function Monolith({
 
 export function Act2Evolution() {
   const mark = useMemo(() => studioMark(), []);
+  const root = useRef<THREE.Group>(null);
   const floorY = -2.35;
   const bases = YEARS.map((year) => new THREE.Vector3(year.at.x, floorY, year.at.z));
 
+  useFrame(() => {
+    const node = root.current;
+    if (!node) return;
+    const { internal } = readClock(scrollProgress.current);
+    node.visible = internal > 4.4 && internal < 10.4;
+  });
+
   return (
-    <group name="act-2-evolution">
+    <group ref={root} name="act-2-evolution" visible={false}>
       <Monolith index={0} year={YEARS[0].year} at={YEARS[0].at} accent={YEARS[0].accent} rim={YEARS[0].rim} />
       <Monolith index={1} year={YEARS[1].year} at={YEARS[1].at} accent={YEARS[1].accent} rim={YEARS[1].rim} mark={mark} />
       <Monolith index={2} year={YEARS[2].year} at={YEARS[2].at} accent={YEARS[2].accent} rim={YEARS[2].rim} />

@@ -29,7 +29,7 @@ export function BatteryScrollMeter() {
           style={{ height: `${level * 100}%`, maxHeight: "calc(100% - 4px)" }}
         />
       </div>
-      <span className="font-mono text-[10px] text-[#F2B544]">
+      <span className="font-mono text-xs text-[#F2B544] sm:text-[13px]">
         {percent}%{percent >= 100 ? " ✓" : ""}
       </span>
     </div>

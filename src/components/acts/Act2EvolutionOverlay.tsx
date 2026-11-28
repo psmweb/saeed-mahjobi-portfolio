@@ -18,7 +18,7 @@ export function Act2EvolutionOverlay() {
       aria-hidden={hidden}
     >
       <div className="max-w-xl rounded-2xl border border-white/15 bg-[rgba(12,15,24,0.82)] p-4 shadow-[0_20px_60px_rgba(0,0,0,0.45)] backdrop-blur-md sm:p-5">
-        <p className="font-mono text-[11px] tracking-[0.18em] text-[#F2B544]">02 · 2016 → 2026</p>
+        <p className="font-mono text-xs tracking-[0.14em] text-[#F2B544] sm:text-[13px] sm:tracking-[0.18em]">02 · 2016 → 2026</p>
         <ol className="mt-3 space-y-2">
           {dictionary.evolutionStage.items.map((item) => (
             <li key={item.year} className="flex flex-wrap items-baseline gap-x-3 gap-y-1">

@@ -16,6 +16,9 @@ export function SmoothScroll() {
     const lenis = new Lenis({
       autoRaf: true,
       anchors: true,
+      syncTouch: false,
+      smoothWheel: !scrollProgress.reducedMotion,
+      lerp: scrollProgress.reducedMotion ? 1 : 0.1,
       virtualScroll: (data) => {
         data.deltaX = mirrorX(data.deltaX, dir);
         return true;

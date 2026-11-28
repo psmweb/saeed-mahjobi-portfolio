@@ -4,7 +4,7 @@ Onboarding for anyone changing the Saeed Mahjobi portfolio (`ONE COMMAND`). Read
 
 ## What this repo is
 
-A Next.js 15 App Router, React 19, TypeScript, Tailwind CSS single page. English is LTR. Persian is RTL (`Vazirmatn`). The current release is **v0.7.0**: Act 5 golden wipe and command-center finale, on top of the v0.6.0 agent arena.
+A Next.js 15 App Router, React 19, TypeScript, Tailwind CSS single page. English is LTR. Persian is RTL (`Vazirmatn`). The current release is **v0.9.0**: full QA, draw-call pass, and polish on the five-act scene. Act 4 and Act 5 stay under 150 draw calls. Evidence frames live in `docs/qa-screenshots/`.
 
 Name on the page: **Saeed Mahjobi** (`سعید محجوبی`). Languages: English (Fluent / Professional) and Persian (Native).
 
@@ -42,7 +42,7 @@ Match `docs/reference/onecommand3d_main.js` and `docs/reference/onecommand3d_ind
 
 Two approved deviations, already locked:
 
-1. Hero title font is **Bebas Neue**, weight 400, tracking `0.06em`, via `--font-bebas` and `.font-hero-display`. The class is ready. It is not applied to Act 1 yet.
+1. Hero title font is **Bebas Neue**, weight 400, tracking `0.06em`, via `--font-bebas` and `.font-hero-display`. It is applied to the Act 1 English name and the Act 5 English lockup.
 2. The portrait is frameless. No arched obsidian-gold frame. Do not alter the face when the file arrives.
 
 ## SemVer

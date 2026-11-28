@@ -47,6 +47,10 @@ export function AmberStoryteller() {
     const visible = internal > 1.2 && internal < 4.6;
     root.visible = visible;
     if (!visible) return;
+    const enter = Math.min(1, Math.max(0, (internal - 1.4) / 0.7));
+    const c1 = 1.7;
+    const sprung = enter <= 0 ? 0 : enter >= 1 ? 1 : 1 + (c1 + 1) * (enter - 1) ** 3 + c1 * (enter - 1) ** 2;
+    root.scale.setScalar(Math.max(0.001, sprung));
     root.position.set(0.3, 2.35 + Math.sin(internal * 2) * 0.08, 1.6);
     gem.current.rotation.set(internal * 0.7, internal * 1.1, 0);
     core.current.rotation.set(-internal, internal * 0.6, 0);

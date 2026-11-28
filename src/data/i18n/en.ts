@@ -90,7 +90,7 @@ export const en: Dictionary = {
     logMark: "ONE COMMAND",
     logIdle: "Standing by",
     brand: "SAEED MAHJOBI",
-    chapters: ["01 Command", "02 Evolution", "03 Ventures", "04 Agents", "05 Deploy"],
+    chapters: ["01 COMMAND", "02 EVOLUTION", "03 VENTURES", "04 AGENTS", "05 DEPLOY"],
     logLines: [
       "▸ awaiting command…",
       "▸ build --ventures=6 --team=5-agents --verify",
@@ -189,7 +189,7 @@ export const en: Dictionary = {
       title: "Battery Store",
       body: "Next.js storefront and NestJS API with vehicle fitment and inventory.",
       stack: "Next.js 15 · NestJS",
-      chip: "v0.2.0 · PR #201",
+      chip: "v0.2.0 · 201 PRs",
     },
     {
       id: "trader-bot",

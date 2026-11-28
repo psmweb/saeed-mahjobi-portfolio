@@ -35,7 +35,7 @@ const LIVE = [
   {
     texture: "/textures/ventures/battery-store.png",
     chips: [
-      ["PR #201", "PULL REQUEST"],
+      ["201", "PULL REQUESTS"],
       ["v0.2.0", "NEXT.JS 15 · NESTJS"],
     ],
   },

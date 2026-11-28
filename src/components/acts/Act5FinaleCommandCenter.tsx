@@ -194,7 +194,7 @@ export function Act5FinaleCommandCenter() {
               target="_blank"
               rel="noreferrer noopener"
               data-finale-link="github"
-              className={`inline-flex h-9 items-center rounded-full border border-white/20 bg-white/[0.06] px-3 font-mono text-[12px] text-[#EDEDE6] transition-colors hover:border-white/40 hover:bg-white/[0.12] hover:text-white active:border-[#F2B544] active:bg-[#F2B544]/20 active:text-white sm:h-11 sm:px-4 sm:text-[13px] ${focusRing}`}
+              className={`inline-flex h-10 items-center rounded-full border border-white/20 bg-white/[0.06] px-3 font-mono text-xs text-[#EDEDE6] transition-colors hover:border-white/40 hover:bg-white/[0.12] hover:text-white active:border-[#F2B544] active:bg-[#F2B544]/20 active:text-white sm:h-11 sm:px-4 sm:text-[13px] ${focusRing}`}
             >
               {copy.github}
             </a>
@@ -202,7 +202,7 @@ export function Act5FinaleCommandCenter() {
               href={resumes.en}
               download
               data-finale-link="resume-en"
-              className={`inline-flex h-9 items-center rounded-full border border-white/20 bg-white/[0.08] px-3 font-display text-[13px] font-semibold text-white transition-colors hover:border-white/40 hover:bg-white/[0.14] active:border-[#F2B544] active:bg-[#F2B544]/25 sm:h-11 sm:px-4 ${focusRing}`}
+              className={`inline-flex h-10 items-center rounded-full border border-white/20 bg-white/[0.08] px-3 font-display text-[13px] font-semibold text-white transition-colors hover:border-white/40 hover:bg-white/[0.14] active:border-[#F2B544] active:bg-[#F2B544]/25 sm:h-11 sm:px-4 ${focusRing}`}
             >
               {copy.resumeEn}
             </a>
@@ -210,7 +210,7 @@ export function Act5FinaleCommandCenter() {
               href={resumes.fa}
               download
               data-finale-link="resume-fa"
-              className={`inline-flex h-9 items-center rounded-full border border-white/20 bg-white/[0.08] px-3 font-display text-[13px] font-semibold text-white transition-colors hover:border-white/40 hover:bg-white/[0.14] active:border-[#F2B544] active:bg-[#F2B544]/25 sm:h-11 sm:px-4 ${focusRing}`}
+              className={`inline-flex h-10 items-center rounded-full border border-white/20 bg-white/[0.08] px-3 font-display text-[13px] font-semibold text-white transition-colors hover:border-white/40 hover:bg-white/[0.14] active:border-[#F2B544] active:bg-[#F2B544]/25 sm:h-11 sm:px-4 ${focusRing}`}
             >
               {copy.resumeFa}
             </a>
@@ -219,7 +219,7 @@ export function Act5FinaleCommandCenter() {
               data-finale-approve={approved ? "on" : "ready"}
               aria-pressed={approved}
               onClick={() => setApproved((current) => !current)}
-              className={`inline-flex h-9 items-center rounded-full bg-gradient-to-br from-[#FFD27A] to-[#F2B544] px-3 font-display text-[13px] font-semibold text-[#120d02] transition-[filter,transform] hover:brightness-110 active:scale-[0.98] active:brightness-95 sm:h-11 sm:px-4 ${
+              className={`inline-flex h-10 items-center rounded-full bg-gradient-to-br from-[#FFD27A] to-[#F2B544] px-3 font-display text-[13px] font-semibold text-[#120d02] transition-[filter,transform] hover:brightness-110 active:scale-[0.98] active:brightness-95 sm:h-11 sm:px-4 ${
                 state.pulse ? "finale-approve-pulse" : ""
               } ${approved ? "ring-2 ring-[#fff3d6] ring-offset-2 ring-offset-[#05070C]" : ""} ${focusRing}`}
             >
@@ -229,7 +229,7 @@ export function Act5FinaleCommandCenter() {
           <p
             dir="ltr"
             data-finale="languages"
-            className="mt-3 w-full text-right font-mono text-[11px] tracking-[0.06em] text-[#A9B0BE] [text-shadow:0_1px_8px_#05070C] sm:mt-4 sm:text-xs"
+            className="mt-3 w-full text-pretty text-right font-mono text-xs tracking-[0.04em] text-[#A9B0BE] [text-shadow:0_1px_8px_#05070C] sm:mt-4 sm:text-[13px] sm:tracking-[0.06em]"
             style={lineStyle(languages)}
           >
             {dictionary.profile.english} · {dictionary.profile.persian}
