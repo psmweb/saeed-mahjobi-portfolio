@@ -2,7 +2,7 @@
 
 Semantic versions for ONE COMMAND. Tags are annotated. Each tag ships with `CHANGELOG.md` and this file.
 
-Dates and commits are taken from `git log` and the annotated tags. v0.1.0–v0.3.0 were tagged on `main` and have no pull request. v0.4.0–v0.9.2 landed through pull requests #1–#7. The commit column is the merge commit for those pull requests, and the tagged commit when there was no merge. v1.0.0's pull request is this release. Its merge commit does not exist until that pull request merges. The commit shown for v1.0.0 is the tagged release commit.
+Dates and commits are taken from `git log` and the annotated tags. v0.1.0–v0.3.0 were tagged on `main` and have no pull request. v0.4.0–v0.9.2 landed through pull requests #1–#7. The commit column is the merge commit for those pull requests, and the tagged commit when there was no merge. v1.0.0 is pull request #8. Its merge commit does not exist until that pull request merges. The commit shown for v1.0.0 is the annotated tag.
 
 | Version | Date | PR | Commit | Highlights |
 | --- | --- | --- | --- | --- |
@@ -16,7 +16,7 @@ Dates and commits are taken from `git log` and the annotated tags. v0.1.0–v0.3
 | v0.9.0 | 2026-11-28 04:03:06 +0330 | #5 | `f39718bb82fdbc46b94432f9109f338f47058d27` | Visual parity, responsive, and performance audit |
 | v0.9.1 | 2026-11-28 04:32:25 +0330 | #6 | `4f28afd4498f9350a7afc560ebf2465610c04f45` | Extruded hero, Act 2 archive, Persian type, framing |
 | v0.9.2 | 2026-11-28 05:02:07 +0330 | #7 | `dbbb26908aab8496a96242b2f00e92b3253cb221` | Act 2 screen mockups and year scale, Act 4 shipped spacing |
-| v1.0.0 | 2026-11-28 | this release | tagged with v1.0.0 | Production release: docs, verification, no visual change |
+| v1.0.0 | 2026-11-28 | #8 | tag `v1.0.0` | Production release: docs, verification, no visual change |
 
 After v1.0.0: `v1.0.x` fixes copy or visuals, `v1.x.0` adds a venture or feature, `v2.0.0` is a redesign.
 
