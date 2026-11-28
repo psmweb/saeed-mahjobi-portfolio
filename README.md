@@ -94,7 +94,7 @@ Public sentences must stay inside the facts already recorded in `src/data` and `
 
 ## Performance
 
-Act 4 peaks at 145 draw calls and Act 5 at 127, both under 150, measured at 1440×900 with device pixel ratio 1. The canvas caps DPR at 1.75 on desktop and 1.25 below 768px. `prefers-reduced-motion` skips camera smoothing, the arena burst, and the finale beam.
+Act 4 peaks at 145 draw calls and Act 5 at 127, both under 150, measured at 1440×900 with device pixel ratio 1. The canvas picks its pixel ratio once at load, `min(devicePixelRatio, tier cap)`, with caps of 2, 1.5, and 1.25. A frame drop may lower that ratio one step, once, after half a second with no scroll, wheel, or touch. It does not change while the page is scrolling. `prefers-reduced-motion` skips camera smoothing, the arena burst, and the finale beam.
 
 A Lighthouse run on this kind of virtual machine uses software WebGL (SwiftShader). The Performance score then understates a normal GPU. Accessibility, best practices, and SEO for the v1.0.0 check are in `docs/QA_REPORT.md`.
 

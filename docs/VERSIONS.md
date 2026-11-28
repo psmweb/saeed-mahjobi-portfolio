@@ -43,6 +43,14 @@ Not tagged. Motion and performance on the v1.1.0 scene. The three parts below la
 
 The Act 1 slot uses `public/portrait/saeed-portrait-editorial.webp`, the approved 1080×2003 WebP with alpha. A 720px-wide sibling is `saeed-portrait-editorial-720.webp`, written by `npm run optimize:portrait` (dev-only `sharp`). The overlay serves them with `<picture>`, `fetchpriority="high"`, and `object-fit: contain` aligned to the bottom. There is no frame. The amber glow remains a backlight. The source file is not recompressed.
 
+## Canvas ratio
+
+Not a version tag. The drawing buffer no longer changes resolution while the page scrolls.
+
+- Load-time ratio is `min(devicePixelRatio, tier cap)`. Caps stay 2 (high), 1.5 (medium), and 1.25 (low).
+- `AdaptiveDpr` is not mounted. The canvas receives one number, not a range.
+- `PerformanceMonitor` may step that number down one cap, once per session, after 500ms with no scroll, wheel, or touch. Input on a frame clears that 500ms, even when the frame ran long. A scroll in progress keeps the current buffer. A slow frame with no input still counts. It does not step back up.
+
 ## v1.1.0
 
 Not tagged. Motion upgrade on the v1.0.0 scene. a, b, and c are all landed.

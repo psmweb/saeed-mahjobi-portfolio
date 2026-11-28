@@ -1,3 +1,18 @@
+# QA report — canvas DPR lock
+
+The drawing buffer is no longer resized while the page scrolls. Reproduce with a production server and `node scripts/qa/measure-dpr-scroll.mjs <site>`.
+
+## Scroll under a stalled frame (2026-11-28)
+
+`npm run build`, then `npx next start -p 3100`. Chrome headless, `deviceScaleFactor` 2. Each pass seeks the full 13-viewport scroll while the main thread stalls about 70ms per frame, so `PerformanceMonitor` marks the session degraded during the travel. The script then waits, still, and seeks back across the page under the same stall. Canvas `width` and `height` writes are counted only when the value changes.
+
+| Pass | Tier | Load ratio | Buffer during scroll | Resizes during scroll | After idle | Second scroll resizes |
+| --- | --- | --- | ---: | --- | --- | ---: |
+| Desktop 1440×900 | high | 2.00 | 2880×1800 | 0 | one step, to 1.50 (2160×1350), `scrolling: false` | 0 |
+| Narrow 390×844 | low | 1.25 | 487×1055 | 0 | one step, to 1.00 (390×844), `scrolling: false` | 0 |
+
+Both passes reached progress 1 with `degraded: true` and came back to progress 0 at the lowered ratio. The idle resize is the one allowed step. A second decline during the return trip did not resize the buffer again. Console and page errors were empty.
+
 # QA report — v1.0.0
 
 v1.0.0 re-checked the approved v0.9.2 scene. Visuals, copy, and layout did not change. The v0.9.2 sections below stay the record of the last visual pass. Frames in `docs/qa-screenshots/` are that pass. Reproduce a capture with `node scripts/qa/capture.mjs <site> <reference>`. Draw calls: `node scripts/qa/measure-draws.mjs <site>`.
