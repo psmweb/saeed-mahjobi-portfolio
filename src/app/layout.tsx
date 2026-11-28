@@ -3,6 +3,7 @@ import path from "node:path";
 import type { Metadata } from "next";
 import { Bebas_Neue, JetBrains_Mono, Plus_Jakarta_Sans, Space_Grotesk, Vazirmatn } from "next/font/google";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { heroPortrait } from "@/data/portraits";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -73,6 +74,22 @@ export default function RootLayout({
       className={`${jakarta.variable} ${space.variable} ${jetbrains.variable} ${vazir.variable} ${bebas.variable}`}
     >
       <body className="antialiased" data-portrait={portraitReady ? "ready" : "empty"}>
+        <link
+          rel="preload"
+          as="image"
+          href={heroPortrait.src}
+          type="image/webp"
+          fetchPriority="high"
+          media="(min-width: 640px)"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href={heroPortrait.mobileSrc}
+          type="image/webp"
+          fetchPriority="high"
+          media="(max-width: 639px)"
+        />
         <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>

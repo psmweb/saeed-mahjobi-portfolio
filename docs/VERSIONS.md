@@ -41,7 +41,7 @@ Not tagged. Motion and performance on the v1.1.0 scene. The three parts below la
 
 ### Portrait
 
-The frameless Act 1 slot is unchanged. The approved editorial cutout was not in the stores this integration could read, so no portrait file was added and no face was drawn. The slot stays the amber and obsidian glow until `public/portrait/saeed.png` is supplied.
+The Act 1 slot uses `public/portrait/saeed-portrait-editorial.webp`, the approved 1080×2003 WebP with alpha. A 720px-wide sibling is `saeed-portrait-editorial-720.webp`, written by `npm run optimize:portrait` (dev-only `sharp`). The overlay serves them with `<picture>`, `fetchpriority="high"`, and `object-fit: contain` aligned to the bottom. There is no frame. The amber glow remains a backlight. The source file is not recompressed.
 
 ## v1.1.0
 

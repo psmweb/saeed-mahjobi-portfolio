@@ -4,7 +4,11 @@ All notable changes to this portfolio are documented here. The format follows Ke
 
 ## [Unreleased] - 2026-11-28
 
-Phase 1, not tagged. Motion and performance on the v1.1.0 scene: a longer scroll on one clock, lighter venture plates, and a soft heading reveal.
+Phase 1, not tagged. Motion and performance on the v1.1.0 scene: a longer scroll on one clock, lighter venture plates, a soft heading reveal, and the approved editorial portrait.
+
+### Added
+
+- The Act 1 slot shows `public/portrait/saeed-portrait-editorial.webp` (1080×2003 WebP with alpha, byte-identical to the approved file). Mobile uses the 720×1335 variant from `npm run optimize:portrait`. The overlay uses `<picture>`, `fetchpriority="high"`, `object-fit: contain`, and bottom alignment. No frame, border, radius, shadow, or CSS crop. The amber glow stays behind the cutout. Bebas Neue at `0.06em`, the layout, and the copy are unchanged. Headless Chrome reports that image as LCP: 212 ms on desktop and 108 ms on mobile. First Load JS is 327 kB. The route chunk stays 179 kB.
 
 ### Changed
 
@@ -21,7 +25,7 @@ Phase 1, not tagged. Motion and performance on the v1.1.0 scene: a longer scroll
 
 ### Unchanged
 
-- Hero at progress 0: Bebas Neue at `0.06em`, frameless portrait slot. The approved editorial cutout was not available in the stores this branch could read, so the slot stays the glow and no face was drawn.
+- Hero type, layout, and copy at progress 0. Bebas Neue stays at `0.06em`.
 - `prefers-reduced-motion` still updates live: native wheel, `lerp` 1, short handoff, no blur.
 
 ## [1.1.0-c] - 2026-11-28

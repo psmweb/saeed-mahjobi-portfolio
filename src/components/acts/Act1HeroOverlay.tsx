@@ -1,5 +1,6 @@
 "use client";
 
+import { HeroPortrait } from "@/components/HeroPortrait";
 import { useLanguage } from "@/context/LanguageContext";
 import {
   actHandoff,
@@ -36,6 +37,7 @@ export function Act1HeroOverlay() {
       data-opacity={opacity.toFixed(2)}
       aria-hidden={hidden}
     >
+      <HeroPortrait />
       <h1
         className={
           persian
