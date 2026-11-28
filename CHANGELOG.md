@@ -4,15 +4,24 @@ All notable changes to this portfolio are documented here. The format follows Ke
 
 ## [Unreleased] - 2026-11-28
 
-Phase 1, not tagged. This section collects the unmerged parts as they land.
+Phase 1, not tagged. Motion and performance on the v1.1.0 scene: a longer scroll on one clock, lighter venture plates, and a soft heading reveal.
 
 ### Changed
 
+- Scroll travel is 13 viewports. Act travels are about 1.68 / 1.80 / 5.05 / 2.48 / 2.00 viewports, sized in `svh` from `ACT_SCROLL_VIEWPORTS`. At a 900px viewport that is 11,700px of scroll. Act 3 venture slots land between about 710px and 761px. The act handoff window is 0.35 viewport.
+- Lenis uses `lerp` 0.075, `wheelMultiplier` 0.6, `touchMultiplier` 1, and `autoRaf: false`. `CameraRig` calls `lenis.raf` on the WebGL frame and copies progress onto the scene clock. The old lambda-7 damp is gone. A wheel frame cannot jump farther than the shortest act.
+- `mapPresentationTime` is a monotone cubic. The venture run from 14.2s to 34.0s stays linear, so speed no longer steps from 0.90 to 0.38. Glide sampling and the handoff mix use `easeInOutCubic`.
+- The canvas no longer sets `preserveDrawingBuffer`. QA capture uses page screenshots, which do not read the drawing buffer.
 - The six Act 3 UI plates are 1024×2304 WebP at quality 82, named with a content hash. File size went from 2,628,341 bytes to 467,902 bytes. Level-0 GPU memory went from 138,240,000 bytes to 56,623,104 bytes. With the mip chain the new plates are 75,497,448 bytes.
 - Act 3 and the Act 4 target cards fetch those files only when scroll progress is within 0.1 of Act 3. The slab shows the plate's average color, then fades the image in. Upload uses sRGB, WebGL2 mipmaps, anisotropy of at most 4, and `gl.initTexture` right after load.
 - `next.config.ts` `headers()` sets `Cache-Control: public, max-age=31536000, immutable` on `/textures/:path*` and `/images/:path*`. `output` is still unset so the deploy script can insert `standalone`.
 - `npm run optimize:textures` rebuilds the plates. The 1600×3600 PNGs are deleted from `public/` and remain in git history.
-- `SplitReveal` is a soft masked reveal. Each line uses `mask-image: linear-gradient(to bottom, #000 70%, transparent)`, a mask-position sweep, and `padding-block: 0.12em`, with no hard clip. Units move from opacity 0, `blur(8px)`, and `translateY(0.5em)` to rest on `cubic-bezier(0.22, 1, 0.36, 1)`. Persian, RTL, and `fa` split by word (0.7s, 0.06s stagger, reading order). Latin splits by character inside nowrap words (0.5s, 0.015s stagger). `will-change` covers only opacity, transform, and filter while a unit runs. The filter is cleared to `none`, and the resting render is the original string. Reduced motion is a live 0.18s opacity fade. Act 1 hero copy and the Bebas Neue `0.06em` lockup are unchanged.
+- `SplitReveal` is a soft masked reveal. Each line uses `mask-image: linear-gradient(to bottom, #000 70%, transparent)`, a mask-position sweep, and `padding-block: 0.12em`, with no hard clip. Units move from opacity 0, `blur(8px)`, and `translateY(0.5em)` to rest on `cubic-bezier(0.22, 1, 0.36, 1)`. Persian, RTL, and `fa` split by word (0.7s, 0.06s stagger, reading order). Latin splits by character inside nowrap words (0.5s, 0.015s stagger). `will-change` covers only opacity, transform, and filter while a unit runs. The filter is cleared to `none`, and the resting render is the original string. Reduced motion is a live 0.18s opacity fade. Act 1 hero copy and the Bebas Neue `0.06em` lockup are unchanged. The triggers still follow overlay opacity on the 52s clock, so the longer scroll does not move when a heading reveals.
+
+### Unchanged
+
+- Hero at progress 0: Bebas Neue at `0.06em`, frameless portrait slot.
+- `prefers-reduced-motion` still updates live: native wheel, `lerp` 1, short handoff, no blur.
 
 ## [1.1.0-c] - 2026-11-28
 

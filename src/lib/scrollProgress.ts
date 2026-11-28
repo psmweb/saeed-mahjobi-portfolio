@@ -1,10 +1,8 @@
-import { scrollFollow } from "@/lib/motion";
-
 /**
  * Mutable scroll clock. The WebGL loop reads this object and does not subscribe.
- * `current` is the Lenis progress. `smoothed` is the critically damped clock the
- * scene, the camera, and the act handoff sample. Seek and any immediate scroll
- * copy `current` into `smoothed` on that turn. Reduced motion keeps them equal.
+ * `current` is the Lenis progress. `smoothed` copies `current` on that same frame.
+ * Lenis is the smoother. Seek and any immediate scroll copy on that turn.
+ * Reduced motion keeps them equal as well.
  */
 export const scrollProgress = {
   current: 0,
@@ -17,9 +15,8 @@ type Listener = (progress: number) => void;
 
 const listeners = new Set<Listener>();
 const smoothedListeners = new Set<Listener>();
-let frame = 0;
 let publishedSmoothed = Number.NaN;
-let drivenAt = 0;
+let canvasDrove = false;
 
 function publishSmoothed(force = false) {
   const value = scrollProgress.smoothed;
@@ -29,30 +26,32 @@ function publishSmoothed(force = false) {
 }
 
 /**
- * Advance the damped clock by one frame. The WebGL loop is the authority.
- * A DOM fallback calls this only when that loop has gone quiet, so overlays
- * still track scroll if the canvas is unavailable. Matches `MathUtils.damp`.
+ * Copy Lenis progress onto the scene clock. The WebGL frame is the authority.
+ * There is no second damper: Lenis lerp is the only smoother.
  */
-export function stepSmoothed(deltaSeconds: number) {
-  const dt = Math.min(Math.max(deltaSeconds, 0), scrollFollow.deltaCap);
+export function stepSmoothed() {
   const before = scrollProgress.smoothed;
-  const gap = scrollProgress.current - scrollProgress.smoothed;
-  // Settle exactly once the follow is inside a fraction of a percent. The
-  // opening overlay is fully visible at progress 0 and inside its fade just
-  // above that, so a chapter jump to the top has to land on 0, not beside it.
-  if (scrollProgress.reducedMotion || scrollProgress.snap || Math.abs(gap) < 0.0002) {
-    scrollProgress.smoothed = scrollProgress.current;
-    scrollProgress.snap = false;
-  } else {
-    const blend = 1 - Math.exp(-scrollFollow.lambda * dt);
-    scrollProgress.smoothed += gap * blend;
-  }
-  drivenAt = performance.now();
+  scrollProgress.smoothed = scrollProgress.current;
+  scrollProgress.snap = false;
   publishSmoothed(Math.abs(scrollProgress.smoothed - before) > 1e-8);
 }
 
-export function smoothedIsStale() {
-  return performance.now() - drivenAt > 48;
+type ScrollDriver = (time: number) => void;
+let driver: ScrollDriver | null = null;
+
+export function registerScrollDriver(next: ScrollDriver | null) {
+  driver = next;
+}
+
+/** Called from the WebGL frame. The bootstrap loop stops after the first call. */
+export function driveScroll(time: number) {
+  canvasDrove = true;
+  driver?.(time);
+}
+
+/** True after the WebGL frame has taken the scroll clock. */
+export function canvasClockIsLive() {
+  return canvasDrove;
 }
 
 export function setScrollProgress(progress: number) {
@@ -63,12 +62,9 @@ export function setScrollProgress(progress: number) {
     scrollProgress.smoothed = next;
     publishSmoothed();
   }
-  if (!changed || frame !== 0) return;
-  frame = requestAnimationFrame(() => {
-    frame = 0;
-    const value = scrollProgress.current;
-    listeners.forEach((listener) => listener(value));
-  });
+  if (!changed) return;
+  const value = scrollProgress.current;
+  listeners.forEach((listener) => listener(value));
 }
 
 export function subscribeScroll(listener: Listener) {

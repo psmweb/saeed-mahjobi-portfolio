@@ -52,7 +52,7 @@ src/
       fa.ts
       index.ts
   lib/
-    motion.ts           durations, easings, critically damped springs
+    motion.ts           durations, easings, springs, Lenis scroll tuning
     direction.ts        mirrorX, mirrorVector, GSAP clamp
 public/
   images/               saeed_editorial_portrait.png, saeed_cutout_clean.png
@@ -62,11 +62,13 @@ scripts/
 
 ## Five-act scroll choreography
 
-Each act is a full-viewport section. Lenis (`lerp` 0.1) writes document progress to `scrollProgress.current`. The WebGL frame damps that into `scrollProgress.smoothed` (`THREE.MathUtils.damp`, lambda 7). The camera and scene acts read the damped clock. Seek and immediate chapter jumps snap it. `src/lib/motion.ts` holds the shared durations, easings, and springs; `globals.css` mirrors them as `--dur-*` and `--ease-*`.
+Scroll travel is 13 viewports (`SCROLL_VIEWPORTS`). Act travels are about 1.68 / 1.80 / 5.05 / 2.48 / 2.00 viewports, from the 52s cuts. Landmark sections use `actSectionHeight` in `svh`. The last section is one viewport taller so that travel is still on screen at the end. At a 900px viewport the scrollable distance is 11,700px, and each Act 3 venture slot is about 710–761px. The act handoff window is 0.35 viewport (315px at that height).
 
-`cinema.ts` builds one centripetal Catmull-Rom curve per act segment from the approved camera. Hold frames are copied exactly. Moves between holds are sampled with the cinematic ease. Reduced motion skips the damp, the roll, and the curve.
+Lenis (`lerp` 0.075, `wheelMultiplier` 0.6, `touchMultiplier` 1, `autoRaf: false`) writes document progress to `scrollProgress.current`. The WebGL frame calls `lenis.raf` and copies that progress onto `scrollProgress.smoothed` in the same turn. There is no second damp. The camera and scene acts read that clock. Seek and immediate chapter jumps snap it. One wheel frame cannot move farther than the shortest act. `src/lib/motion.ts` holds the shared durations, easings, springs, and `scrollTuning`; `globals.css` mirrors the durations and easings as `--dur-*` and `--ease-*`.
 
-The four act cuts live in `ACT_BOUNDARY_INTERNAL`. `src/lib/actHandoff.ts` turns those cuts into a window on `scrollProgress.smoothed`: `duration.scene` of the 52s clock, or `duration.micro` when reduced motion is on. Inside the window the outgoing overlay dims and blurs, the incoming overlay eases in when its own fade has arrived by the end of the window, and the key, hemisphere, fog, and arena rig lerp between the per-act presets in `ACT_LIGHTS`. Outside the window every one of those values is the approved rig, so a resting frame does not move. Depth of field is `TransitionVeil`, a DOM vignette with a small backdrop blur on the high tier only. It is not mounted at rest, and it is not a postprocessing pass.
+`cinema.ts` builds one centripetal Catmull-Rom curve per act segment from the approved camera. Hold frames are copied exactly. Moves between holds are sampled with `easeInOutCubic`. `mapPresentationTime` keeps a shared slope at every knot. The venture run stays linear, and the join at 14.2s eases onto that slope. Reduced motion skips the roll and the curve, and Lenis tracking is 1:1.
+
+The four act cuts live in `ACT_BOUNDARY_INTERNAL`. `src/lib/actHandoff.ts` turns those cuts into a window on `scrollProgress.smoothed`: 0.35 viewport of the scroll (1.4s of the 52s clock), or `duration.micro` when reduced motion is on. The mix eases with a cubic. Inside the window the outgoing overlay dims and blurs, the incoming overlay eases in when its own fade has arrived by the end of the window, and the key, hemisphere, fog, and arena rig lerp between the per-act presets in `ACT_LIGHTS`. Outside the window every one of those values is the approved rig, so a resting frame does not move. Depth of field is `TransitionVeil`, a DOM vignette with a small backdrop blur on the high tier only. It is not mounted at rest, and it is not a postprocessing pass.
 
 `src/lib/performanceTier.ts` picks high, medium, or low at load from viewport width, `devicePixelRatio`, `hardwareConcurrency`, `deviceMemory` when the browser exposes it, and `(pointer: coarse)`. Pixel-ratio caps are 2, 1.5, and 1.25. The ship-burst instance count is 36, 18, or 10. The starfield stays at 2600. drei `PerformanceMonitor` can lower the burst further and skip the veil if the frame rate drops. A `matchMedia` listener on `prefers-reduced-motion` updates Lenis and the shared flag while the page is open.
 

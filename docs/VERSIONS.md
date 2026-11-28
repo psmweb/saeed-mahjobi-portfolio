@@ -20,15 +20,24 @@ Dates and commits are taken from `git log` and the annotated tags. v0.1.0–v0.3
 
 After v1.0.0: `v1.0.x` fixes copy or visuals, `v1.x.0` adds a venture or feature, `v2.0.0` is a redesign.
 
-## Phase 1C
+## Phase 1
 
-Not tagged. Softens the Act 2–5 heading reveal on the v1.1.0 scene. Act 1 is not split.
+Not tagged. Motion and performance on the v1.1.0 scene. The three parts below landed together.
+
+### Scroll and clock
+
+- Scroll travel is 13 viewports (`SCROLL_VIEWPORTS`). Act travels are about 1.68 / 1.80 / 5.05 / 2.48 / 2.00 viewports.
+- Lenis: `lerp` 0.075, `wheelMultiplier` 0.6, `touchMultiplier` 1, `autoRaf: false`. One WebGL frame drives Lenis and the scene. No second damp.
+- `mapPresentationTime` eases through the 14.2s knot. The venture run stays linear. Handoff window is 0.35 viewport. Glides and the handoff mix use a cubic.
+- `preserveDrawingBuffer` is off.
+
+### Heading reveal
 
 - Each line is masked with `linear-gradient(to bottom, #000 70%, transparent)`, swept by `mask-position`, and padded `0.12em` block so ascenders, descenders, and Persian marks are not cut. No `overflow: hidden`.
 - Units animate opacity, blur (`8px` to `0`), and `translateY` (`0.5em` to `0`) on `cubic-bezier(0.22, 1, 0.36, 1)`.
 - Persian, RTL, and `fa` are one span per word (0.7s, 0.06s stagger, reading order). Latin is one span per character inside a nowrap word (0.5s, 0.015s stagger).
 - The split stays stable while it runs. `will-change` is removed when a unit finishes, the filter is set to `none`, and the resting render is the original string. The hero lockup stays Bebas Neue at `0.06em`.
-- Reduced motion is a live 0.18s opacity fade.
+- Reduced motion is a live 0.18s opacity fade. Reveal triggers still read overlay opacity on the 52s clock, so the longer travel does not change when a heading starts.
 
 ## v1.1.0
 

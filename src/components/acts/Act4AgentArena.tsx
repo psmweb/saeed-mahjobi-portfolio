@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { SplitReveal } from "@/components/motion/SplitReveal";
 import { TiltCard } from "@/components/motion/TiltCard";
-import { PRESENTATION_SECONDS, mapPresentationTime, readClock } from "@/components/scene/cinema";
+import { PRESENTATION_SECONDS, actSectionHeight, mapPresentationTime, readClock } from "@/components/scene/cinema";
 import { useLanguage } from "@/context/LanguageContext";
 import {
   arenaHud,
@@ -132,7 +132,7 @@ export function Act4AgentArena() {
 
   return (
     <>
-      <section id="arena" aria-label={dictionary.acts.arena.title} className="min-h-[100svh]">
+      <section id="arena" aria-label={dictionary.acts.arena.title} style={{ height: actSectionHeight(3) }}>
         <h2 className="sr-only">{dictionary.acts.arena.title}</h2>
         <p className="sr-only">{dictionary.acts.arena.body}</p>
       </section>

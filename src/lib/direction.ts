@@ -1,6 +1,10 @@
 import gsap from "gsap";
 import type { Direction, Locale } from "@/data/i18n/types";
 
+// Nothing in the page tweens through GSAP. Sleep the ticker so it does not
+// keep a second animation frame beside the WebGL clock.
+if (typeof window !== "undefined") gsap.ticker.sleep();
+
 export function directionFor(locale: Locale): Direction {
   return locale === "fa" ? "rtl" : "ltr";
 }
