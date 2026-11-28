@@ -10,11 +10,12 @@ import {
   finaleWipe,
   readClock,
 } from "@/components/scene/cinema";
+import { actHandoff, handoffBlur } from "@/lib/actHandoff";
 import { useLanguage } from "@/context/LanguageContext";
 import { en } from "@/data/i18n/en";
 import { fa } from "@/data/i18n/fa";
 import { resumes } from "@/data/resumes";
-import { scrollProgress, subscribeScroll } from "@/lib/scrollProgress";
+import { scrollProgress, subscribeScroll, subscribeSmoothed } from "@/lib/scrollProgress";
 
 const GITHUB = "https://github.com/psmweb";
 
@@ -25,6 +26,7 @@ type FinaleState = {
   locked: boolean;
   pulse: boolean;
   show: boolean;
+  blur: number;
 };
 
 const HIDDEN: FinaleState = {
@@ -34,11 +36,14 @@ const HIDDEN: FinaleState = {
   locked: false,
   pulse: false,
   show: false,
+  blur: 0,
 };
 
 function readFinale(): FinaleState {
-  const internal = readClock(scrollProgress.current).internal;
+  const handoff = actHandoff(scrollProgress.smoothed, scrollProgress.reducedMotion);
+  const internal = readClock(scrollProgress.smoothed).internal;
   const reduced = scrollProgress.reducedMotion;
+  const blurOf = (amount: number) => handoffBlur(4, amount, handoff);
   if (internal < 23.4) return HIDDEN;
   if (reduced) {
     if (internal < 23.45) return HIDDEN;
@@ -49,6 +54,7 @@ function readFinale(): FinaleState {
       locked: true,
       pulse: finaleApprovePulse(internal),
       show: true,
+      blur: 0,
     };
   }
   const wipe = finaleWipe(internal);
@@ -60,6 +66,7 @@ function readFinale(): FinaleState {
     number,
   ];
   const show = wipe.opacity > 0.02 || lines.some((opacity) => opacity > 0.02);
+  const presence = Math.max(wipe.opacity, ...lines);
   return {
     wipeProgress: wipe.progress,
     wipeOpacity: wipe.opacity,
@@ -67,6 +74,7 @@ function readFinale(): FinaleState {
     locked: finaleLocaleLock(internal),
     pulse: finaleApprovePulse(internal),
     show,
+    blur: blurOf(presence),
   };
 }
 
@@ -74,6 +82,7 @@ function same(a: FinaleState, b: FinaleState) {
   if (a.show !== b.show || a.locked !== b.locked || a.pulse !== b.pulse) return false;
   if (Math.abs(a.wipeOpacity - b.wipeOpacity) > 0.03) return false;
   if (Math.abs(a.wipeProgress - b.wipeProgress) > 0.03) return false;
+  if (Math.abs(a.blur - b.blur) > 0.08) return false;
   return a.lines.every((opacity, index) => Math.abs(opacity - b.lines[index]) < 0.03);
 }
 
@@ -97,14 +106,18 @@ export function Act5FinaleCommandCenter() {
   const persian = fa.finaleStage;
   const mirror = state.locked || locale === "fa";
 
-  useEffect(
-    () =>
-      subscribeScroll(() => {
-        const next = readFinale();
-        setState((current) => (same(current, next) ? current : next));
-      }),
-    [],
-  );
+  useEffect(() => {
+    const paint = () => {
+      const next = readFinale();
+      setState((current) => (same(current, next) ? current : next));
+    };
+    const stopScroll = subscribeScroll(paint);
+    const stopSmooth = subscribeSmoothed(paint);
+    return () => {
+      stopScroll();
+      stopSmooth();
+    };
+  }, []);
 
   const [kicker, name, closing, actions, languages] = state.lines;
   const wipeState = state.wipeOpacity > 0.02 ? "running" : state.wipeProgress >= 0.999 ? "done" : "idle";
@@ -123,6 +136,7 @@ export function Act5FinaleCommandCenter() {
         style={{
           opacity: state.wipeOpacity,
           left: beamLeft,
+          filter: state.blur > 0.2 ? `blur(${state.blur.toFixed(2)}px)` : undefined,
           background:
             "linear-gradient(90deg, rgba(255,210,122,0), rgba(255,210,122,0.55) 45%, #FFF3D6 50%, rgba(255,210,122,0.55) 55%, rgba(255,210,122,0))",
         }}
@@ -130,7 +144,11 @@ export function Act5FinaleCommandCenter() {
       {state.show ? (
         <div
           className="pointer-events-none fixed z-30 w-[min(41.25rem,calc(100%-9.25rem))] text-start"
-          style={{ top: "clamp(4.6rem, 11vh, 7.25rem)", right: "4.75rem" }}
+          style={{
+            top: "clamp(4.6rem, 11vh, 7.25rem)",
+            right: "4.75rem",
+            filter: state.blur > 0.2 ? `blur(${state.blur.toFixed(2)}px)` : undefined,
+          }}
           dir={mirror ? "rtl" : "ltr"}
           lang={mirror ? "fa" : "en"}
           data-act="5"

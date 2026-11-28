@@ -1,11 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { SplitReveal } from "@/components/motion/SplitReveal";
 import { TiltCard } from "@/components/motion/TiltCard";
-import { STAGE_ACCENTS, readClock, venturePlacardOpacity } from "@/components/scene/cinema";
+import { usePrefersReducedMotion } from "@/components/motion/usePointerMedia";
+import { useSmoothedProgress } from "@/components/motion/useSmoothedProgress";
+import {
+  PRESENTATION_SECONDS,
+  STAGE_ACCENTS,
+  mapPresentationTime,
+  readClock,
+  venturePlacardOpacity,
+} from "@/components/scene/cinema";
 import { useLanguage } from "@/context/LanguageContext";
-import { subscribeScroll } from "@/lib/scrollProgress";
+import {
+  actHandoff,
+  blendBoundaryOpacity,
+  handoffBlur,
+  transitionFilter,
+} from "@/lib/actHandoff";
 
 const ACCENT_DOTS: Record<number, readonly [string, string] | null> = {
   0: null,
@@ -18,17 +30,32 @@ const ACCENT_DOTS: Record<number, readonly [string, string] | null> = {
 
 export function Act3VentureOverlay() {
   const { dictionary, dir, locale } = useLanguage();
-  const [internal, setInternal] = useState(0);
-
-  useEffect(() => subscribeScroll((progress) => setInternal(readClock(progress).internal)), []);
-
-  const active = dictionary.ventureStages
-    .map((stage, index) => ({ stage, index, opacity: venturePlacardOpacity(internal, index) }))
-    .find((item) => item.opacity > 0.02);
+  const progress = useSmoothedProgress();
+  const reduced = usePrefersReducedMotion();
+  const handoff = actHandoff(progress, reduced);
+  const internal = readClock(progress).internal;
+  const ranked = dictionary.ventureStages.map((stage, index) => ({
+    stage,
+    index,
+    opacity: venturePlacardOpacity(internal, index),
+  }));
+  let active = ranked.find((item) => item.opacity > 0.02) ?? null;
+  const exitInternal =
+    handoff.boundary < 0
+      ? internal
+      : mapPresentationTime(Math.min(PRESENTATION_SECONDS, handoff.at + handoff.half));
+  const incomingExit = handoff.to === 2 ? venturePlacardOpacity(exitInternal, 0) : 0;
+  if (!active && handoff.to === 2 && handoff.pulse > 0 && incomingExit >= 0.45) {
+    const stage = dictionary.ventureStages[0];
+    if (stage) active = { stage, index: 0, opacity: 0 };
+  }
 
   if (!active) return null;
 
-  const { stage, index, opacity } = active;
+  const { stage, index } = active;
+  const naturalExit = handoff.to === 2 && index === 0 ? incomingExit : active.opacity;
+  const opacity = blendBoundaryOpacity(2, active.opacity, naturalExit, handoff);
+  const blur = handoffBlur(2, opacity, handoff);
   const revealed = opacity > 0.08;
   const settled = opacity > 0.92;
   const accent = STAGE_ACCENTS[index] ?? STAGE_ACCENTS[0];
@@ -42,7 +69,7 @@ export function Act3VentureOverlay() {
   return (
     <div
       className={`pointer-events-none fixed z-20 w-[min(17.75rem,calc(100%-5.25rem))] start-3 bottom-14 top-auto sm:bottom-auto sm:start-10 sm:w-[318px] ${parked}`}
-      style={{ opacity, transform: `translateX(${shift}px)` }}
+      style={{ opacity, transform: `translateX(${shift}px)`, filter: transitionFilter(blur) }}
       data-act="3"
       data-venture={stage.id}
       data-opacity={opacity.toFixed(2)}

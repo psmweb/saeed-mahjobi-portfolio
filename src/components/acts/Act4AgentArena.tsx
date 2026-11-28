@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { SplitReveal } from "@/components/motion/SplitReveal";
 import { TiltCard } from "@/components/motion/TiltCard";
-import { readClock } from "@/components/scene/cinema";
+import { PRESENTATION_SECONDS, mapPresentationTime, readClock } from "@/components/scene/cinema";
 import { useLanguage } from "@/context/LanguageContext";
 import {
   arenaHud,
@@ -15,9 +15,14 @@ import {
   type ArenaHud,
   type ArenaMode,
 } from "@/lib/arenaReplay";
-import { scrollProgress, subscribeScroll } from "@/lib/scrollProgress";
+import {
+  actHandoff,
+  blendBoundaryOpacity,
+  handoffBlur,
+} from "@/lib/actHandoff";
+import { scrollProgress, subscribeScroll, subscribeSmoothed } from "@/lib/scrollProgress";
 
-type OverlayState = ArenaHud & { mode: ArenaMode };
+type OverlayState = ArenaHud & { mode: ArenaMode; blur: number };
 
 const HIDDEN: OverlayState = {
   mode: "scroll",
@@ -27,22 +32,32 @@ const HIDDEN: OverlayState = {
   done: 0,
   phase: "online",
   shipped: false,
+  blur: 0,
 };
 
 function readOverlay(now: number): OverlayState {
-  const internal = readClock(scrollProgress.current).internal;
+  const handoff = actHandoff(scrollProgress.smoothed, scrollProgress.reducedMotion);
+  const internal = readClock(scrollProgress.smoothed).internal;
   const sample = sampleArenaTime(internal, now, scrollProgress.reducedMotion);
   const hud = arenaHud(sample.t);
-  if (sample.mode === "scroll") return { mode: sample.mode, ...hud };
-  return {
-    mode: sample.mode,
-    opacity: 1,
-    toast: sample.mode === "hold" ? 1 : hud.toast,
-    online: 5,
-    done: sample.mode === "hold" ? 5 : hud.done,
-    phase: sample.mode === "hold" ? "shipped" : hud.phase,
-    shipped: sample.mode === "hold" ? true : hud.shipped,
-  };
+  const base =
+    sample.mode === "scroll"
+      ? { mode: sample.mode, ...hud }
+      : {
+          mode: sample.mode,
+          opacity: 1,
+          toast: sample.mode === "hold" ? 1 : hud.toast,
+          online: 5,
+          done: sample.mode === "hold" ? 5 : hud.done,
+          phase: sample.mode === "hold" ? ("shipped" as const) : hud.phase,
+          shipped: sample.mode === "hold" ? true : hud.shipped,
+        };
+  const exitInternal =
+    handoff.boundary < 0
+      ? internal
+      : mapPresentationTime(Math.min(PRESENTATION_SECONDS, handoff.at + handoff.half));
+  const opacity = blendBoundaryOpacity(3, base.opacity, arenaHud(exitInternal).opacity, handoff);
+  return { ...base, opacity, blur: handoffBlur(3, opacity, handoff) };
 }
 
 function same(a: OverlayState, b: OverlayState) {
@@ -53,7 +68,8 @@ function same(a: OverlayState, b: OverlayState) {
     a.online === b.online &&
     a.done === b.done &&
     Math.abs(a.opacity - b.opacity) < 0.03 &&
-    Math.abs(a.toast - b.toast) < 0.03
+    Math.abs(a.toast - b.toast) < 0.03 &&
+    Math.abs(a.blur - b.blur) < 0.08
   );
 }
 
@@ -72,6 +88,7 @@ export function Act4AgentArena() {
       setState((current) => (same(current, next) ? current : next));
       if (isArenaPlaying()) frame = requestAnimationFrame(paint);
     };
+    const stopSmooth = subscribeSmoothed(() => paint());
     const stopScroll = subscribeScroll((progress) => {
       const internal = readClock(progress).internal;
       if (internal >= 22.85) seen = true;
@@ -95,6 +112,7 @@ export function Act4AgentArena() {
       window.clearTimeout(timer);
       cancelAnimationFrame(frame);
       stopScroll();
+      stopSmooth();
       stopArena();
     };
   }, []);
@@ -122,7 +140,10 @@ export function Act4AgentArena() {
         <>
           <div
             className="pointer-events-none fixed inset-x-3 top-[4.85rem] z-30 flex flex-col gap-2 sm:inset-x-8 sm:top-[5.35rem] sm:flex-row sm:items-start sm:justify-between"
-            style={{ opacity: state.opacity }}
+            style={{
+              opacity: state.opacity,
+              filter: state.blur > 0.2 ? `blur(${state.blur.toFixed(2)}px)` : undefined,
+            }}
             data-act="4"
             data-phase={state.phase}
             data-mode={state.mode}

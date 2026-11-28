@@ -20,6 +20,14 @@ Dates and commits are taken from `git log` and the annotated tags. v0.1.0–v0.3
 
 After v1.0.0: `v1.0.x` fixes copy or visuals, `v1.x.0` adds a venture or feature, `v2.0.0` is a redesign.
 
+## v1.1.0
+
+Not tagged. Motion upgrade on the v1.0.0 scene. a, b, and c are all landed.
+
+- **a.** Motion tokens, the damped scroll clock, and one Catmull-Rom camera curve per act segment. Hold knots stay exact.
+- **b.** Magnetic controls, card tilt, and split text reveals. Pointer follow is off for touch and reduced motion. Act 1 hero copy is not split.
+- **c.** Act handoff from `scrollProgress.smoothed` (overlay crossfade, light lerp, DOM depth veil), a high/medium/low performance tier, and a live `prefers-reduced-motion` path. Act 4 stays at 145 draw calls. Act 5 stays at 127. Resting frames stay on the approved picture.
+
 ## v1.1.0-b
 
 Not tagged. DOM micro-interactions on the v1.1.0-a scene.

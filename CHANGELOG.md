@@ -2,6 +2,24 @@
 
 All notable changes to this portfolio are documented here. The format follows Keep a Changelog. Versions follow Semantic Versioning.
 
+## [1.1.0-c] - 2026-11-28
+
+Act handoff, a load-time performance tier, and a live reduced-motion path. v1.1.0-a, v1.1.0-b, and v1.1.0-c together are the v1.1.0 motion upgrade. This part is not tagged. Resting frames stay on the approved picture.
+
+### Added
+
+- `src/lib/actHandoff.ts`. Between the four act cuts the damped clock drives an overlay crossfade, a light lerp, and a depth-of-field veil. The window is `duration.scene` (1.1s of the 52s show). Nothing in the handoff uses a timer. Seek and the chapter chips land on the pose for that progress, with the veil unmounted outside a window.
+- `TransitionVeil`. A DOM vignette. The high tier adds a 2.2px backdrop blur. Low tier and a runtime decline skip it. No `@react-three/postprocessing` pass.
+- Per-act light presets. Key, hemisphere, fog, and the arena rig lerp only while the window is open, then return to the approved rig.
+- `src/lib/performanceTier.ts`. High, medium, and low from viewport width, pixel ratio, core count, `deviceMemory` when present, and a coarse pointer. Pixel-ratio caps are 2, 1.5, and 1.25. Ship-burst sparks are 36, 18, and 10. The starfield stays at 2600 so the hold frames match. `PerformanceMonitor` can drop the burst to 8 and skip the veil.
+- A live `prefers-reduced-motion` listener. Lenis turns smoothing off (`smoothWheel` false, `lerp` 1). The handoff becomes a short opacity fade (`duration.micro`) with no blur and no light lerp. Magnetic, tilt, and split reveals stay off. Robot idle clocks stay at rest.
+
+### Unchanged
+
+- Copy, layout, fonts, and colors at rest. The Act 1 hero stays Bebas Neue at `0.06em`, with the frameless portrait slot.
+- Draw calls. Act 4 shipped is 145. Act 5 is 127.
+- First Load JS moved from 321 kB to 324 kB. The route chunk moved from 174 kB to 177 kB.
+
 ## [1.1.0-b] - 2026-11-28
 
 DOM micro-interactions. The scene, camera, and cinema clock are unchanged. Resting layouts match the previous hold frames.

@@ -38,12 +38,29 @@ export function mapPresentationTime(tr: number): number {
   return 27.5;
 }
 
+/** Internal-clock cuts between the five acts. `chapterIndex` reads these. */
+export const ACT_BOUNDARY_INTERNAL = [4.8, 9.9, 17.6, 23.5] as const;
+
 export function chapterIndex(internalT: number): number {
-  if (internalT < 4.8) return 0;
-  if (internalT < 9.9) return 1;
-  if (internalT < 17.6) return 2;
-  if (internalT < 23.5) return 3;
+  if (internalT < ACT_BOUNDARY_INTERNAL[0]) return 0;
+  if (internalT < ACT_BOUNDARY_INTERNAL[1]) return 1;
+  if (internalT < ACT_BOUNDARY_INTERNAL[2]) return 2;
+  if (internalT < ACT_BOUNDARY_INTERNAL[3]) return 3;
   return 4;
+}
+
+/** Inverse of `mapPresentationTime` on the piecewise 0–52s clock. */
+export function presentationForInternal(internal: number): number {
+  const time = Math.min(27.5, Math.max(0, internal));
+  for (let i = 0; i < KN.length - 1; i += 1) {
+    const [presentA, internalA] = KN[i];
+    const [presentB, internalB] = KN[i + 1];
+    if (time <= internalB) {
+      const span = internalB - internalA;
+      return span === 0 ? presentA : presentA + ((presentB - presentA) * (time - internalA)) / span;
+    }
+  }
+  return PRESENTATION_SECONDS;
 }
 
 const PRODUCT_LOG_AT = STW.map(([start]) => start - 0.05);

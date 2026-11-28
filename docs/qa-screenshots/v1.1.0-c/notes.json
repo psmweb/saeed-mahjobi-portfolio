@@ -1,0 +1,592 @@
+{
+  "beforeSite": "http://127.0.0.1:3020",
+  "afterSite": "http://127.0.0.1:3021",
+  "firstLoadJs": {
+    "before": "321 kB",
+    "after": "324 kB",
+    "routeBefore": "174 kB",
+    "routeAfter": "177 kB"
+  },
+  "holds": {
+    "before": [
+      {
+        "folder": "before",
+        "view": "desktop",
+        "progress": 0,
+        "file": "docs/qa-screenshots/v1.1.0-c/before/desktop-p0.0.png",
+        "calls": "17",
+        "triangles": "5956",
+        "phase": "hidden",
+        "tier": "",
+        "dpr": "",
+        "handoff": "",
+        "sparks": "",
+        "errors": []
+      },
+      {
+        "folder": "before",
+        "view": "desktop",
+        "progress": 0.3,
+        "file": "docs/qa-screenshots/v1.1.0-c/before/desktop-p0.3.png",
+        "calls": "17",
+        "triangles": "5956",
+        "phase": "hidden",
+        "tier": "",
+        "dpr": "",
+        "handoff": "",
+        "sparks": "",
+        "errors": []
+      },
+      {
+        "folder": "before",
+        "view": "desktop",
+        "progress": 0.5,
+        "file": "docs/qa-screenshots/v1.1.0-c/before/desktop-p0.5.png",
+        "calls": "20",
+        "triangles": "1978",
+        "phase": "hidden",
+        "tier": "",
+        "dpr": "",
+        "handoff": "",
+        "sparks": "",
+        "errors": []
+      },
+      {
+        "folder": "before",
+        "view": "desktop",
+        "progress": 0.7,
+        "file": "docs/qa-screenshots/v1.1.0-c/before/desktop-p0.7.png",
+        "calls": "20",
+        "triangles": "1978",
+        "phase": "online",
+        "tier": "",
+        "dpr": "",
+        "handoff": "",
+        "sparks": "",
+        "errors": []
+      },
+      {
+        "folder": "before",
+        "view": "desktop",
+        "progress": 1,
+        "file": "docs/qa-screenshots/v1.1.0-c/before/desktop-p1.0.png",
+        "calls": "127",
+        "triangles": "36166",
+        "phase": "hidden",
+        "tier": "",
+        "dpr": "",
+        "handoff": "",
+        "sparks": "",
+        "errors": []
+      },
+      {
+        "folder": "before",
+        "view": "mobile",
+        "progress": 0,
+        "file": "docs/qa-screenshots/v1.1.0-c/before/mobile-p0.0.png",
+        "calls": "10",
+        "triangles": "18",
+        "phase": "hidden",
+        "tier": "",
+        "dpr": "",
+        "handoff": "",
+        "sparks": "",
+        "errors": []
+      },
+      {
+        "folder": "before",
+        "view": "mobile",
+        "progress": 0.3,
+        "file": "docs/qa-screenshots/v1.1.0-c/before/mobile-p0.3.png",
+        "calls": "17",
+        "triangles": "1972",
+        "phase": "hidden",
+        "tier": "",
+        "dpr": "",
+        "handoff": "",
+        "sparks": "",
+        "errors": []
+      },
+      {
+        "folder": "before",
+        "view": "mobile",
+        "progress": 0.5,
+        "file": "docs/qa-screenshots/v1.1.0-c/before/mobile-p0.5.png",
+        "calls": "15",
+        "triangles": "1968",
+        "phase": "hidden",
+        "tier": "",
+        "dpr": "",
+        "handoff": "",
+        "sparks": "",
+        "errors": []
+      },
+      {
+        "folder": "before",
+        "view": "mobile",
+        "progress": 0.7,
+        "file": "docs/qa-screenshots/v1.1.0-c/before/mobile-p0.7.png",
+        "calls": "15",
+        "triangles": "1968",
+        "phase": "online",
+        "tier": "",
+        "dpr": "",
+        "handoff": "",
+        "sparks": "",
+        "errors": []
+      },
+      {
+        "folder": "before",
+        "view": "mobile",
+        "progress": 1,
+        "file": "docs/qa-screenshots/v1.1.0-c/before/mobile-p1.0.png",
+        "calls": "127",
+        "triangles": "36166",
+        "phase": "hidden",
+        "tier": "",
+        "dpr": "",
+        "handoff": "",
+        "sparks": "",
+        "errors": []
+      }
+    ],
+    "after": [
+      {
+        "folder": "after",
+        "view": "desktop",
+        "progress": 0,
+        "file": "docs/qa-screenshots/v1.1.0-c/after/desktop-p0.0.png",
+        "calls": "17",
+        "triangles": "5956",
+        "phase": "hidden",
+        "tier": "high",
+        "dpr": "1.00",
+        "handoff": "0.000",
+        "sparks": "36",
+        "errors": []
+      },
+      {
+        "folder": "after",
+        "view": "desktop",
+        "progress": 0.3,
+        "file": "docs/qa-screenshots/v1.1.0-c/after/desktop-p0.3.png",
+        "calls": "17",
+        "triangles": "5956",
+        "phase": "hidden",
+        "tier": "high-degraded",
+        "dpr": "1.00",
+        "handoff": "0.000",
+        "sparks": "8",
+        "errors": []
+      },
+      {
+        "folder": "after",
+        "view": "desktop",
+        "progress": 0.5,
+        "file": "docs/qa-screenshots/v1.1.0-c/after/desktop-p0.5.png",
+        "calls": "20",
+        "triangles": "1978",
+        "phase": "hidden",
+        "tier": "high-degraded",
+        "dpr": "1.00",
+        "handoff": "0.000",
+        "sparks": "8",
+        "errors": []
+      },
+      {
+        "folder": "after",
+        "view": "desktop",
+        "progress": 0.7,
+        "file": "docs/qa-screenshots/v1.1.0-c/after/desktop-p0.7.png",
+        "calls": "20",
+        "triangles": "1978",
+        "phase": "online",
+        "tier": "high-degraded",
+        "dpr": "1.00",
+        "handoff": "0.000",
+        "sparks": "8",
+        "errors": []
+      },
+      {
+        "folder": "after",
+        "view": "desktop",
+        "progress": 1,
+        "file": "docs/qa-screenshots/v1.1.0-c/after/desktop-p1.0.png",
+        "calls": "127",
+        "triangles": "36166",
+        "phase": "hidden",
+        "tier": "high-degraded",
+        "dpr": "1.00",
+        "handoff": "0.000",
+        "sparks": "8",
+        "errors": []
+      },
+      {
+        "folder": "after",
+        "view": "mobile",
+        "progress": 0,
+        "file": "docs/qa-screenshots/v1.1.0-c/after/mobile-p0.0.png",
+        "calls": "10",
+        "triangles": "18",
+        "phase": "hidden",
+        "tier": "low",
+        "dpr": "1.00",
+        "handoff": "0.000",
+        "sparks": "10",
+        "errors": []
+      },
+      {
+        "folder": "after",
+        "view": "mobile",
+        "progress": 0.3,
+        "file": "docs/qa-screenshots/v1.1.0-c/after/mobile-p0.3.png",
+        "calls": "17",
+        "triangles": "1972",
+        "phase": "hidden",
+        "tier": "low-degraded",
+        "dpr": "1.00",
+        "handoff": "0.000",
+        "sparks": "8",
+        "errors": []
+      },
+      {
+        "folder": "after",
+        "view": "mobile",
+        "progress": 0.5,
+        "file": "docs/qa-screenshots/v1.1.0-c/after/mobile-p0.5.png",
+        "calls": "15",
+        "triangles": "1968",
+        "phase": "hidden",
+        "tier": "low-degraded",
+        "dpr": "1.00",
+        "handoff": "0.000",
+        "sparks": "8",
+        "errors": []
+      },
+      {
+        "folder": "after",
+        "view": "mobile",
+        "progress": 0.7,
+        "file": "docs/qa-screenshots/v1.1.0-c/after/mobile-p0.7.png",
+        "calls": "15",
+        "triangles": "1968",
+        "phase": "online",
+        "tier": "low-degraded",
+        "dpr": "1.00",
+        "handoff": "0.000",
+        "sparks": "8",
+        "errors": []
+      },
+      {
+        "folder": "after",
+        "view": "mobile",
+        "progress": 1,
+        "file": "docs/qa-screenshots/v1.1.0-c/after/mobile-p1.0.png",
+        "calls": "127",
+        "triangles": "36166",
+        "phase": "hidden",
+        "tier": "low-degraded",
+        "dpr": "1.00",
+        "handoff": "0.000",
+        "sparks": "8",
+        "errors": []
+      }
+    ]
+  },
+  "diffs": [
+    {
+      "name": "desktop-p0.0.png",
+      "changed": 128,
+      "maxDelta": 44,
+      "meanDelta": 0.004,
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "name": "desktop-p0.3.png",
+      "changed": 0,
+      "maxDelta": 0,
+      "meanDelta": 0,
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "name": "desktop-p0.5.png",
+      "changed": 0,
+      "maxDelta": 0,
+      "meanDelta": 0,
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "name": "desktop-p0.7.png",
+      "changed": 0,
+      "maxDelta": 0,
+      "meanDelta": 0,
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "name": "desktop-p1.0.png",
+      "changed": 61741,
+      "maxDelta": 248,
+      "meanDelta": 4.512,
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "name": "mobile-p0.0.png",
+      "changed": 0,
+      "maxDelta": 2,
+      "meanDelta": 0.001,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "name": "mobile-p0.3.png",
+      "changed": 0,
+      "maxDelta": 1,
+      "meanDelta": 0,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "name": "mobile-p0.5.png",
+      "changed": 0,
+      "maxDelta": 0,
+      "meanDelta": 0,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "name": "mobile-p0.7.png",
+      "changed": 0,
+      "maxDelta": 3,
+      "meanDelta": 0.001,
+      "width": 390,
+      "height": 844
+    },
+    {
+      "name": "mobile-p1.0.png",
+      "changed": 8319,
+      "maxDelta": 228,
+      "meanDelta": 1.785,
+      "width": 390,
+      "height": 844
+    }
+  ],
+  "transitionDesktop": {
+    "reduced": false,
+    "current": 0.26781798245614036,
+    "smoothed": 0.26781798245614036,
+    "tier": "high",
+    "dprCap": 2,
+    "sparks": 36,
+    "stars": 2600,
+    "dof": true,
+    "degraded": false,
+    "smoothWheel": true,
+    "lerp": 0.1,
+    "handoff": {
+      "pulse": 0.9999241403705567,
+      "mix": 0.5192988841574263,
+      "from": 1,
+      "to": 2,
+      "at": 13.922222222222222,
+      "half": 0.55,
+      "reduced": false,
+      "boundary": 1
+    }
+  },
+  "transitionAct1": {
+    "reduced": false,
+    "current": 0.12911184210526316,
+    "smoothed": 0.12911184210526316,
+    "tier": "high",
+    "dprCap": 2,
+    "sparks": 8,
+    "stars": 2600,
+    "dof": false,
+    "degraded": true,
+    "smoothWheel": true,
+    "lerp": 0.1,
+    "handoff": {
+      "pulse": 0.9998440298029277,
+      "mix": 0.47251502406292223,
+      "from": 0,
+      "to": 1,
+      "at": 6.72,
+      "half": 0.55,
+      "reduced": false,
+      "boundary": 0
+    }
+  },
+  "transitionMobile": {
+    "reduced": false,
+    "current": 0.26781542056074764,
+    "smoothed": 0.26781542056074764,
+    "tier": "low",
+    "dprCap": 1.25,
+    "sparks": 10,
+    "stars": 2600,
+    "dof": false,
+    "degraded": false,
+    "smoothWheel": true,
+    "lerp": 0.1,
+    "handoff": {
+      "pulse": 0.9999287543394162,
+      "mix": 0.5187118299503092,
+      "from": 1,
+      "to": 2,
+      "at": 13.922222222222222,
+      "half": 0.55,
+      "reduced": false,
+      "boundary": 1
+    }
+  },
+  "chapter": {
+    "finale": {
+      "current": 0.9858860220517942,
+      "smoothed": 0.6191788048600481,
+      "pulse": 0,
+      "boundary": -1
+    },
+    "command": {
+      "current": 0,
+      "smoothed": 0.009342028032108042,
+      "pulse": 0
+    },
+    "act1Opacity": "1.00",
+    "veil": "absent"
+  },
+  "reducedHold": {
+    "reduced": true,
+    "current": 0.5,
+    "smoothed": 0.5,
+    "tier": "high",
+    "dprCap": 2,
+    "sparks": 36,
+    "stars": 2600,
+    "dof": false,
+    "degraded": false,
+    "smoothWheel": false,
+    "lerp": 1,
+    "handoff": {
+      "pulse": 0,
+      "mix": 0,
+      "from": 0,
+      "to": 1,
+      "at": 0,
+      "half": 0,
+      "reduced": true,
+      "boundary": -1
+    }
+  },
+  "reducedBoundary": {
+    "reduced": true,
+    "current": 0.26781798245614036,
+    "smoothed": 0.26781798245614036,
+    "tier": "high",
+    "dprCap": 2,
+    "sparks": 8,
+    "stars": 2600,
+    "dof": false,
+    "degraded": true,
+    "smoothWheel": false,
+    "lerp": 1,
+    "handoff": {
+      "pulse": 0.9971682722664293,
+      "mix": 0.6088570062632079,
+      "from": 1,
+      "to": 2,
+      "at": 13.922222222222222,
+      "half": 0.09,
+      "reduced": true,
+      "boundary": 1
+    }
+  },
+  "reducedProbe": {
+    "motion": {
+      "reduced": true,
+      "current": 0.26781798245614036,
+      "smoothed": 0.26781798245614036,
+      "tier": "high",
+      "dprCap": 2,
+      "sparks": 8,
+      "stars": 2600,
+      "dof": false,
+      "degraded": true,
+      "smoothWheel": false,
+      "lerp": 1,
+      "handoff": {
+        "pulse": 0.9971682722664293,
+        "mix": 0.6088570062632079,
+        "from": 1,
+        "to": 2,
+        "at": 13.922222222222222,
+        "half": 0.09,
+        "reduced": true,
+        "boundary": 1
+      }
+    },
+    "cardFilter": "none",
+    "magneticTransform": ""
+  },
+  "throttleStats": {
+    "fps": 4.4,
+    "tier": "low",
+    "dprCap": 1.25,
+    "dpr": "1.25",
+    "sparks": 8,
+    "stars": 2600,
+    "dof": false,
+    "degraded": true,
+    "cores": 4,
+    "memory": 16,
+    "coarse": true,
+    "width": 390
+  },
+  "summary": {
+    "drawCalls": {
+      "act4Shipped": 145,
+      "act5": 127,
+      "act1": 32,
+      "act2": 15
+    },
+    "pixelDiff": {
+      "desktop-p0.0": "128 px over delta 9, all inside a 7x15 caret at (86,770); max channel delta 44",
+      "desktop-p0.3": "identical",
+      "desktop-p0.5": "identical",
+      "desktop-p0.7": "identical",
+      "desktop-p1.0": "robot idle only (y 552-826); copy matches",
+      "mobile-p0.0": "max channel delta 2",
+      "mobile-p0.3": "max channel delta 1",
+      "mobile-p0.5": "identical",
+      "mobile-p0.7": "max channel delta 3",
+      "mobile-p1.0": "robot idle only"
+    },
+    "chapterSeek": {
+      "finale": "current === smoothed === 0.9868, pulse 0, veil absent, finale copy visible",
+      "command": "current === smoothed === 0, pulse 0, veil absent, act 1 opacity 1.00, filter none"
+    },
+    "throttle": {
+      "fps": 4.4,
+      "tier": "low",
+      "dprCap": 1.25,
+      "dpr": "1.25",
+      "sparks": 8,
+      "stars": 2600,
+      "dof": false,
+      "degraded": true,
+      "cores": 4,
+      "memory": 16,
+      "coarse": true,
+      "width": 390
+    },
+    "handoffAtAct2Act3": {
+      "desktop": "veil dof, backdrop blur 2.2px, act 3 placard opacity 0.52 blur 3.85px, tier high, sparks 36",
+      "mobile": "tier low, dpr cap 1.25, sparks 10, dof off",
+      "reduced": "smoothWheel false, lerp 1, smoothed === current, filter none, magnetic transform empty, half window 0.09s"
+    }
+  }
+}
