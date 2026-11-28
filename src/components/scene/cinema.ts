@@ -146,6 +146,14 @@ const presentationMarks = [
   PRESENTATION_SECONDS,
 ];
 
+/**
+ * Scroll progress where Act 3 opens.
+ * The cut is `ACT_BOUNDARY_INTERNAL[1]` (internal 9.9), inverted through the
+ * monotone time map and divided by the 52s show.
+ */
+export const ACT3_SCROLL_START =
+  presentationForInternal(ACT_BOUNDARY_INTERNAL[1]) / PRESENTATION_SECONDS;
+
 /** Scroll travel of each act, in viewports. Sum is `SCROLL_VIEWPORTS`. */
 export const ACT_SCROLL_VIEWPORTS: readonly number[] = presentationMarks.slice(0, -1).map((start, index) => {
   return ((presentationMarks[index + 1] - start) / PRESENTATION_SECONDS) * SCROLL_VIEWPORTS;

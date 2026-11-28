@@ -12,14 +12,3 @@ export const VENTURE_TEXTURES = {
 } as const;
 
 export type VentureTextureId = keyof typeof VENTURE_TEXTURES;
-
-/**
- * Act 3 opens at internal 9.9. That presentation time is 1253/90 seconds
- * (the 13.7s–14.2s knot across internal 9.7–10.15). Scroll progress divides
- * by the 52s show. Plates start loading 0.1 before that progress.
- */
-export const VENTURE_TEXTURE_LOAD_AT = 1253 / 90 / 52 - 0.1;
-
-export function ventureTexturesDue(progress: number) {
-  return progress >= VENTURE_TEXTURE_LOAD_AT;
-}

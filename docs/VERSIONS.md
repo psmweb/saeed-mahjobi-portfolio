@@ -39,6 +39,10 @@ Not tagged. Motion and performance on the v1.1.0 scene. The three parts below la
 - The split stays stable while it runs. `will-change` is removed when a unit finishes, the filter is set to `none`, and the resting render is the original string. The hero lockup stays Bebas Neue at `0.06em`.
 - Reduced motion is a live 0.18s opacity fade. Reveal triggers still read overlay opacity on the 52s clock, so the longer travel does not change when a heading starts.
 
+### Portrait
+
+The frameless Act 1 slot is unchanged. The approved editorial cutout was not in the stores this integration could read, so no portrait file was added and no face was drawn. The slot stays the amber and obsidian glow until `public/portrait/saeed.png` is supplied.
+
 ## v1.1.0
 
 Not tagged. Motion upgrade on the v1.0.0 scene. a, b, and c are all landed.
@@ -49,7 +53,7 @@ Not tagged. Motion upgrade on the v1.0.0 scene. a, b, and c are all landed.
 
 ## Venture textures
 
-Not a version tag. The six Act 3 plates shipped as 1600×3600 PNGs (2,628,341 bytes). They are now 1024×2304 WebP at quality 82 (467,902 bytes), content-hashed, and fetched only within 0.1 scroll progress of Act 3. `next.config.ts` `headers()` marks `/textures/:path*` and `/images/:path*` `public, max-age=31536000, immutable`. The pipeline is `npm run optimize:textures`. Detail is in `AGENTS.md`.
+Not a version tag. The six Act 3 plates shipped as 1600×3600 PNGs (2,628,341 bytes). They are now 1024×2304 WebP at quality 82 (467,902 bytes), content-hashed, and fetched at `ACT3_SCROLL_START - 0.1` on the 13-viewport clock. `next.config.ts` `headers()` marks `/textures/:path*` and `/images/:path*` `public, max-age=31536000, immutable`. The pipeline is `npm run optimize:textures`. Detail is in `AGENTS.md`.
 
 ## v1.1.0-b
 
