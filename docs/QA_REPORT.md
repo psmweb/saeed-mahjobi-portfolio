@@ -1,3 +1,59 @@
+# QA report — v1.0.0
+
+v1.0.0 re-checked the approved v0.9.2 scene. Visuals, copy, and layout did not change. The v0.9.2 sections below stay the record of the last visual pass. Frames in `docs/qa-screenshots/` are that pass. Reproduce a capture with `node scripts/qa/capture.mjs <site> <reference>`. Draw calls: `node scripts/qa/measure-draws.mjs <site>`.
+
+## Release regression (2026-11-28)
+
+Production server after `npm ci` and `npm run build`, then `npm run start`. Viewport for draw calls: 1440×900, device pixel ratio 1. WebGL renderer in this VM: ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero))), SwiftShader driver.
+
+### Commands
+
+`npm ci`, `npm run build`, `npx tsc --noEmit`, `npm run lint`, and `npm run check:catalog` passed.
+
+### Draw calls
+
+Remeasured with `scripts/qa/measure-draws.mjs`. Every sample matches v0.9.2. `errors` was empty.
+
+| Sample | Internal t | Calls | Triangles |
+| --- | ---: | ---: | ---: |
+| Act 1 | 2.0 | 32 | 14,252 |
+| Act 2 | 7.2 | 15 | 3,792 |
+| Venture 1 | 10.65 | 18 | 1,974 |
+| Venture 2 | 11.91 | 29 | 2,950 |
+| Venture 3 | 13.18 | 30 | 3,324 |
+| Venture 4 | 14.44 | 22 | 1,982 |
+| Venture 5 | 15.71 | 23 | 1,984 |
+| Venture 6 | 16.97 | 20 | 1,978 |
+| Act 4 building | 20.4 | 139 | 38,314 |
+| Act 4 beams | 22.3 | 140 | 38,316 |
+| Act 4 shipped | 23.15 | 145 | 38,166 |
+| Act 5 | 26.2 | 127 | 36,166 |
+
+Act 4 peak is 145 calls. Act 5 is 127. Both stay under 150.
+
+### Capture
+
+`scripts/qa/capture.mjs` walked every act, including the six venture stages, at 1440×900 and 390×844, in English and Persian. Console errors, page errors, and failed network responses were empty. That set includes hydration failures, which surface as console or page errors. Chapter chips landed on acts 1–5 in order (`aria-current` indexes 0–4). With WebGL context creation blocked, the page still shows "3D stage unavailable on this device." plus the hero, chapter, and act copy.
+
+The reference font and texture pack is not in this repo, so the four comparison sheets were not replaced. They remain the v0.9.2 pairs.
+
+### Lighthouse
+
+Lighthouse 12.8.2, Headless Chrome 157, against `http://127.0.0.1:3020`. This VM composites WebGL with SwiftShader, so the Performance score understates a desktop or phone GPU. Main-thread time is the reason both Performance scores sit where they do: desktop total blocking time was 39,680 ms and time to interactive was 45.7 s. Mobile total blocking time was 159,530 ms and time to interactive was 183.5 s. Cumulative layout shift was 0 on both.
+
+| Form factor | Performance | Accessibility | Best Practices | SEO |
+| --- | ---: | ---: | ---: | ---: |
+| Desktop | 67 | 100 | 100 | 100 |
+| Mobile | 54 | 100 | 100 | 100 |
+
+Accessibility, best practices, and SEO scored 100 on both form factors. No alt text, label, meta description, `lang`, or `dir` change was required. The document already has a meta description, Open Graph title, `lang="en"`, and `dir="ltr"`, and the language toggle updates `lang` and `dir`.
+
+### Catalog grep
+
+`npm run check:catalog` passed. A separate search of `src/`, text files under `public/`, `docs/`, `README.md`, `AGENTS.md`, `CHANGELOG.md`, and `ARCHITECTURE.md`, plus the text of both resume PDFs, found no standalone match for the blocked tokens. An unanchored search for one of those tokens also hits ordinary English words such as `material` and `editorial`. Those are not the blocked term, and no copy was changed.
+
+---
+
 # QA report — v0.9.2
 
 Phase 6.2 micro-polish on top of the v0.9.1 parity pass. Frames are in `docs/qa-screenshots/`. Reproduce them with `node scripts/qa/capture.mjs <site> <reference>`. Draw calls: `node scripts/qa/measure-draws.mjs <site>`.

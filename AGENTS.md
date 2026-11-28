@@ -4,11 +4,13 @@ Onboarding for anyone changing the Saeed Mahjobi portfolio (`ONE COMMAND`). Read
 
 ## What this repo is
 
-A Next.js 15 App Router, React 19, TypeScript, Tailwind CSS single page. English is LTR. Persian is RTL (`Vazirmatn`). The current release is **v0.9.2**: Act 2 archive screens and year scale, plus the Act 4 shipped spacing. Every act stays under 150 draw calls. Evidence frames live in `docs/qa-screenshots/`.
+A Next.js 15 App Router, React 19, TypeScript, Tailwind CSS single page. English is LTR. Persian is RTL (`Vazirmatn`). Name on the page: **Saeed Mahjobi** (`سعید محجوبی`). Languages: English (Fluent / Professional) and Persian (Native).
 
-Name on the page: **Saeed Mahjobi** (`سعید محجوبی`). Languages: English (Fluent / Professional) and Persian (Native).
+## Live status
 
-## Architecture
+**v1.0.0 released.** The shipped scene is the approved v0.9.2 visual build: Act 2 archive screens and year scale, plus the Act 4 shipped spacing. No visual, copy, or layout change landed in v1.0.0. Act 4 peaks at 145 draw calls and Act 5 at 127. Both stay under 150. Evidence frames live in `docs/qa-screenshots/`. The release check, including Lighthouse, is in `docs/QA_REPORT.md`.
+
+## Architecture and file map
 
 - `src/app/` — shell, fonts, tokens.
 - `src/context/LanguageContext.tsx` — instant `en` / `fa` switch. Sets `lang` and `dir`.
@@ -40,10 +42,11 @@ Name on the page: **Saeed Mahjobi** (`سعید محجوبی`). Languages: Englis
 
 Match `docs/reference/onecommand3d_main.js` and `docs/reference/onecommand3d_index.html` for camera curves, PBR materials, lighting, the glass HUD, the five-act clock, six venture stages, five robot figurines, and the Persian mirror.
 
-Two approved deviations, already locked:
+## Known deviations
 
-1. Hero title font is **Bebas Neue**, weight 400, tracking `0.06em`. English Act 1 is a 3D extrusion (`public/fonts/bebas-neue.json`, drei `Text3D`). The HTML `h1` stays for accessibility, visually hidden on desktop and shown on small screens. Persian Act 1 is HTML Vazirmatn, not 3D. Act 5 English lockup stays Bebas Neue.
-2. The portrait is frameless. No arched obsidian-gold frame. The slot sits where the reference arch sits. Do not alter the face when the file arrives.
+1. Hero title font is **Bebas Neue**, weight 400, tracking `0.06em`, by owner choice. English Act 1 is a 3D extrusion (`public/fonts/bebas-neue.json`, drei `Text3D`). The HTML `h1` stays for accessibility, visually hidden on desktop and shown on small screens. Persian Act 1 is HTML Vazirmatn, not 3D. Act 5 English lockup stays Bebas Neue.
+2. The portrait is frameless and still waiting for the owner's photo. No arched obsidian-gold frame. The slot sits where the reference arch sits. The file, when it arrives, is `public/portrait/saeed.png`, a frameless cut-out. Do not alter the face.
+3. Venture and ship statuses are labelled `Live simulation · demo` (`شبیه‌سازی زنده · دمو`).
 
 ## SemVer
 

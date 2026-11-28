@@ -2,21 +2,32 @@
 
 Semantic versions for ONE COMMAND. Tags are annotated. Each tag ships with `CHANGELOG.md` and this file.
 
-| Version | Phase | Scope | Status |
-| --- | --- | --- | --- |
-| v0.1.0 | 0 | Governance, living docs, hero font hook, resumes, venture textures | Released |
-| v0.2.0 | 1 | Obsidian atmosphere, cinema camera, persistent HUD | Released |
-| v0.3.0 | 2 | Act 1 hero and Act 2 evolution | Released |
-| v0.4.0 | 3A | Venture stages 1–3 (Mikham + Miara, Battery Store, Trader Bot) | Released |
-| v0.5.0 | 3B | Venture stages 4–6 (Honarmarket, Yadaki Yar, Sandoq-Yar) | Released |
-| v0.6.0 | 4 | Five PBR robot figurines and the arena demo | Released |
-| v0.7.0 | 5 | Persian RTL mirror and command-center finale | Released |
-| v0.9.0 | 6 | Visual parity, responsive, and performance audit | Released |
-| v0.9.1 | 6.1 | Targeted parity: extruded hero, Act 2 archive, Persian type, framing | Released |
-| v0.9.2 | 6.2 | Act 2 screen mockups and year scale, Act 4 shipped spacing | Released |
-| v1.0.0 | 7 | Production release | Not started |
+Dates and commits are taken from `git log` and the annotated tags. v0.1.0–v0.3.0 were tagged on `main` and have no pull request. v0.4.0–v0.9.2 landed through pull requests #1–#7. The commit column is the merge commit for those pull requests, and the tagged commit when there was no merge. v1.0.0's pull request is this release. Its merge commit does not exist until that pull request merges. The commit shown for v1.0.0 is the tagged release commit.
+
+| Version | Date | PR | Commit | Highlights |
+| --- | --- | --- | --- | --- |
+| v0.1.0 | 2026-11-27 22:03:43 +0000 | — | `b490f7cb11ffc556a75a9ae4a6185d6a9fe9bde9` | Governance, living docs, hero font hook, resumes, venture textures |
+| v0.2.0 | 2026-11-27 22:17:48 +0000 | — | `247a990ba0b08362030fd062550bfe4849c066de` | Obsidian atmosphere, cinema camera, persistent HUD |
+| v0.3.0 | 2026-11-27 22:33:40 +0000 | — | `1cd8591406c451c1acff4265d513588a6a08e4c5` | Act 1 hero and Act 2 evolution |
+| v0.4.0 | 2026-11-28 02:25:08 +0330 | #1 | `3a1415473910fbeb7b6a8c96ba3ff367f8388a23` | Venture stages 1–3: Mikham + Miara, Battery Store, Trader Bot |
+| v0.5.0 | 2026-11-28 02:46:19 +0330 | #2 | `2c3a2cb5a25762cd7940a6b2a99bf1fd8cc9ad16` | Venture stages 4–6: Honarmarket, Yadaki Yar, Sandoq-Yar |
+| v0.6.0 | 2026-11-28 03:15:01 +0330 | #3 | `3dce7a4be7abfa5f883c3cdf9c372d79a28e680c` | Five PBR robot figurines and the arena demo |
+| v0.7.0 | 2026-11-28 03:35:07 +0330 | #4 | `92781238882817cacd46d5c6549ce56c5cfca186` | Persian RTL mirror and command-center finale |
+| v0.9.0 | 2026-11-28 04:03:06 +0330 | #5 | `f39718bb82fdbc46b94432f9109f338f47058d27` | Visual parity, responsive, and performance audit |
+| v0.9.1 | 2026-11-28 04:32:25 +0330 | #6 | `4f28afd4498f9350a7afc560ebf2465610c04f45` | Extruded hero, Act 2 archive, Persian type, framing |
+| v0.9.2 | 2026-11-28 05:02:07 +0330 | #7 | `dbbb26908aab8496a96242b2f00e92b3253cb221` | Act 2 screen mockups and year scale, Act 4 shipped spacing |
+| v1.0.0 | 2026-11-28 | this release | tagged with v1.0.0 | Production release: docs, verification, no visual change |
 
 After v1.0.0: `v1.0.x` fixes copy or visuals, `v1.x.0` adds a venture or feature, `v2.0.0` is a redesign.
+
+## v1.0.0
+
+Phase 7. Release engineering on the approved v0.9.2 scene.
+
+- `package.json` is `1.0.0`. README covers setup, the five acts, content files, the frameless portrait path, and a Vercel deploy with no secrets.
+- `npm ci`, `npm run build`, `npx tsc --noEmit`, `npm run lint`, and `npm run check:catalog` passed on this commit's parent scene.
+- Playwright re-captured every act at 1440×900 and 390×844 in English and Persian. Console, page, network, and hydration errors were empty. Draw calls match the v0.9.2 table. Act 4 peak is 145. Act 5 is 127.
+- Lighthouse 12.8.2 against `npm run start` on software WebGL: desktop Performance 67, Accessibility 100, Best Practices 100, SEO 100. Mobile Performance 54, Accessibility 100, Best Practices 100, SEO 100. Detail is in `docs/QA_REPORT.md`.
 
 ## v0.1.0
 

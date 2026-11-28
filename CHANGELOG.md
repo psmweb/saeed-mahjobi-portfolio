@@ -2,6 +2,33 @@
 
 All notable changes to this portfolio are documented here. The format follows Keep a Changelog. Versions follow Semantic Versioning.
 
+## [1.0.0] - 2026-11-28
+
+Production release of the five-act portfolio. The scene, copy, and layout are the v0.9.2 build. This version adds the release record: README, version history, and the checks below.
+
+### Added
+
+- README in English and Persian: setup, scripts, folder map, portrait slot, content files, performance, and Vercel deploy notes.
+- Lighthouse desktop and mobile scores in `docs/QA_REPORT.md`.
+- Version table in `docs/VERSIONS.md` with the date, pull request, and merge commit for each release that has one.
+
+### Release summary
+
+- **0.1.0** — Governance, living docs, Bebas Neue hook, resume PDFs, and the six venture textures.
+- **0.2.0** — Obsidian atmosphere, the 0–52s cinema camera, and the glass HUD.
+- **0.3.0** — Act 1 command hero and Act 2 evolution.
+- **0.4.0** — Venture stages 1–3 (Mikham + Miara, Battery Store, Trader Bot).
+- **0.5.0** — Venture stages 4–6 (Honarmarket, Yadaki Yar, Sandoq-Yar).
+- **0.6.0** — Five PBR robot figurines and the ship-release demo, labelled `Live simulation · demo`.
+- **0.7.0** — Persian RTL finale, resume and GitHub controls, and the five agents at rest.
+- **0.9.0** — Draw-call pass, responsive polish, and the QA evidence. Act 4 and Act 5 stay under 150 calls.
+- **0.9.1** — Extruded Bebas hero, Act 2 archive, Persian type, and framing fixes inside that budget.
+- **0.9.2** — Act 2 archive screens and year scale, and the Act 4 shipped spacing.
+
+### Unchanged
+
+- Visuals, 3D scenes, public copy, and layout.
+
 ## [0.9.2] - 2026-11-28
 
 ### Changed
