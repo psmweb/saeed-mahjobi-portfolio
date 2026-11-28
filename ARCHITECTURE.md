@@ -39,7 +39,7 @@ src/
     motion/
       Magnetic.tsx       pointer pull, 6px, micro spring
       TiltCard.tsx       pointer tilt, 5deg, ui spring, specular sheen
-      SplitReveal.tsx    act heading reveal; Persian per word, Latin per grapheme
+      SplitReveal.tsx    soft masked heading reveal; Persian per word, Latin per character
       usePointerMedia.ts fine pointer and reduced-motion gates
   data/
     ventures.ts         six active products plus catalog and archive facts
@@ -70,7 +70,7 @@ The four act cuts live in `ACT_BOUNDARY_INTERNAL`. `src/lib/actHandoff.ts` turns
 
 `src/lib/performanceTier.ts` picks high, medium, or low at load from viewport width, `devicePixelRatio`, `hardwareConcurrency`, `deviceMemory` when the browser exposes it, and `(pointer: coarse)`. Pixel-ratio caps are 2, 1.5, and 1.25. The ship-burst instance count is 36, 18, or 10. The starfield stays at 2600. drei `PerformanceMonitor` can lower the burst further and skip the veil if the frame rate drops. A `matchMedia` listener on `prefers-reduced-motion` updates Lenis and the shared flag while the page is open.
 
-DOM micro-interactions live in `src/components/motion/` and do not touch the scene. Magnetic controls and tilted cards follow a fine pointer only, and they clear their transform at rest. Split reveals play when an act heading becomes active. A seek that lands inside the act shows the finished type. Persian splits on words. Latin may split on graphemes. Act 1 hero copy stays on the approved entrance. Reduced motion and a coarse pointer leave those controls still.
+DOM micro-interactions live in `src/components/motion/` and do not touch the scene. Magnetic controls and tilted cards follow a fine pointer only, and they clear their transform at rest. Split reveals play when an act heading becomes active. A seek that lands inside the act shows the finished string. Persian, RTL, and `fa` split on words so joined letters stay intact (0.7s, 0.06s stagger). Latin splits on characters inside nowrap words (0.5s, 0.015s stagger). Each line wears a soft bottom mask (`linear-gradient(to bottom, #000 70%, transparent)` plus `padding-block: 0.12em`) and units rise from `blur(8px)` and `translateY(0.5em)` on `cubic-bezier(0.22, 1, 0.36, 1)`. The resting render is the original string. Act 1 hero copy stays on the approved entrance. Reduced motion fades the line in over 0.18s with no blur and no travel. A coarse pointer leaves magnetic and tilt still.
 
 | Act | Section | What the scaffold shows | What the visual build adds |
 | --- | --- | --- | --- |

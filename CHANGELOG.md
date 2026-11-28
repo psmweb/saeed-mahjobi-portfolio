@@ -4,7 +4,7 @@ All notable changes to this portfolio are documented here. The format follows Ke
 
 ## [Unreleased] - 2026-11-28
 
-Phase 1B. Lighter venture plates and a long cache for those files. Not tagged.
+Phase 1, not tagged. This section collects the unmerged parts as they land.
 
 ### Changed
 
@@ -12,6 +12,7 @@ Phase 1B. Lighter venture plates and a long cache for those files. Not tagged.
 - Act 3 and the Act 4 target cards fetch those files only when scroll progress is within 0.1 of Act 3. The slab shows the plate's average color, then fades the image in. Upload uses sRGB, WebGL2 mipmaps, anisotropy of at most 4, and `gl.initTexture` right after load.
 - `next.config.ts` `headers()` sets `Cache-Control: public, max-age=31536000, immutable` on `/textures/:path*` and `/images/:path*`. `output` is still unset so the deploy script can insert `standalone`.
 - `npm run optimize:textures` rebuilds the plates. The 1600×3600 PNGs are deleted from `public/` and remain in git history.
+- `SplitReveal` is a soft masked reveal. Each line uses `mask-image: linear-gradient(to bottom, #000 70%, transparent)`, a mask-position sweep, and `padding-block: 0.12em`, with no hard clip. Units move from opacity 0, `blur(8px)`, and `translateY(0.5em)` to rest on `cubic-bezier(0.22, 1, 0.36, 1)`. Persian, RTL, and `fa` split by word (0.7s, 0.06s stagger, reading order). Latin splits by character inside nowrap words (0.5s, 0.015s stagger). `will-change` covers only opacity, transform, and filter while a unit runs. The filter is cleared to `none`, and the resting render is the original string. Reduced motion is a live 0.18s opacity fade. Act 1 hero copy and the Bebas Neue `0.06em` lockup are unchanged.
 
 ## [1.1.0-c] - 2026-11-28
 
