@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { SplitReveal } from "@/components/motion/SplitReveal";
+import { TiltCard } from "@/components/motion/TiltCard";
 import { STAGE_ACCENTS, readClock, venturePlacardOpacity } from "@/components/scene/cinema";
 import { useLanguage } from "@/context/LanguageContext";
 import { subscribeScroll } from "@/lib/scrollProgress";
@@ -27,6 +29,8 @@ export function Act3VentureOverlay() {
   if (!active) return null;
 
   const { stage, index, opacity } = active;
+  const revealed = opacity > 0.08;
+  const settled = opacity > 0.92;
   const accent = STAGE_ACCENTS[index] ?? STAGE_ACCENTS[0];
   const dots = ACCENT_DOTS[index];
   const shift = (1 - opacity) * (dir === "rtl" ? 28 : -28);
@@ -44,8 +48,9 @@ export function Act3VentureOverlay() {
       data-opacity={opacity.toFixed(2)}
       aria-hidden={opacity < 0.04}
     >
-      <article
-        className="rounded-2xl border bg-[linear-gradient(180deg,rgba(22,26,38,0.78),rgba(10,12,19,0.86))] px-4 py-4 shadow-[0_20px_60px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.09)] backdrop-blur-md sm:px-[22px] sm:py-5"
+      <TiltCard
+        as="article"
+        className={`${opacity > 0.4 ? "pointer-events-auto" : "pointer-events-none"} rounded-2xl border bg-[linear-gradient(180deg,rgba(22,26,38,0.78),rgba(10,12,19,0.86))] px-4 py-4 shadow-[0_20px_60px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.09)] backdrop-blur-md sm:px-[22px] sm:py-5`}
         style={{ borderColor: `${accent}66` }}
       >
         <p
@@ -56,7 +61,7 @@ export function Act3VentureOverlay() {
           }
           style={{ color: accent }}
         >
-          {stage.kicker}
+          <SplitReveal key={stage.id} text={stage.kicker} active={revealed} settled={settled} />
           {dots ? (
             <span className="ms-2 inline-flex translate-y-[-1px] gap-1 align-middle" aria-hidden>
               {dots.map((color) => (
@@ -65,7 +70,9 @@ export function Act3VentureOverlay() {
             </span>
           ) : null}
         </p>
-        <h2 className="mt-2.5 font-display text-[1.65rem] leading-[1.05] text-white sm:text-[2.15rem]">{stage.title}</h2>
+        <h2 className="mt-2.5 font-display text-[1.65rem] leading-[1.05] text-white sm:text-[2.15rem]">
+          <SplitReveal key={`${stage.id}-title`} text={stage.title} active={revealed} settled={settled} delay={0.04} />
+        </h2>
         <p className="mt-2.5 text-[13px] leading-snug text-pretty text-[#B4BAC6] sm:text-[13.5px] sm:leading-relaxed">{stage.body}</p>
         <p
           className={`mt-2.5 text-xs leading-relaxed text-pretty text-[#8C93A3] sm:text-[13px] ${
@@ -96,14 +103,14 @@ export function Act3VentureOverlay() {
             {stage.barcode}
           </p>
         ) : null}
-      </article>
+      </TiltCard>
       {stage.satellites ? (
         <div className="mt-2 flex flex-col gap-2" data-satellites={stage.id}>
           {stage.satellites.map((item) => (
-            <div
+            <TiltCard
               key={item.id}
               data-satellite={item.id}
-              className="flex items-center justify-between gap-2 rounded-xl border border-white/[0.13] bg-[linear-gradient(180deg,rgba(22,26,38,0.78),rgba(10,12,19,0.82))] px-3.5 py-2 shadow-[0_12px_40px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.09)] backdrop-blur-md"
+              className={`${opacity > 0.4 ? "pointer-events-auto" : "pointer-events-none"} flex items-center justify-between gap-2 rounded-xl border border-white/[0.13] bg-[linear-gradient(180deg,rgba(22,26,38,0.78),rgba(10,12,19,0.82))] px-3.5 py-2 shadow-[0_12px_40px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.09)] backdrop-blur-md`}
             >
               <span className="font-display text-[13px] font-semibold leading-none text-white">{item.title}</span>
               <span
@@ -112,7 +119,7 @@ export function Act3VentureOverlay() {
               >
                 {item.detail}
               </span>
-            </div>
+            </TiltCard>
           ))}
         </div>
       ) : null}

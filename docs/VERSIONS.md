@@ -20,6 +20,15 @@ Dates and commits are taken from `git log` and the annotated tags. v0.1.0–v0.3
 
 After v1.0.0: `v1.0.x` fixes copy or visuals, `v1.x.0` adds a venture or feature, `v2.0.0` is a redesign.
 
+## v1.1.0-b
+
+Not tagged. DOM micro-interactions on the v1.1.0-a scene.
+
+- `Magnetic`, `TiltCard`, and `SplitReveal` live in `src/components/motion/`.
+- Pointer follow uses the micro and ui springs and only runs for a fine hovering pointer. Reduced motion and touch leave the controls still.
+- Act headings reveal when the act becomes active. Persian is per word. Latin is per grapheme. Act 1 hero copy is left on the approved clock.
+- Resting hold frames keep the previous layout. The scene and draw-call budget are unchanged.
+
 ## v1.1.0-a
 
 Not tagged. Motion on the v1.0.0 scene.

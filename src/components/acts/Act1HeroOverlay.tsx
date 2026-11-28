@@ -55,7 +55,7 @@ export function Act1HeroOverlay() {
             <li key={pill}>
               <span
                 tabIndex={0}
-                className={`inline-flex rounded-full border border-[#F2B544]/50 bg-white/5 px-2.5 py-1 text-[#FFD27A] outline-none transition-colors duration-[var(--dur-ui)] ease-[var(--ease-out-expo)] hover:border-[#F59E0B] hover:bg-[#F59E0B]/15 focus-visible:ring-2 focus-visible:ring-[#F59E0B] ${
+                className={`inline-flex rounded-full border border-[#F2B544]/50 bg-white/5 px-2.5 py-1 text-[#FFD27A] outline-none transition-colors duration-[var(--dur-ui)] ease-[var(--ease-out-expo)] hover:border-[#F59E0B] hover:bg-[#F59E0B]/15 focus-visible:border-[#F59E0B] focus-visible:bg-[#F59E0B]/15 focus-visible:ring-2 focus-visible:ring-[#F59E0B] ${
                   persian ? "font-fa text-xs" : "font-mono text-[11px]"
                 }`}
               >

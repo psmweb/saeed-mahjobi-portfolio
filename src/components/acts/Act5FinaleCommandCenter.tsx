@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Magnetic } from "@/components/motion/Magnetic";
+import { SplitReveal } from "@/components/motion/SplitReveal";
 import {
   finaleApprovePulse,
   finaleLineOpacity,
@@ -85,6 +87,8 @@ function lineStyle(opacity: number) {
 const focusRing =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F59E0B] focus-visible:ring-offset-2 focus-visible:ring-offset-[#05070C]";
 
+const nameClip = "bg-[linear-gradient(180deg,#fff_35%,#C9CCD6)] bg-clip-text text-transparent";
+
 export function Act5FinaleCommandCenter() {
   const { dictionary, locale } = useLanguage();
   const [state, setState] = useState<FinaleState>(HIDDEN);
@@ -138,7 +142,7 @@ export function Act5FinaleCommandCenter() {
             className="font-fa text-[13px] font-semibold tracking-[0.02em] text-[#F2B544] sm:text-sm"
             style={lineStyle(kicker)}
           >
-            {mirror ? persian.kicker : copy.kicker}
+            <SplitReveal text={mirror ? persian.kicker : copy.kicker} active={kicker > 0.08} settled={kicker > 0.92} />
           </p>
           <h2
             data-finale="headline"
@@ -152,7 +156,12 @@ export function Act5FinaleCommandCenter() {
             }
             style={lineStyle(name)}
           >
-            {locale === "fa" ? persian.name : copy.name}
+            <SplitReveal
+              text={locale === "fa" ? persian.name : copy.name}
+              active={name > 0.08}
+              settled={name > 0.92}
+              unitClassName={locale === "fa" ? nameClip : undefined}
+            />
           </h2>
           {locale === "en" ? (
             <p
@@ -161,7 +170,7 @@ export function Act5FinaleCommandCenter() {
               className="mt-0.5 bg-[linear-gradient(180deg,#fff_35%,#C9CCD6)] bg-clip-text font-fa text-[1.4rem] font-black leading-[1.2] text-transparent sm:text-[2.65rem]"
               style={lineStyle(name)}
             >
-              {persian.name}
+              <SplitReveal text={persian.name} active={name > 0.08} settled={name > 0.92} unitClassName={nameClip} />
             </p>
           ) : null}
           <p
@@ -169,8 +178,19 @@ export function Act5FinaleCommandCenter() {
             className="mt-1 max-w-[36rem] font-fa text-[15px] font-semibold leading-snug text-[#EDEDE6] sm:text-[1.65rem] sm:leading-[1.6]"
             style={lineStyle(closing)}
           >
-            {mirror ? persian.closingLead : copy.closingLead}{" "}
-            <span className="text-[#F2B544]">{mirror ? persian.closingAccent : copy.closingAccent}</span>
+            <SplitReveal
+              text={mirror ? persian.closingLead : copy.closingLead}
+              active={closing > 0.08}
+              settled={closing > 0.92}
+            />{" "}
+            <span className="text-[#F2B544]">
+              <SplitReveal
+                text={mirror ? persian.closingAccent : copy.closingAccent}
+                active={closing > 0.08}
+                settled={closing > 0.92}
+                delay={0.06}
+              />
+            </span>
           </p>
           {locale === "en" && mirror ? (
             <p
@@ -180,7 +200,10 @@ export function Act5FinaleCommandCenter() {
               className="mt-0.5 w-full text-right text-[13px] leading-snug text-[#EDEDE6] sm:text-lg"
               style={lineStyle(closing)}
             >
-              {en.finaleStage.closingLead} <span className="text-[#F2B544]">{en.finaleStage.closingAccent}</span>
+              <SplitReveal text={en.finaleStage.closingLead} active={closing > 0.08} settled={closing > 0.92} />{" "}
+              <span className="text-[#F2B544]">
+                <SplitReveal text={en.finaleStage.closingAccent} active={closing > 0.08} settled={closing > 0.92} delay={0.06} />
+              </span>
             </p>
           ) : null}
           <div
@@ -189,44 +212,52 @@ export function Act5FinaleCommandCenter() {
             style={lineStyle(actions)}
             inert={actions < 0.45}
           >
-            <a
-              href={GITHUB}
-              target="_blank"
-              rel="noreferrer noopener"
-              data-finale-link="github"
-              className={`inline-flex h-10 items-center rounded-full border border-white/20 bg-white/[0.06] px-3 font-mono text-xs text-[#EDEDE6] transition-colors hover:border-white/40 hover:bg-white/[0.12] hover:text-white active:border-[#F2B544] active:bg-[#F2B544]/20 active:text-white sm:h-11 sm:px-4 sm:text-[13px] ${focusRing}`}
-            >
-              {copy.github}
-            </a>
-            <a
-              href={resumes.en}
-              download
-              data-finale-link="resume-en"
-              className={`inline-flex h-10 items-center rounded-full border border-white/20 bg-white/[0.08] px-3 font-display text-[13px] font-semibold text-white transition-colors hover:border-white/40 hover:bg-white/[0.14] active:border-[#F2B544] active:bg-[#F2B544]/25 sm:h-11 sm:px-4 ${focusRing}`}
-            >
-              {copy.resumeEn}
-            </a>
-            <a
-              href={resumes.fa}
-              download
-              data-finale-link="resume-fa"
-              className={`inline-flex h-10 items-center rounded-full border border-white/20 bg-white/[0.08] px-3 font-display text-[13px] font-semibold text-white transition-colors hover:border-white/40 hover:bg-white/[0.14] active:border-[#F2B544] active:bg-[#F2B544]/25 sm:h-11 sm:px-4 ${focusRing}`}
-            >
-              {copy.resumeFa}
-            </a>
-            <button
-              type="button"
-              data-finale-approve={approved ? "on" : "ready"}
-              aria-pressed={approved}
-              onClick={() => setApproved((current) => !current)}
-              className={`inline-flex h-10 items-center rounded-full bg-gradient-to-br from-[#FFD27A] to-[#F2B544] px-3 text-[13px] font-semibold text-[#120d02] transition-[filter,transform] hover:brightness-110 active:scale-[0.98] active:brightness-95 sm:h-11 sm:px-4 ${
-                locale === "fa" ? "font-fa" : "font-display"
-              } ${
-                state.pulse ? "finale-approve-pulse" : ""
-              } ${approved ? "ring-2 ring-[#fff3d6] ring-offset-2 ring-offset-[#05070C]" : ""} ${focusRing}`}
-            >
-              {copy.approve}
-            </button>
+            <Magnetic>
+              <a
+                href={GITHUB}
+                target="_blank"
+                rel="noreferrer noopener"
+                data-finale-link="github"
+                className={`inline-flex h-10 items-center rounded-full border border-white/20 bg-white/[0.06] px-3 font-mono text-xs text-[#EDEDE6] transition-colors hover:border-white/40 hover:bg-white/[0.12] hover:text-white focus-visible:border-white/40 focus-visible:bg-white/[0.12] focus-visible:text-white active:border-[#F2B544] active:bg-[#F2B544]/20 active:text-white sm:h-11 sm:px-4 sm:text-[13px] ${focusRing}`}
+              >
+                {copy.github}
+              </a>
+            </Magnetic>
+            <Magnetic>
+              <a
+                href={resumes.en}
+                download
+                data-finale-link="resume-en"
+                className={`inline-flex h-10 items-center rounded-full border border-white/20 bg-white/[0.08] px-3 font-display text-[13px] font-semibold text-white transition-colors hover:border-white/40 hover:bg-white/[0.14] focus-visible:border-white/40 focus-visible:bg-white/[0.14] active:border-[#F2B544] active:bg-[#F2B544]/25 sm:h-11 sm:px-4 ${focusRing}`}
+              >
+                {copy.resumeEn}
+              </a>
+            </Magnetic>
+            <Magnetic>
+              <a
+                href={resumes.fa}
+                download
+                data-finale-link="resume-fa"
+                className={`inline-flex h-10 items-center rounded-full border border-white/20 bg-white/[0.08] px-3 font-display text-[13px] font-semibold text-white transition-colors hover:border-white/40 hover:bg-white/[0.14] focus-visible:border-white/40 focus-visible:bg-white/[0.14] active:border-[#F2B544] active:bg-[#F2B544]/25 sm:h-11 sm:px-4 ${focusRing}`}
+              >
+                {copy.resumeFa}
+              </a>
+            </Magnetic>
+            <Magnetic>
+              <button
+                type="button"
+                data-finale-approve={approved ? "on" : "ready"}
+                aria-pressed={approved}
+                onClick={() => setApproved((current) => !current)}
+                className={`inline-flex h-10 items-center rounded-full bg-gradient-to-br from-[#FFD27A] to-[#F2B544] px-3 text-[13px] font-semibold text-[#120d02] transition-[filter,transform] hover:brightness-110 focus-visible:brightness-110 active:scale-[0.98] active:brightness-95 sm:h-11 sm:px-4 ${
+                  locale === "fa" ? "font-fa" : "font-display"
+                } ${
+                  state.pulse ? "finale-approve-pulse" : ""
+                } ${approved ? "ring-2 ring-[#fff3d6] ring-offset-2 ring-offset-[#05070C]" : ""} ${focusRing}`}
+              >
+                {copy.approve}
+              </button>
+            </Magnetic>
           </div>
           <p
             dir="ltr"

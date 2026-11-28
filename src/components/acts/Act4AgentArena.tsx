@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Magnetic } from "@/components/motion/Magnetic";
+import { SplitReveal } from "@/components/motion/SplitReveal";
+import { TiltCard } from "@/components/motion/TiltCard";
 import { readClock } from "@/components/scene/cinema";
 import { useLanguage } from "@/context/LanguageContext";
 import {
@@ -97,6 +100,8 @@ export function Act4AgentArena() {
   }, []);
 
   const playing = state.mode === "play";
+  const active = state.opacity > 0.08;
+  const settled = state.opacity > 0.92;
   const status =
     state.phase === "online"
       ? `${copy.statusOnline} ${state.online}/5`
@@ -122,36 +127,42 @@ export function Act4AgentArena() {
             data-phase={state.phase}
             data-mode={state.mode}
           >
-            <div className="max-w-full rounded-3xl border border-white/10 bg-[rgba(14,17,26,0.78)] px-3.5 py-2 shadow-[0_10px_40px_rgba(0,0,0,0.45)] backdrop-blur-md sm:max-w-[62%] sm:rounded-full sm:px-4">
+            <TiltCard className="pointer-events-auto max-w-full rounded-3xl border border-white/10 bg-[rgba(14,17,26,0.78)] px-3.5 py-2 shadow-[0_10px_40px_rgba(0,0,0,0.45)] backdrop-blur-md sm:max-w-[62%] sm:rounded-full sm:px-4">
               <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[13px] leading-snug text-white">
-                <span className={`${script} text-[12px] text-[#8C93A3] ${locale === "fa" ? "" : "tracking-[0.14em]"}`}>{copy.kicker}</span>
-                <span className={`${locale === "fa" ? "font-fa" : "font-display"} text-[15px] font-semibold sm:text-[17px]`}>{copy.headline}</span>
+                <span className={`${script} text-[12px] text-[#8C93A3] ${locale === "fa" ? "" : "tracking-[0.14em]"}`}>
+                  <SplitReveal text={copy.kicker} active={active} settled={settled} />
+                </span>
+                <span className={`${locale === "fa" ? "font-fa" : "font-display"} text-[15px] font-semibold sm:text-[17px]`}>
+                  <SplitReveal text={copy.headline} active={active} settled={settled} delay={0.04} />
+                </span>
                 <span className={`${script} text-[12px] text-[#3DDC97]`} aria-live="polite">
                   {status}
                 </span>
               </p>
-            </div>
-            <div className="pointer-events-auto flex max-w-full flex-wrap items-center gap-2 self-end rounded-3xl border border-white/10 bg-[rgba(14,17,26,0.78)] px-3 py-2 shadow-[0_10px_40px_rgba(0,0,0,0.45)] backdrop-blur-md sm:rounded-full sm:px-3.5">
+            </TiltCard>
+            <TiltCard className="pointer-events-auto flex max-w-full flex-wrap items-center gap-2 self-end rounded-3xl border border-white/10 bg-[rgba(14,17,26,0.78)] px-3 py-2 shadow-[0_10px_40px_rgba(0,0,0,0.45)] backdrop-blur-md sm:rounded-full sm:px-3.5">
               <span data-demo-badge={dictionary.demoBadge} className={`${script} text-xs text-[#8C93A3] ${locale === "fa" ? "" : "tracking-[0.04em]"}`}>
                 {dictionary.demoBadge}
               </span>
               <span className="font-mono text-[12px] text-[#EDEDE6]" dir="ltr">{copy.shipTitle}</span>
               <span className={`${script} text-[12px] text-[#EDEDE6]`}>{counter}</span>
-              <button
-                type="button"
-                data-ship-replay="true"
-                aria-pressed={playing}
-                aria-label={`${copy.replay} ${copy.shipTitle}. ${dictionary.demoBadge}`}
-                onClick={() => startArenaReplay()}
-                className={`inline-flex min-h-10 items-center rounded-full border px-3.5 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F59E0B] sm:min-h-0 sm:py-1.5 sm:text-[13px] ${script} ${
-                  playing
-                    ? "border-[#F2B544] bg-[#F2B544] text-[#120d02]"
-                    : "border-white/20 bg-white/[0.06] text-[#EDEDE6] hover:border-[#F59E0B] hover:bg-[#F59E0B]/15 hover:text-white active:border-[#F2B544] active:bg-[#F2B544] active:text-[#120d02]"
-                }`}
-              >
-                {playing ? copy.replaying : copy.replay}
-              </button>
-            </div>
+              <Magnetic>
+                <button
+                  type="button"
+                  data-ship-replay="true"
+                  aria-pressed={playing}
+                  aria-label={`${copy.replay} ${copy.shipTitle}. ${dictionary.demoBadge}`}
+                  onClick={() => startArenaReplay()}
+                  className={`inline-flex min-h-10 items-center rounded-full border px-3.5 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F59E0B] sm:min-h-0 sm:py-1.5 sm:text-[13px] ${script} ${
+                    playing
+                      ? "border-[#F2B544] bg-[#F2B544] text-[#120d02]"
+                      : "border-white/20 bg-white/[0.06] text-[#EDEDE6] hover:border-[#F59E0B] hover:bg-[#F59E0B]/15 hover:text-white focus-visible:border-[#F59E0B] focus-visible:bg-[#F59E0B]/15 focus-visible:text-white active:border-[#F2B544] active:bg-[#F2B544] active:text-[#120d02]"
+                  }`}
+                >
+                  {playing ? copy.replaying : copy.replay}
+                </button>
+              </Magnetic>
+            </TiltCard>
           </div>
           <div
             className="pointer-events-none fixed inset-x-4 bottom-14 z-30 flex justify-center"

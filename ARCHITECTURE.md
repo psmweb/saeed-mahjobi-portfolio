@@ -36,6 +36,11 @@ src/
       BatteryScrollMeter.tsx
       LiveBuildLog.tsx
       LanguageToggle.tsx
+    motion/
+      Magnetic.tsx       pointer pull, 6px, micro spring
+      TiltCard.tsx       pointer tilt, 5deg, ui spring, specular sheen
+      SplitReveal.tsx    act heading reveal; Persian per word, Latin per grapheme
+      usePointerMedia.ts fine pointer and reduced-motion gates
   data/
     ventures.ts         six active products plus catalog and archive facts
     agents.ts           five humanoid slots and the demo badge
@@ -47,6 +52,7 @@ src/
       fa.ts
       index.ts
   lib/
+    motion.ts           durations, easings, critically damped springs
     direction.ts        mirrorX, mirrorVector, GSAP clamp
 public/
   images/               saeed_editorial_portrait.png, saeed_cutout_clean.png
@@ -59,6 +65,8 @@ scripts/
 Each act is a full-viewport section. Lenis (`lerp` 0.1) writes document progress to `scrollProgress.current`. The WebGL frame damps that into `scrollProgress.smoothed` (`THREE.MathUtils.damp`, lambda 7). The camera and scene acts read the damped clock. Seek and immediate chapter jumps snap it. `src/lib/motion.ts` holds the shared durations, easings, and springs; `globals.css` mirrors them as `--dur-*` and `--ease-*`.
 
 `cinema.ts` builds one centripetal Catmull-Rom curve per act segment from the approved camera. Hold frames are copied exactly. Moves between holds are sampled with the cinematic ease. Reduced motion skips the damp, the roll, and the curve.
+
+DOM micro-interactions live in `src/components/motion/` and do not touch the scene. Magnetic controls and tilted cards follow a fine pointer only, and they clear their transform at rest. Split reveals play when an act heading becomes active. A seek that lands inside the act shows the finished type. Persian splits on words. Latin may split on graphemes. Act 1 hero copy stays on the approved entrance.
 
 | Act | Section | What the scaffold shows | What the visual build adds |
 | --- | --- | --- | --- |

@@ -1,0 +1,34 @@
+{
+  "viewports": [
+    { "name": "desktop", "width": 1440, "height": 900 },
+    { "name": "mobile", "width": 390, "height": 844 }
+  ],
+  "progress": [0, 0.3, 0.5, 0.7, 1],
+  "pixelDiff": {
+    "threshold": 12,
+    "desktop-p0.0": "0 changed pixels (max channel delta 9)",
+    "desktop-p0.3": "identical",
+    "desktop-p0.5": "identical",
+    "desktop-p0.7": "identical",
+    "desktop-p1.0": "robot idle and approve glow only; DOM type matches",
+    "mobile-p0.0": "terminal caret blink only",
+    "mobile-p0.3": "0 changed pixels (max channel delta 7)",
+    "mobile-p0.5": "identical",
+    "mobile-p0.7": "identical",
+    "mobile-p1.0": "robot idle only; DOM type matches"
+  },
+  "drawCalls": {
+    "act4Shipped": 145,
+    "act5": 127
+  },
+  "interaction": {
+    "magneticNavPx": 4.08,
+    "resumePx": -4.08,
+    "rtlNavPx": 4.08,
+    "tilt": "perspective(900px) rotateX(2.8deg) rotateY(3.2deg)",
+    "sheen": true,
+    "persianSplit": "1 span for a 6-character word",
+    "reducedMotion": "transform cleared",
+    "focusVisible": "white 10% fill matching hover"
+  }
+}
