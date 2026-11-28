@@ -2,6 +2,23 @@
 
 All notable changes to this portfolio are documented here. The format follows Keep a Changelog. Versions follow Semantic Versioning.
 
+## [1.1.0-b] - 2026-11-28
+
+DOM micro-interactions. The scene, camera, and cinema clock are unchanged. Resting layouts match the previous hold frames.
+
+### Added
+
+- `src/components/motion/Magnetic.tsx`. Navbar brand, chapter chips, the language toggle, the arena replay control, and the finale GitHub, resume, and approve controls follow the pointer by at most 6px and spring home with `springPreset.micro`.
+- `src/components/motion/TiltCard.tsx`. Act 2, Act 3 placards and satellite rows, and the Act 4 HUD panels tilt toward the pointer by at most 5° (`springPreset.ui`) with a soft specular sheen.
+- `src/components/motion/SplitReveal.tsx`. Act 2, Act 3, Act 4, and Act 5 headings and subtitles reveal over `duration.reveal` (0.6s) with a 0.03s stagger. Persian splits per word. Latin splits per grapheme. The slide comes from the inline-start side via `mirrorX`. A seek into an act shows the finished line.
+- Focus-visible treatments use the same fill, border, and type color as hover on those controls.
+
+### Unchanged
+
+- Act 1 hero title and tagline. The Bebas Neue lockup stays at `0.06em`, and the approved hero entrance is not given a second reveal.
+- 3D scene, camera curves, `cinema.ts`, draw-call budget, copy, and the frameless portrait slot.
+- Pointer follow is off for touch, coarse pointers, and `prefers-reduced-motion: reduce`.
+
 ## [1.1.0-a] - 2026-11-28
 
 Motion pass. The approved hold frames stay on the same camera pose. Scroll and the moves between those holds are what change.

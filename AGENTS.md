@@ -10,6 +10,8 @@ A Next.js 15 App Router, React 19, TypeScript, Tailwind CSS single page. English
 
 **v1.0.0 released.** The shipped scene is the approved v0.9.2 visual build: Act 2 archive screens and year scale, plus the Act 4 shipped spacing. No visual, copy, or layout change landed in v1.0.0. Act 4 peaks at 145 draw calls and Act 5 at 127. Both stay under 150. Evidence frames live in `docs/qa-screenshots/`. The release check, including Lighthouse, is in `docs/QA_REPORT.md`.
 
+v1.1.0-a adds the motion tokens, the damped scroll clock, and the cinematic camera curves. Hold frames stay on the approved poses. v1.1.0-b adds DOM micro-interactions only: magnetic controls, card tilt, and split text reveals. The 3D scene, camera, and `cinema.ts` stay as they were. Act 1 hero copy is not split, so the Bebas Neue lockup and the 52s hero entrance stay on the approved clock.
+
 ## Architecture and file map
 
 - `src/app/` — shell, fonts, tokens.
@@ -23,6 +25,7 @@ A Next.js 15 App Router, React 19, TypeScript, Tailwind CSS single page. English
 - `src/components/scene/` — atmosphere, camera, Act 1 gem, Act 2 monoliths, Act 3 slabs, Act 4 arena, Act 5 finale.
 - `src/components/acts/` — scroll landmarks plus Act 1–5 overlays.
 - `src/components/hud/` — glass navbar (`SM`, chapter chips, `EN | فارسی`), battery meter, one-line build log.
+- `src/components/motion/` — DOM micro-interactions. `Magnetic` springs a control toward the pointer (6px, `springPreset.micro`). `TiltCard` tilts a card toward the pointer (5°, `springPreset.ui`) and adds a specular sheen. `SplitReveal` reveals a heading per word in Persian and per grapheme in Latin (`duration.reveal`, 0.03s stagger); horizontal travel uses `mirrorX` from the inline-start side. Pointer follow runs only for `(hover: hover) and (pointer: fine)` and is off under `prefers-reduced-motion`. Resting frames render the untransformed page.
 - `src/data/` — ventures, agents, timeline, resumes, portraits, `i18n/en.ts`, `i18n/fa.ts`.
 - `src/lib/motion.ts` — durations, easings, and critically damped springs. CSS mirrors them as `--dur-*` and `--ease-*`.
 - `src/lib/direction.ts` — `mirrorX` / `mirrorVector`. Vertical scroll is not reversed.
