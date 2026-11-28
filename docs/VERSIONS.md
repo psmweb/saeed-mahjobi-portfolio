@@ -43,6 +43,14 @@ Not tagged. Motion and performance on the v1.1.0 scene. The three parts below la
 
 The frameless Act 1 slot is unchanged. The approved editorial cutout was not in the stores this integration could read, so no portrait file was added and no face was drawn. The slot stays the amber and obsidian glow until `public/portrait/saeed.png` is supplied.
 
+## Canvas ratio
+
+Not a version tag. The drawing buffer no longer changes resolution while the page scrolls.
+
+- Load-time ratio is `min(devicePixelRatio, tier cap)`. Caps stay 2 (high), 1.5 (medium), and 1.25 (low).
+- `AdaptiveDpr` is not mounted. The canvas receives one number, not a range.
+- `PerformanceMonitor` may step that number down one cap, once per session, after 500ms with no scroll, wheel, or touch. Input on a frame clears that 500ms, even when the frame ran long. A scroll in progress keeps the current buffer. A slow frame with no input still counts. It does not step back up.
+
 ## v1.1.0
 
 Not tagged. Motion upgrade on the v1.0.0 scene. a, b, and c are all landed.

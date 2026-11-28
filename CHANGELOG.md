@@ -19,6 +19,10 @@ Phase 1, not tagged. Motion and performance on the v1.1.0 scene: a longer scroll
 - `npm run optimize:textures` rebuilds the plates. The 1600×3600 PNGs are deleted from `public/` and remain in git history.
 - `SplitReveal` is a soft masked reveal. Each line uses `mask-image: linear-gradient(to bottom, #000 70%, transparent)`, a mask-position sweep, and `padding-block: 0.12em`, with no hard clip. Units move from opacity 0, `blur(8px)`, and `translateY(0.5em)` to rest on `cubic-bezier(0.22, 1, 0.36, 1)`. Persian, RTL, and `fa` split by word (0.7s, 0.06s stagger, reading order). Latin splits by character inside nowrap words (0.5s, 0.015s stagger). `will-change` covers only opacity, transform, and filter while a unit runs. The filter is cleared to `none`, and the resting render is the original string. Reduced motion is a live 0.18s opacity fade. Act 1 hero copy and the Bebas Neue `0.06em` lockup are unchanged. The triggers still follow overlay opacity on the 52s clock, so the longer scroll does not move when a heading reveals.
 
+### Fixed
+
+- The canvas pixel ratio is chosen once at load: `min(devicePixelRatio, tier cap)`. Caps stay 2, 1.5, and 1.25. `AdaptiveDpr` is gone, and the canvas `dpr` is a single number, so the drawing buffer does not resize when the frame rate dips during scroll. `PerformanceMonitor` may lower it one cap, once per session, and only after 500ms without scroll, wheel, or touch. Input during a frame clears that quiet time, even if the frame ran long, so a hitch while scrolling cannot open the gate. A slow frame with no input still counts. It does not raise the ratio.
+
 ### Unchanged
 
 - Hero at progress 0: Bebas Neue at `0.06em`, frameless portrait slot. The approved editorial cutout was not available in the stores this branch could read, so the slot stays the glow and no face was drawn.
