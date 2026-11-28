@@ -189,7 +189,7 @@ export const fa: Dictionary = {
       title: "فروشگاه باتری",
       body: "فروشگاه Next.js و API با NestJS، با تناسب خودرو و موجودی.",
       stack: "Next.js 15 · NestJS",
-      chip: "v0.2.0 · PR #201",
+      chip: "v0.2.0 · ۲۰۱ PR",
     },
     {
       id: "trader-bot",

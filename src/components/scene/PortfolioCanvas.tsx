@@ -1,5 +1,6 @@
 "use client";
 
+import { AdaptiveDpr, PerformanceMonitor } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { Act1Hero } from "./acts/Act1Hero";
@@ -22,12 +23,18 @@ function RenderMeter() {
   return null;
 }
 
+function pixelCap() {
+  if (typeof window === "undefined") return 1.75;
+  return window.matchMedia("(max-width: 767px)").matches ? 1.25 : 1.75;
+}
+
 export function PortfolioCanvas() {
+  const dprMax = pixelCap();
   return (
     <Canvas
       className="h-full w-full"
       camera={{ fov: 40, near: 0.1, far: 500, position: [-1.8, 1.4, 15.5] }}
-      dpr={[1, 1.5]}
+      dpr={[1, dprMax]}
       gl={{
         antialias: true,
         alpha: false,
@@ -40,6 +47,9 @@ export function PortfolioCanvas() {
         gl.setClearColor("#05070C");
       }}
     >
+      <PerformanceMonitor>
+        <AdaptiveDpr />
+      </PerformanceMonitor>
       <ObsidianAtmosphere />
       <CameraRig />
       <Act1Hero />

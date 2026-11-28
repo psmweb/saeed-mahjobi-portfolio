@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
+import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import type { ArenaProp } from "@/data/agents";
 
 export type RobotRig = {
@@ -7,12 +8,12 @@ export type RobotRig = {
   body: THREE.Group;
   head: THREE.Group;
   arms: { pivot: THREE.Group; sx: number; hand: THREE.Object3D }[];
-  eyes: THREE.Mesh[];
-  happy: THREE.Mesh[];
-  thrusters: { mesh: THREE.Mesh; material: THREE.MeshBasicMaterial }[];
+  eyes: THREE.InstancedMesh;
+  happy: THREE.Mesh;
+  thrusters: { mesh: THREE.InstancedMesh; material: THREE.MeshBasicMaterial };
   prop: THREE.Group;
   propKind: ArenaProp;
-  leds: THREE.Mesh[];
+  leds: THREE.InstancedMesh;
   shadow: THREE.Mesh;
 };
 
@@ -33,6 +34,18 @@ type Pose = {
   nod: number;
   calm: boolean;
 };
+
+type Vec3 = readonly [number, number, number];
+
+const ORIGIN: Vec3 = [0, 0, 0];
+const UNIT: Vec3 = [1, 1, 1];
+
+const posePosition = new THREE.Vector3();
+const poseQuaternion = new THREE.Quaternion();
+const poseScale = new THREE.Vector3();
+const poseEuler = new THREE.Euler();
+const poseMatrix = new THREE.Matrix4();
+const poseDummy = new THREE.Object3D();
 
 function roundRect(
   context: CanvasRenderingContext2D,
@@ -108,7 +121,51 @@ function additive(color: string, opacity: number, disposables: THREE.Material[])
   return material;
 }
 
-/** Shared obsidian, brushed metal, and seam stock. One geometry set for all five rigs. */
+function posed(
+  geometry: THREE.BufferGeometry,
+  position: Vec3 = ORIGIN,
+  rotation: Vec3 = ORIGIN,
+  scale: Vec3 = UNIT,
+) {
+  const clone = geometry.index ? geometry.toNonIndexed() : geometry.clone();
+  posePosition.set(position[0], position[1], position[2]);
+  poseEuler.set(rotation[0], rotation[1], rotation[2]);
+  poseQuaternion.setFromEuler(poseEuler);
+  poseScale.set(scale[0], scale[1], scale[2]);
+  poseMatrix.compose(posePosition, poseQuaternion, poseScale);
+  clone.applyMatrix4(poseMatrix);
+  return clone;
+}
+
+function fused(parts: THREE.BufferGeometry[]) {
+  const merged = mergeGeometries(parts, false);
+  parts.forEach((part) => part.dispose());
+  if (!merged) throw new Error("robot geometry merge failed");
+  merged.computeBoundingSphere();
+  return merged;
+}
+
+function mesh(parent: THREE.Object3D, geometry: THREE.BufferGeometry, material: THREE.Material) {
+  const surface = new THREE.Mesh(geometry, material);
+  parent.add(surface);
+  return surface;
+}
+
+function placeInstance(
+  target: THREE.InstancedMesh,
+  index: number,
+  position: Vec3,
+  rotation: Vec3 = ORIGIN,
+  scale: Vec3 = UNIT,
+) {
+  poseDummy.position.set(position[0], position[1], position[2]);
+  poseDummy.rotation.set(rotation[0], rotation[1], rotation[2]);
+  poseDummy.scale.set(scale[0], scale[1], scale[2]);
+  poseDummy.updateMatrix();
+  target.setMatrixAt(index, poseDummy.matrix);
+}
+
+/** Shared obsidian, brushed metal, and seam stock. Static parts are one mesh per material. */
 export function createRobotKit(): RobotKit {
   const geometries: THREE.BufferGeometry[] = [];
   const materials: THREE.Material[] = [];
@@ -134,7 +191,7 @@ export function createRobotKit(): RobotKit {
     clearcoatRoughness: 0.2,
   });
   const seam = new THREE.MeshStandardMaterial({ color: "#020203", roughness: 0.7, metalness: 0.2 });
-  const ledGreen = new THREE.MeshBasicMaterial({ color: "#3DDC97", toneMapped: false });
+  const ledLit = new THREE.MeshBasicMaterial({ color: "#ffffff", toneMapped: false });
   const shadowMaterial = new THREE.MeshBasicMaterial({
     map: radialTexture("#000000", textures),
     transparent: true,
@@ -142,39 +199,115 @@ export function createRobotKit(): RobotKit {
     depthWrite: false,
     toneMapped: false,
   });
-  materials.push(obsidian, brushed, seam, ledGreen, shadowMaterial);
+  materials.push(obsidian, brushed, seam, ledLit, shadowMaterial);
 
-  const torsoGeo = keep(new THREE.CapsuleGeometry(0.27, 0.26, 8, 20));
-  const chestGeo = keep(new THREE.CircleGeometry(0.075, 28));
-  const chestRingGeo = keep(new THREE.TorusGeometry(0.105, 0.015, 8, 28));
-  const beltGeo = keep(new THREE.TorusGeometry(0.27, 0.03, 8, 32));
-  const seamGeo = keep(new THREE.TorusGeometry(0.27, 0.006, 6, 36));
+  const torsoGeo = keep(new THREE.CapsuleGeometry(0.27, 0.26, 5, 12));
+  const chestGeo = keep(new THREE.CircleGeometry(0.075, 18));
+  const chestRingGeo = keep(new THREE.TorusGeometry(0.105, 0.015, 6, 18));
+  const beltGeo = keep(new THREE.TorusGeometry(0.27, 0.03, 6, 20));
+  const seamGeo = keep(new THREE.TorusGeometry(0.27, 0.006, 4, 20));
   const seamBarGeo = keep(new THREE.BoxGeometry(0.006, 0.3, 0.02));
   const ledGeo = keep(new THREE.SphereGeometry(0.014, 8, 6));
   const packGeo = keep(new RoundedBoxGeometry(0.3, 0.26, 0.06, 2, 0.02));
-  const neckGeo = keep(new THREE.CylinderGeometry(0.08, 0.1, 0.12, 16));
-  const headGeo = keep(new THREE.SphereGeometry(0.36, 32, 24));
-  const shellGeo = keep(new THREE.SphereGeometry(0.365, 32, 20, 0, Math.PI * 2, 0, 1.05));
-  const visorGeo = keep(new THREE.SphereGeometry(0.372, 36, 20, Math.PI / 2 - 1.02, 2.04, Math.PI / 2 - 0.5, 1));
-  const visorRimGeo = keep(new THREE.TorusGeometry(0.3, 0.012, 8, 40, Math.PI));
-  const eyeGeo = keep(new THREE.CapsuleGeometry(0.04, 0.07, 4, 10));
-  const smileGeo = keep(new THREE.TorusGeometry(0.06, 0.016, 6, 16, Math.PI));
+  const neckGeo = keep(new THREE.CylinderGeometry(0.08, 0.1, 0.12, 12));
+  const headGeo = keep(new THREE.SphereGeometry(0.36, 24, 16));
+  const shellGeo = keep(new THREE.SphereGeometry(0.365, 24, 14, 0, Math.PI * 2, 0, 1.05));
+  const visorGeo = keep(new THREE.SphereGeometry(0.372, 24, 14, Math.PI / 2 - 1.02, 2.04, Math.PI / 2 - 0.5, 1));
+  const visorRimGeo = keep(new THREE.TorusGeometry(0.3, 0.012, 6, 24, Math.PI));
+  const eyeGeo = keep(new THREE.CapsuleGeometry(0.04, 0.07, 3, 8));
+  const smileGeo = keep(new THREE.TorusGeometry(0.06, 0.016, 4, 12, Math.PI));
   const glowGeo = keep(new THREE.PlaneGeometry(0.7, 0.32));
-  const earGeo = keep(new THREE.CylinderGeometry(0.095, 0.095, 0.08, 20));
-  const earRingGeo = keep(new THREE.TorusGeometry(0.07, 0.014, 8, 20));
-  const antennaGeo = keep(new THREE.CylinderGeometry(0.012, 0.012, 0.16, 8));
-  const antennaBallGeo = keep(new THREE.SphereGeometry(0.035, 12, 10));
-  const jointGeo = keep(new THREE.SphereGeometry(0.075, 16, 12));
-  const armGeo = keep(new THREE.CapsuleGeometry(0.062, 0.2, 4, 12));
-  const handGeo = keep(new THREE.SphereGeometry(0.085, 16, 12));
-  const palmGeo = keep(new THREE.SphereGeometry(0.04, 10, 8));
-  const wristGeo = keep(new THREE.TorusGeometry(0.068, 0.014, 8, 20));
-  const capGeo = keep(new THREE.SphereGeometry(0.095, 16, 10, 0, Math.PI * 2, 0, Math.PI / 2));
-  const legGeo = keep(new THREE.CapsuleGeometry(0.075, 0.1, 4, 12));
-  const bootGeo = keep(new THREE.CylinderGeometry(0.07, 0.095, 0.07, 16));
-  const flameGeo = keep(new THREE.ConeGeometry(0.08, 0.42, 12, 1, true));
+  const earGeo = keep(new THREE.CylinderGeometry(0.095, 0.095, 0.08, 12));
+  const earRingGeo = keep(new THREE.TorusGeometry(0.07, 0.014, 6, 14));
+  const antennaGeo = keep(new THREE.CylinderGeometry(0.012, 0.012, 0.16, 6));
+  const antennaBallGeo = keep(new THREE.SphereGeometry(0.035, 10, 8));
+  const jointGeo = keep(new THREE.SphereGeometry(0.075, 12, 8));
+  const armGeo = keep(new THREE.CapsuleGeometry(0.062, 0.2, 3, 8));
+  const handGeo = keep(new THREE.SphereGeometry(0.085, 12, 8));
+  const palmGeo = keep(new THREE.SphereGeometry(0.04, 8, 6));
+  const wristGeo = keep(new THREE.TorusGeometry(0.068, 0.014, 6, 12));
+  const capGeo = keep(new THREE.SphereGeometry(0.095, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2));
+  const legGeo = keep(new THREE.CapsuleGeometry(0.075, 0.1, 3, 8));
+  const bootGeo = keep(new THREE.CylinderGeometry(0.07, 0.095, 0.07, 12));
+  const flameGeo = keep(new THREE.ConeGeometry(0.08, 0.42, 8, 1, true));
   const shadowGeo = keep(new THREE.PlaneGeometry(1.1, 1.1));
   const screen = frameTexture(textures);
+
+  const bodyObsidian = keep(
+    fused([
+      posed(torsoGeo, ORIGIN, ORIGIN, [1.12, 1, 0.86]),
+      posed(bootGeo, [-0.13, -0.62, 0]),
+      posed(bootGeo, [0.13, -0.62, 0]),
+    ]),
+  );
+  const bodyBrushed = keep(
+    fused([
+      posed(chestRingGeo, [0, 0.06, 0.232], [Math.PI / 2, 0, 0]),
+      posed(beltGeo, [0, -0.15, 0], [Math.PI / 2, 0, 0], [1.12, 0.86, 1]),
+      posed(packGeo, [0, 0.04, -0.22]),
+      posed(neckGeo, [0, 0.43, 0]),
+      posed(legGeo, [-0.13, -0.5, 0]),
+      posed(legGeo, [0.13, -0.5, 0]),
+    ]),
+  );
+  const bodySeam = keep(
+    fused([
+      posed(seamGeo, [0, 0.13, 0], [Math.PI / 2, 0, 0], [1.13, 0.87, 1]),
+      posed(seamGeo, [0, -0.03, 0], [Math.PI / 2, 0, 0], [1.13, 0.87, 1]),
+      posed(seamBarGeo, [0, -0.02, 0.23]),
+    ]),
+  );
+  const bodyAccent = keep(fused([posed(chestGeo, [0, 0.06, 0.244])]));
+  const headBrushed = keep(fused([posed(headGeo, ORIGIN, ORIGIN, [1.14, 0.96, 1]), posed(antennaGeo, [0.12, 0.4, 0])]));
+  const headObsidian = keep(
+    fused([
+      posed(shellGeo, ORIGIN, ORIGIN, [1.14, 0.96, 1]),
+      posed(earGeo, [-0.41, 0, 0], [0, 0, Math.PI / 2]),
+      posed(earGeo, [0.41, 0, 0], [0, 0, Math.PI / 2]),
+    ]),
+  );
+  const headAccent = keep(
+    fused([
+      posed(visorRimGeo, [0, 0.02, 0.2], [0, 0, Math.PI], [1.38, 0.62, 1]),
+      posed(earRingGeo, [-0.452, 0, 0], [0, Math.PI / 2, 0]),
+      posed(earRingGeo, [0.452, 0, 0], [0, Math.PI / 2, 0]),
+      posed(antennaBallGeo, [0.12, 0.49, 0]),
+    ]),
+  );
+  const headVisor = keep(fused([posed(visorGeo, ORIGIN, ORIGIN, [1.14, 0.96, 1])]));
+  const smileMerged = keep(fused([posed(smileGeo, [-0.13, -0.01, 0.39]), posed(smileGeo, [0.13, -0.01, 0.39])]));
+  const armBrushed = keep(
+    fused([
+      posed(jointGeo),
+      posed(handGeo, [0, -0.36, 0]),
+      posed(wristGeo, [0, -0.29, 0], [Math.PI / 2, 0, 0]),
+    ]),
+  );
+  const armObsidian = keep(fused([posed(armGeo, [0, -0.17, 0]), posed(capGeo, [0, 0.01, 0])]));
+  const armAccent = keep(fused([posed(palmGeo, [0, -0.43, 0])]));
+
+  const haloGeo = keep(new THREE.TorusGeometry(0.3, 0.035, 8, 28));
+  const serverGeo = keep(new RoundedBoxGeometry(0.3, 0.3, 0.3, 2, 0.04));
+  const stripeBar = new THREE.BoxGeometry(0.2, 0.025, 0.01);
+  const stripeGeo = keep(
+    fused([
+      posed(stripeBar, [0, -0.08, 0.152]),
+      posed(stripeBar, [0, 0, 0.152]),
+      posed(stripeBar, [0, 0.08, 0.152]),
+    ]),
+  );
+  stripeBar.dispose();
+  const frameGeo = keep(new RoundedBoxGeometry(0.42, 0.3, 0.03, 2, 0.02));
+  const displayGeo = keep(new THREE.PlaneGeometry(0.36, 0.24));
+  const prismGeo = keep(new THREE.OctahedronGeometry(0.2, 0));
+  const barrelGeo = keep(new THREE.CylinderGeometry(0.15, 0.15, 0.16, 16));
+  const lensRimGeo = keep(new THREE.TorusGeometry(0.13, 0.025, 6, 16));
+  const lensGlassGeo = keep(new THREE.CircleGeometry(0.11, 16));
+  const screenMaterial = new THREE.MeshBasicMaterial({ map: screen, toneMapped: false });
+  materials.push(screenMaterial);
+
+  const sideLeds = [-0.1, 0, 0.1] as const;
+  const eyeSides = [-1, 1] as const;
 
   const make = (color: string, prop: ArenaProp, name: string): RobotRig => {
     const accent = new THREE.MeshStandardMaterial({
@@ -199,156 +332,75 @@ export function createRobotKit(): RobotKit {
       color: new THREE.Color(color).lerp(new THREE.Color("#ffffff"), 0.35),
       toneMapped: false,
     });
-    const ledSide = new THREE.MeshBasicMaterial({ color, toneMapped: false });
-    materials.push(accent, visorMaterial, eyeMaterial, ledSide);
+    materials.push(accent, visorMaterial, eyeMaterial);
 
     const root = new THREE.Group();
     root.name = name;
     const body = new THREE.Group();
     root.add(body);
+    mesh(body, bodyObsidian, obsidian);
+    mesh(body, bodyBrushed, brushed);
+    mesh(body, bodySeam, seam);
+    mesh(body, bodyAccent, accent);
 
-    const torso = new THREE.Mesh(torsoGeo, obsidian);
-    torso.scale.set(1.12, 1, 0.86);
-    body.add(torso);
-
-    const chest = new THREE.Mesh(chestGeo, accent);
-    chest.position.set(0, 0.06, 0.244);
-    body.add(chest);
-    const chestRing = new THREE.Mesh(chestRingGeo, brushed);
-    chestRing.position.set(0, 0.06, 0.232);
-    body.add(chestRing);
-
-    const belt = new THREE.Mesh(beltGeo, brushed);
-    belt.rotation.x = Math.PI / 2;
-    belt.scale.set(1.12, 0.86, 1);
-    belt.position.y = -0.15;
-    body.add(belt);
-    for (const y of [0.13, -0.03]) {
-      const band = new THREE.Mesh(seamGeo, seam);
-      band.rotation.x = Math.PI / 2;
-      band.scale.set(1.13, 0.87, 1);
-      band.position.y = y;
-      body.add(band);
-    }
-    const seamBar = new THREE.Mesh(seamBarGeo, seam);
-    seamBar.position.set(0, -0.02, 0.23);
-    body.add(seamBar);
-
-    const leds: THREE.Mesh[] = [];
-    for (let q = 0; q < 3; q += 1) {
-      const led = new THREE.Mesh(ledGeo, q === 1 ? ledGreen : ledSide);
-      led.position.set(-0.1 + q * 0.1, -0.09, 0.236);
-      body.add(led);
-      leds.push(led);
-    }
-
-    const pack = new THREE.Mesh(packGeo, brushed);
-    pack.position.set(0, 0.04, -0.22);
-    body.add(pack);
-    const neck = new THREE.Mesh(neckGeo, brushed);
-    neck.position.y = 0.43;
-    body.add(neck);
+    const leds = new THREE.InstancedMesh(ledGeo, ledLit, 3);
+    leds.frustumCulled = false;
+    const sideColor = new THREE.Color(color);
+    const midColor = new THREE.Color("#3DDC97");
+    sideLeds.forEach((x, index) => {
+      placeInstance(leds, index, [x, -0.09, 0.236]);
+      leds.setColorAt(index, index === 1 ? midColor : sideColor);
+    });
+    leds.instanceMatrix.needsUpdate = true;
+    if (leds.instanceColor) leds.instanceColor.needsUpdate = true;
+    body.add(leds);
 
     const head = new THREE.Group();
     head.position.y = 0.76;
     body.add(head);
-    const skull = new THREE.Mesh(headGeo, brushed);
-    skull.scale.set(1.14, 0.96, 1);
-    head.add(skull);
-    const shell = new THREE.Mesh(shellGeo, obsidian);
-    shell.scale.set(1.14, 0.96, 1);
-    head.add(shell);
-    const visor = new THREE.Mesh(visorGeo, visorMaterial);
-    visor.scale.set(1.14, 0.96, 1);
-    head.add(visor);
-    const visorRim = new THREE.Mesh(visorRimGeo, accent);
-    visorRim.rotation.z = Math.PI;
-    visorRim.scale.set(1.38, 0.62, 1);
-    visorRim.position.set(0, 0.02, 0.2);
-    head.add(visorRim);
+    mesh(head, headBrushed, brushed);
+    mesh(head, headObsidian, obsidian);
+    mesh(head, headVisor, visorMaterial);
+    mesh(head, headAccent, accent);
 
-    const eyes: THREE.Mesh[] = [];
-    const happy: THREE.Mesh[] = [];
-    for (const sx of [-1, 1]) {
-      const eye = new THREE.Mesh(eyeGeo, eyeMaterial);
-      eye.position.set(sx * 0.13, 0.01, 0.385);
-      eye.rotation.x = -0.05;
-      head.add(eye);
-      eyes.push(eye);
-      const smile = new THREE.Mesh(smileGeo, eyeMaterial);
-      smile.position.set(sx * 0.13, -0.01, 0.39);
-      smile.visible = false;
-      head.add(smile);
-      happy.push(smile);
-    }
+    const eyes = new THREE.InstancedMesh(eyeGeo, eyeMaterial, 2);
+    eyes.frustumCulled = false;
+    eyeSides.forEach((sx, index) => {
+      placeInstance(eyes, index, [sx * 0.13, 0.01, 0.385], [-0.05, 0, 0]);
+    });
+    eyes.instanceMatrix.needsUpdate = true;
+    head.add(eyes);
 
-    const glow = new THREE.Mesh(
-      glowGeo,
-      additive("#ffffff", 0.35, materials),
-    );
+    const happy = mesh(head, smileMerged, eyeMaterial);
+    happy.visible = false;
+
+    const glow = mesh(head, glowGeo, additive("#ffffff", 0.35, materials));
     const glowMap = radialTexture(color, textures);
     (glow.material as THREE.MeshBasicMaterial).map = glowMap;
     glow.position.set(0, 0, 0.39);
-    head.add(glow);
-
-    for (const sx of [-1, 1]) {
-      const ear = new THREE.Mesh(earGeo, obsidian);
-      ear.rotation.z = Math.PI / 2;
-      ear.position.set(sx * 0.41, 0, 0);
-      head.add(ear);
-      const ring = new THREE.Mesh(earRingGeo, accent);
-      ring.rotation.y = Math.PI / 2;
-      ring.position.set(sx * 0.452, 0, 0);
-      head.add(ring);
-    }
-
-    const antenna = new THREE.Mesh(antennaGeo, brushed);
-    antenna.position.set(0.12, 0.4, 0);
-    head.add(antenna);
-    const antennaBall = new THREE.Mesh(antennaBallGeo, accent);
-    antennaBall.position.set(0.12, 0.49, 0);
-    head.add(antennaBall);
 
     const arms: RobotRig["arms"] = [];
-    for (const sx of [-1, 1]) {
+    for (const sx of eyeSides) {
       const pivot = new THREE.Group();
       pivot.position.set(sx * 0.36, 0.22, 0);
       body.add(pivot);
-      pivot.add(new THREE.Mesh(jointGeo, brushed));
-      const upper = new THREE.Mesh(armGeo, obsidian);
-      upper.position.y = -0.17;
-      pivot.add(upper);
-      const hand = new THREE.Mesh(handGeo, brushed);
+      mesh(pivot, armBrushed, brushed);
+      mesh(pivot, armObsidian, obsidian);
+      mesh(pivot, armAccent, accent);
+      const hand = new THREE.Object3D();
       hand.position.y = -0.36;
       pivot.add(hand);
-      const palm = new THREE.Mesh(palmGeo, accent);
-      palm.position.y = -0.43;
-      pivot.add(palm);
-      const wrist = new THREE.Mesh(wristGeo, brushed);
-      wrist.rotation.x = Math.PI / 2;
-      wrist.position.y = -0.29;
-      pivot.add(wrist);
-      const cap = new THREE.Mesh(capGeo, obsidian);
-      cap.position.y = 0.01;
-      pivot.add(cap);
       arms.push({ pivot, sx, hand });
     }
 
-    const thrusters: RobotRig["thrusters"] = [];
-    for (const sx of [-1, 1]) {
-      const leg = new THREE.Mesh(legGeo, brushed);
-      leg.position.set(sx * 0.13, -0.5, 0);
-      body.add(leg);
-      const boot = new THREE.Mesh(bootGeo, obsidian);
-      boot.position.set(sx * 0.13, -0.62, 0);
-      body.add(boot);
-      const flameMaterial = additive(color, 0.7, materials);
-      const flame = new THREE.Mesh(flameGeo, flameMaterial);
-      flame.rotation.x = Math.PI;
-      flame.position.set(sx * 0.13, -0.86, 0);
-      body.add(flame);
-      thrusters.push({ mesh: flame, material: flameMaterial });
-    }
+    const flameMaterial = additive(color, 0.7, materials);
+    const thrusterMesh = new THREE.InstancedMesh(flameGeo, flameMaterial, 2);
+    thrusterMesh.frustumCulled = false;
+    eyeSides.forEach((sx, index) => {
+      placeInstance(thrusterMesh, index, [sx * 0.13, -0.86, 0], [Math.PI, 0, 0]);
+    });
+    thrusterMesh.instanceMatrix.needsUpdate = true;
+    body.add(thrusterMesh);
 
     const propPivot = new THREE.Group();
     propPivot.position.set(0.62, 0.95, 0);
@@ -362,52 +414,41 @@ export function createRobotKit(): RobotKit {
         roughness: 0.2,
       });
       materials.push(haloMaterial);
-      const halo = new THREE.Mesh(keep(new THREE.TorusGeometry(0.3, 0.035, 10, 48)), haloMaterial);
+      const halo = mesh(propPivot, haloGeo, haloMaterial);
       halo.rotation.x = Math.PI / 2.3;
       propPivot.position.set(0, 1.32, 0);
-      propPivot.add(halo);
     }
     if (prop === "server") {
-      propPivot.add(new THREE.Mesh(keep(new RoundedBoxGeometry(0.3, 0.3, 0.3, 3, 0.04)), obsidian));
-      for (let i = 0; i < 3; i += 1) {
-        const stripe = new THREE.Mesh(keep(new THREE.BoxGeometry(0.2, 0.025, 0.01)), accent);
-        stripe.position.set(0, -0.08 + i * 0.08, 0.152);
-        propPivot.add(stripe);
-      }
+      mesh(propPivot, serverGeo, obsidian);
+      mesh(propPivot, stripeGeo, accent);
     }
     if (prop === "frame") {
-      propPivot.add(new THREE.Mesh(keep(new RoundedBoxGeometry(0.42, 0.3, 0.03, 2, 0.02)), obsidian));
-      const display = new THREE.Mesh(
-        keep(new THREE.PlaneGeometry(0.36, 0.24)),
-        new THREE.MeshBasicMaterial({ map: screen, toneMapped: false }),
-      );
-      materials.push(display.material as THREE.Material);
+      mesh(propPivot, frameGeo, obsidian);
+      const display = mesh(propPivot, displayGeo, screenMaterial);
       display.position.z = 0.017;
-      propPivot.add(display);
     }
     if (prop === "prism") {
       const prismMaterial = new THREE.MeshPhysicalMaterial({
         color: "#C4B5FD",
-        transmission: 0.4,
         roughness: 0.05,
+        metalness: 0.05,
+        transparent: true,
+        opacity: 0.78,
         thickness: 0.4,
         emissive: "#7C3AED",
-        emissiveIntensity: 0.8,
+        emissiveIntensity: 0.85,
         flatShading: true,
-        transparent: true,
+        envMapIntensity: 1.4,
       });
       materials.push(prismMaterial);
-      const prism = new THREE.Mesh(keep(new THREE.OctahedronGeometry(0.2, 0)), prismMaterial);
+      const prism = mesh(propPivot, prismGeo, prismMaterial);
       prism.scale.y = 1.4;
-      propPivot.add(prism);
     }
     if (prop === "lens") {
-      const barrel = new THREE.Mesh(keep(new THREE.CylinderGeometry(0.15, 0.15, 0.16, 28)), obsidian);
+      const barrel = mesh(propPivot, barrelGeo, obsidian);
       barrel.rotation.x = Math.PI / 2;
-      propPivot.add(barrel);
-      const rim = new THREE.Mesh(keep(new THREE.TorusGeometry(0.13, 0.025, 8, 28)), brushed);
+      const rim = mesh(propPivot, lensRimGeo, brushed);
       rim.position.z = 0.09;
-      propPivot.add(rim);
       const glassMaterial = new THREE.MeshPhysicalMaterial({
         color: "#1a0f08",
         metalness: 0.2,
@@ -417,14 +458,12 @@ export function createRobotKit(): RobotKit {
         emissiveIntensity: 0.5,
       });
       materials.push(glassMaterial);
-      const glass = new THREE.Mesh(keep(new THREE.CircleGeometry(0.11, 28)), glassMaterial);
+      const glass = mesh(propPivot, lensGlassGeo, glassMaterial);
       glass.position.z = 0.085;
-      propPivot.add(glass);
     }
 
-    const shadow = new THREE.Mesh(shadowGeo, shadowMaterial);
+    const shadow = mesh(root, shadowGeo, shadowMaterial);
     shadow.rotation.x = -Math.PI / 2;
-    root.add(shadow);
 
     const rim = new THREE.PointLight(color, 3.5, 3.2, 2);
     rim.position.set(0, 0.9, -0.7);
@@ -437,7 +476,7 @@ export function createRobotKit(): RobotKit {
       arms,
       eyes,
       happy,
-      thrusters,
+      thrusters: { mesh: thrusterMesh, material: flameMaterial },
       prop: propPivot,
       propKind: prop,
       leds,
@@ -458,6 +497,10 @@ export function createRobotKit(): RobotKit {
   };
 }
 
+const EYE_X = [-0.13, 0.13] as const;
+const LED_X = [-0.1, 0, 0.1] as const;
+const FLAME_X = [-0.13, 0.13] as const;
+
 export function poseRobot(rig: RobotRig, time: number, pose: Pose) {
   const motion = pose.calm ? 0 : time;
   const bob = pose.calm ? 0 : Math.sin(motion * 3.2 + pose.phase) * 0.06;
@@ -468,13 +511,12 @@ export function poseRobot(rig: RobotRig, time: number, pose: Pose) {
   rig.head.rotation.z = pose.calm ? 0 : Math.sin(motion * 1.3 + pose.phase) * 0.06;
 
   const blink = pose.calm ? 1 : (motion * 1.1 + pose.phase) % 3.1 < 0.09 ? 0.15 : 1;
-  rig.eyes.forEach((eye) => {
-    eye.scale.y = blink;
-    eye.visible = !pose.happy;
+  EYE_X.forEach((x, index) => {
+    placeInstance(rig.eyes, index, [x, 0.01, 0.385], [-0.05, 0, 0], [1, blink, 1]);
   });
-  rig.happy.forEach((smile) => {
-    smile.visible = pose.happy;
-  });
+  rig.eyes.instanceMatrix.needsUpdate = true;
+  rig.eyes.visible = !pose.happy;
+  rig.happy.visible = pose.happy;
 
   rig.arms.forEach((arm, index) => {
     const swing = pose.calm ? 0 : Math.sin(motion * 3 + pose.phase + index * Math.PI) * 0.18;
@@ -486,18 +528,21 @@ export function poseRobot(rig: RobotRig, time: number, pose: Pose) {
     }
   });
 
-  rig.leds.forEach((led, index) => {
-    led.visible = pose.calm ? true : (motion * 2.2 + index * 0.7 + pose.phase) % 1.6 > 0.35;
+  LED_X.forEach((x, index) => {
+    const on = pose.calm ? true : (motion * 2.2 + index * 0.7 + pose.phase) % 1.6 > 0.35;
+    const scale = on ? 1 : 0;
+    placeInstance(rig.leds, index, [x, -0.09, 0.236], ORIGIN, [scale, scale, scale]);
   });
-  rig.thrusters.forEach((thruster, index) => {
-    if (pose.calm) {
-      thruster.mesh.scale.y = 1;
-      thruster.material.opacity = 0.55;
-      return;
-    }
-    thruster.mesh.scale.y = 0.8 + 0.35 * Math.sin(motion * 28 + index * 2 + pose.phase);
-    thruster.material.opacity = 0.55 + 0.25 * Math.sin(motion * 19 + index);
+  rig.leds.instanceMatrix.needsUpdate = true;
+
+  let opacity = 0;
+  FLAME_X.forEach((x, index) => {
+    const stretch = pose.calm ? 1 : 0.8 + 0.35 * Math.sin(motion * 28 + index * 2 + pose.phase);
+    placeInstance(rig.thrusters.mesh, index, [x, -0.86, 0], [Math.PI, 0, 0], [1, stretch, 1]);
+    opacity += pose.calm ? 0.55 : 0.55 + 0.25 * Math.sin(motion * 19 + index);
   });
+  rig.thrusters.mesh.instanceMatrix.needsUpdate = true;
+  rig.thrusters.material.opacity = opacity / FLAME_X.length;
 
   const hover = rig.propKind === "halo" ? 1.32 : 0.95;
   rig.prop.rotation.y = pose.calm ? 0 : motion * 1.4 + pose.phase;

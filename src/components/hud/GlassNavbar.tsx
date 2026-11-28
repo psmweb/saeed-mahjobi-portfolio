@@ -40,13 +40,14 @@ export function GlassNavbar() {
                 type="button"
                 onClick={() => scrollToAct(id)}
                 aria-current={active ? "true" : undefined}
-                className={`shrink-0 rounded-full px-2 py-1.5 font-mono text-[11px] tracking-[0.08em] transition-colors sm:px-3 ${
+                className={`inline-flex min-h-10 shrink-0 items-center rounded-full px-2.5 font-mono text-xs tracking-[0.08em] transition-colors sm:min-h-0 sm:px-3 sm:py-1.5 sm:text-[13px] ${
                   active
                     ? "bg-[#F2B544] text-[#120d02]"
                     : "text-[#6C7383] hover:bg-white/10 hover:text-ink"
                 }`}
               >
-                <span>{dictionary.hud.chapters[index]}</span>
+                <span className="sm:hidden">{dictionary.hud.chapters[index]?.split(" ")[0]}</span>
+                <span className="hidden sm:inline">{dictionary.hud.chapters[index]}</span>
               </button>
             );
           })}

@@ -131,7 +131,7 @@ export function Act4AgentArena() {
               </p>
             </div>
             <div className="pointer-events-auto flex max-w-full flex-wrap items-center gap-2 self-end rounded-3xl border border-white/10 bg-[rgba(14,17,26,0.78)] px-3 py-2 shadow-[0_10px_40px_rgba(0,0,0,0.45)] backdrop-blur-md sm:rounded-full sm:px-3.5">
-              <span data-demo-badge={dictionary.demoBadge} className="font-mono text-[10px] tracking-[0.04em] text-[#8C93A3]">
+              <span data-demo-badge={dictionary.demoBadge} className="font-mono text-xs tracking-[0.04em] text-[#8C93A3]">
                 {dictionary.demoBadge}
               </span>
               <span className="font-mono text-[11px] text-[#EDEDE6]">{copy.shipTitle}</span>
@@ -142,7 +142,7 @@ export function Act4AgentArena() {
                 aria-pressed={playing}
                 aria-label={`${copy.replay} ${copy.shipTitle}. ${dictionary.demoBadge}`}
                 onClick={() => startArenaReplay()}
-                className={`rounded-full border px-3 py-1.5 font-mono text-[11px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F59E0B] ${
+                className={`inline-flex min-h-10 items-center rounded-full border px-3.5 font-mono text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F59E0B] sm:min-h-0 sm:py-1.5 sm:text-[13px] ${
                   playing
                     ? "border-[#F2B544] bg-[#F2B544] text-[#120d02]"
                     : "border-white/20 bg-white/[0.06] text-[#EDEDE6] hover:border-[#F59E0B] hover:bg-[#F59E0B]/15 hover:text-white active:border-[#F2B544] active:bg-[#F2B544] active:text-[#120d02]"

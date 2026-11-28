@@ -2,6 +2,22 @@
 
 All notable changes to this portfolio are documented here. The format follows Keep a Changelog. Versions follow Semantic Versioning.
 
+## [0.9.0] - 2026-11-28
+
+### Changed
+
+- Act 4 and Act 5 draw calls are under 150. Static robot parts merge per material. Pedestals, beams, eyes, thrusters, and chest LEDs are instanced. The prism no longer renders a transmission pass. Shared segment counts are lower.
+- Adaptive DPR: desktop `[1, 1.75]`, mobile `[1, 1.25]`, with `PerformanceMonitor` and `AdaptiveDpr`.
+- Act groups and idle nebulae stay hidden outside their clock windows.
+- Battery Store placard is `v0.2.0 · 201 PRs` (`v0.2.0 · ۲۰۱ PR` in Persian).
+- English chapter labels match the reference HUD. Mobile chips show the number. Tap targets are at least 40px. Lenis does not sync touch.
+- Open Graph title is `Saeed Mahjobi — ONE COMMAND`.
+
+### Added
+
+- `docs/QA_REPORT.md` and the frames in `docs/qa-screenshots/`.
+- `scripts/qa/measure-draws.mjs` and `scripts/qa/capture.mjs`.
+
 ## [0.7.0] - 2026-11-27
 
 ### Added

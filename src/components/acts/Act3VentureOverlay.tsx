@@ -51,8 +51,8 @@ export function Act3VentureOverlay() {
         <p
           className={
             locale === "fa"
-              ? "font-mono text-[11px] text-balance"
-              : "font-mono text-[11px] tracking-[0.16em]"
+              ? "font-mono text-xs text-balance sm:text-[13px]"
+              : "font-mono text-xs tracking-[0.14em] sm:text-[13px] sm:tracking-[0.16em]"
           }
           style={{ color: accent }}
         >
@@ -66,8 +66,8 @@ export function Act3VentureOverlay() {
           ) : null}
         </p>
         <h2 className="mt-2.5 font-display text-[1.65rem] leading-[1.05] text-white sm:text-[2.15rem]">{stage.title}</h2>
-        <p className="mt-2.5 text-[13px] leading-snug text-[#B4BAC6] sm:text-[13.5px] sm:leading-relaxed">{stage.body}</p>
-        <p className="mt-2.5 font-mono text-[11px] leading-relaxed tracking-[0.04em] text-[#8C93A3]">{stage.stack}</p>
+        <p className="mt-2.5 text-[13px] leading-snug text-pretty text-[#B4BAC6] sm:text-[13.5px] sm:leading-relaxed">{stage.body}</p>
+        <p className="mt-2.5 font-mono text-xs leading-relaxed tracking-[0.04em] text-pretty text-[#8C93A3] sm:text-[13px]">{stage.stack}</p>
         <p className="mt-3.5">
           <span
             dir={latinChip ? "ltr" : undefined}

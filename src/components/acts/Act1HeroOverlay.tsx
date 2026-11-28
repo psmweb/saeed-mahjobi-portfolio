@@ -23,8 +23,8 @@ export function Act1HeroOverlay() {
         <h1
           className={
             locale === "fa"
-              ? "font-fa text-5xl leading-tight text-white sm:text-7xl"
-              : "font-hero-display text-5xl leading-none text-white sm:text-8xl"
+              ? "max-w-[11.5rem] font-fa text-[2.35rem] leading-[1.15] text-white sm:max-w-none sm:text-7xl"
+              : "font-hero-display text-[2.75rem] leading-none text-white sm:text-8xl"
           }
           style={{ textShadow: "0 0 28px rgba(245,158,11,0.55)" }}
         >

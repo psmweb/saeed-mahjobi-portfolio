@@ -11,7 +11,7 @@ Semantic versions for ONE COMMAND. Tags are annotated. Each tag ships with `CHAN
 | v0.5.0 | 3B | Venture stages 4–6 (Honarmarket, Yadaki Yar, Sandoq-Yar) | Released |
 | v0.6.0 | 4 | Five PBR robot figurines and the arena demo | Released |
 | v0.7.0 | 5 | Persian RTL mirror and command-center finale | Released |
-| v0.9.0 | 6 | Visual parity, responsive, and performance audit | Not started |
+| v0.9.0 | 6 | Visual parity, responsive, and performance audit | Released |
 | v1.0.0 | 7 | Production release | Not started |
 
 After v1.0.0: `v1.0.x` fixes copy or visuals, `v1.x.0` adds a venture or feature, `v2.0.0` is a redesign.
@@ -78,5 +78,17 @@ Phase 5. The 44s–52s window is the command center.
 - `prefers-reduced-motion` hides the beam and shows the settled copy, glow, and agents.
 - Portrait viewports pull the finale camera back and tighten the agent row. Desktop aspect keeps the reference camera.
 - Acts 1–4, the venture slabs, the robot kit, and the HUD are unchanged.
+
+## v0.9.0
+
+Phase 6. QA, performance, and polish across all five acts. Detail is in `docs/QA_REPORT.md`.
+
+- Act 4 and Act 5 robot kits merge static parts per material and instance pedestals, beams, eyes, thrusters, and chest LEDs. The UI/UX prism no longer uses a transmission pass. Segment counts on the shared kit are lower. Both acts stay under 150 draw calls.
+- Canvas DPR is `[1, 1.75]` on desktop and `[1, 1.25]` on viewports under 768px, with Drei `PerformanceMonitor` and `AdaptiveDpr`.
+- Act 1 stage, Act 2 group, and zero-opacity nebulae are hidden outside their windows. Act 3, 4, and 5 groups were already gated.
+- Battery Store placard chip is `v0.2.0 · 201 PRs` (Persian `v0.2.0 · ۲۰۱ PR`). The slab chip reads `201` / `PULL REQUESTS`.
+- English chapter chips match the reference HUD labels. Mobile chips show the number only. Body text and tap targets were tightened. Lenis keeps `syncTouch` off.
+- Page title, description, and Open Graph title are `Saeed Mahjobi — ONE COMMAND`.
+- Evidence PNGs are in `docs/qa-screenshots/`. `scripts/qa/measure-draws.mjs` and `scripts/qa/capture.mjs` reproduce the draw-call table and the frames.
 
 

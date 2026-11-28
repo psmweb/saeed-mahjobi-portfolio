@@ -8,7 +8,7 @@ function SceneMessage({ status }: { status: "loading" | "unavailable" }) {
   const label = status === "loading" ? dictionary.scene.loading : dictionary.scene.unavailable;
   return (
     <div className="pointer-events-none fixed inset-0 z-0 flex items-end justify-start p-6">
-      <p className="font-mono text-xs text-amber/80">{label}</p>
+      <p className="max-w-sm font-mono text-[13px] leading-relaxed text-amber/80">{label}</p>
     </div>
   );
 }

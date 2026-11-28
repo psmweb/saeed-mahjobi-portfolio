@@ -38,10 +38,23 @@ const vazir = Vazirmatn({
   display: "swap",
 });
 
+const description =
+  "Bilingual portfolio of Saeed Mahjobi. Six active products, a 2020 archive, and five humanoid agent rigs.";
+
 export const metadata: Metadata = {
   title: "Saeed Mahjobi — ONE COMMAND",
-  description:
-    "Bilingual portfolio of Saeed Mahjobi. Six active products, a 2020 archive, and five humanoid agent rigs.",
+  description,
+  openGraph: {
+    title: "Saeed Mahjobi — ONE COMMAND",
+    description,
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary",
+    title: "Saeed Mahjobi — ONE COMMAND",
+    description,
+  },
 };
 
 export default function RootLayout({

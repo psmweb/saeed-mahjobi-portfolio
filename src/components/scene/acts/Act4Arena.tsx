@@ -46,13 +46,19 @@ type Paint = {
   image?: HTMLImageElement | null;
 };
 
+type Pedestals = {
+  body: THREE.InstancedMesh;
+  ring: THREE.InstancedMesh;
+  glow: THREE.InstancedMesh;
+};
+
 type Runtime = {
   robots: RobotRig[];
   labels: Paint[];
-  pedestals: THREE.Group[];
+  pedestals: Pedestals;
   targets: Paint[];
-  beamsTarget: THREE.Group[];
-  beamsCube: THREE.Group[];
+  beamCore: THREE.InstancedMesh;
+  beamGlow: THREE.InstancedMesh;
   cube: THREE.Mesh;
   cubeGlow: THREE.Mesh;
   cubeGlowMaterial: THREE.MeshBasicMaterial;
@@ -168,22 +174,70 @@ function ringAt(index: number, row: number, mirrored: boolean, out: THREE.Vector
   return out;
 }
 
-function setBeam(group: THREE.Group, from: THREE.Vector3, to: THREE.Vector3, amount: number) {
+const beamDummy = new THREE.Object3D();
+const pedestalBodyLocal = new THREE.Matrix4();
+const pedestalGlowLocal = new THREE.Matrix4().makeRotationX(-Math.PI / 2).setPosition(0, 0.08, 0);
+const pedestalRingLocal = new THREE.Matrix4().makeRotationX(Math.PI / 2).setPosition(0, 0.07, 0);
+const pedestalGroup = new THREE.Matrix4();
+const pedestalOut = new THREE.Matrix4();
+const pedestalPos = new THREE.Vector3();
+const pedestalQuat = new THREE.Quaternion();
+const pedestalScale = new THREE.Vector3();
+
+function writePedestal(mesh: THREE.InstancedMesh, index: number, local: THREE.Matrix4, x: number, scale: number) {
+  pedestalPos.set(x, -2.12, 0.6);
+  pedestalScale.set(scale, scale, scale);
+  pedestalGroup.compose(pedestalPos, pedestalQuat, pedestalScale);
+  mesh.setMatrixAt(index, pedestalOut.multiplyMatrices(pedestalGroup, local));
+}
+
+function placePedestals(runtime: Runtime, xs: readonly number[], scales: readonly number[]) {
+  for (let index = 0; index < 5; index += 1) {
+    const x = xs[index] ?? 0;
+    const scale = scales[index] ?? 0;
+    writePedestal(runtime.pedestals.body, index, pedestalBodyLocal, x, scale);
+    writePedestal(runtime.pedestals.glow, index, pedestalGlowLocal, x, scale);
+    writePedestal(runtime.pedestals.ring, index, pedestalRingLocal, x, scale);
+  }
+  runtime.pedestals.body.instanceMatrix.needsUpdate = true;
+  runtime.pedestals.glow.instanceMatrix.needsUpdate = true;
+  runtime.pedestals.ring.instanceMatrix.needsUpdate = true;
+}
+
+function writeBeam(runtime: Runtime, index: number, from: THREE.Vector3, to: THREE.Vector3, amount: number) {
+  const hide = () => {
+    beamDummy.position.set(0, 0, 0);
+    beamDummy.quaternion.identity();
+    beamDummy.scale.set(0, 0, 0);
+    beamDummy.updateMatrix();
+    runtime.beamCore.setMatrixAt(index, beamDummy.matrix);
+    runtime.beamGlow.setMatrixAt(index, beamDummy.matrix);
+  };
   if (amount <= 0) {
-    group.visible = false;
+    hide();
     return;
   }
   dir.copy(to).sub(from);
   const length = dir.length();
   if (length < 1e-4) {
-    group.visible = false;
+    hide();
     return;
   }
-  group.visible = true;
-  group.position.copy(from);
   dir.multiplyScalar(1 / length);
-  group.quaternion.setFromUnitVectors(up, dir);
-  group.scale.set(1, Math.max(length * amount, 0.001), 1);
+  beamDummy.position.copy(from);
+  beamDummy.quaternion.setFromUnitVectors(up, dir);
+  const span = Math.max(length * amount, 0.001);
+  beamDummy.scale.set(0.025, span, 0.025);
+  beamDummy.updateMatrix();
+  runtime.beamCore.setMatrixAt(index, beamDummy.matrix);
+  beamDummy.scale.set(0.08, span, 0.08);
+  beamDummy.updateMatrix();
+  runtime.beamGlow.setMatrixAt(index, beamDummy.matrix);
+}
+
+function commitBeams(runtime: Runtime) {
+  runtime.beamCore.instanceMatrix.needsUpdate = true;
+  runtime.beamGlow.instanceMatrix.needsUpdate = true;
 }
 
 function paintLabel(label: Paint, text: string, color: string, locale: Locale) {
@@ -478,12 +532,14 @@ function layoutReference(
     }
   });
 
-  runtime.pedestals.forEach((pedestal, index) => {
-    const k = eo5(seg(t, 18.8 + index * 0.06, 19.3 + index * 0.06));
-    pedestal.visible = t > 18.8;
-    pedestal.scale.setScalar(Math.max(0.001, k));
-    pedestal.position.x = axis(HOME_X[index] ?? 0, row, mirrored);
-  });
+  placePedestals(
+    runtime,
+    HOME_X.map((home) => axis(home, row, mirrored)),
+    HOME_X.map((_, index) => {
+      if (!(t > 18.8)) return 0;
+      return Math.max(0.001, eo5(seg(t, 18.8 + index * 0.06, 19.3 + index * 0.06)));
+    }),
+  );
 
   runtime.targets.forEach((target, index) => {
     const appear = eo5(seg(t, 18.9 + index * 0.07, 19.5 + index * 0.07));
@@ -521,37 +577,33 @@ function layoutReference(
 
   root.updateMatrixWorld(true);
   runtime.robots.forEach((robot, index) => {
-    const beam = runtime.beamsTarget[index];
     const fire = seg(t, 19.6 + index * 0.16, 20 + index * 0.16);
     const on = t > 19.6 + index * 0.16 && t < 20.95 && robot.root.visible;
-    if (!beam) return;
-    if (!on) {
-      beam.visible = false;
+    const palm = robot.arms[1]?.hand;
+    if (!on || !palm) {
+      writeBeam(runtime, index, hand, hand, 0);
       return;
     }
-    const palm = robot.arms[1]?.hand;
-    if (!palm) return;
     palm.getWorldPosition(hand);
     root.worldToLocal(hand);
     aimScratch.set(cardPlacement(index, row, mirrored).x, 1.28, -2.58);
-    setBeam(beam, hand, aimScratch, eo5(fire));
+    writeBeam(runtime, index, hand, aimScratch, eo5(fire));
   });
   runtime.robots.forEach((robot, index) => {
     for (let side = 0; side < 2; side += 1) {
-      const beam = runtime.beamsCube[index * 2 + side];
-      if (!beam) continue;
+      const slot = 5 + index * 2 + side;
       const on = t > 22 && t < 22.75 && robot.root.visible;
-      if (!on) {
-        beam.visible = false;
+      const palm = robot.arms[side]?.hand;
+      if (!on || !palm) {
+        writeBeam(runtime, slot, hand, hand, 0);
         continue;
       }
-      const palm = robot.arms[side]?.hand;
-      if (!palm) continue;
       palm.getWorldPosition(hand);
       root.worldToLocal(hand);
-      setBeam(beam, hand, CUBE, eo5(seg(t, 22 + index * 0.03, 22.2 + index * 0.03)));
+      writeBeam(runtime, slot, hand, CUBE, eo5(seg(t, 22 + index * 0.03, 22.2 + index * 0.03)));
     }
   });
+  commitBeams(runtime);
 
   const shock = seg(t, 22.82, 23.4);
   runtime.shock.position.set(0, CUBE.y - 0.55, CUBE.z);
@@ -600,11 +652,11 @@ function layoutCalm(
     const label = runtime.labels[index];
     if (label) placeLabel(label, ringScratch.x, ringScratch.z, 1, row, camera);
   });
-  runtime.pedestals.forEach((pedestal, index) => {
-    pedestal.visible = arrived;
-    pedestal.scale.setScalar(1);
-    pedestal.position.x = axis(HOME_X[index] ?? 0, row, mirrored);
-  });
+  placePedestals(
+    runtime,
+    HOME_X.map((home) => axis(home, row, mirrored)),
+    HOME_X.map(() => (arrived ? 1 : 0)),
+  );
   const progress = stage === "arrival" ? 0 : 1;
   const badge = stage === "arrival" ? 0 : 1;
   runtime.targets.forEach((target, index) => {
@@ -623,34 +675,12 @@ function layoutCalm(
   runtime.cubeGlow.quaternion.copy(camera.quaternion);
   runtime.cubeGlowMaterial.opacity = shipped ? 0.35 : 0;
   runtime.bulb.intensity = shipped ? 8 : 0;
-  runtime.beamsTarget.forEach((beam) => {
-    beam.visible = false;
-  });
-  runtime.beamsCube.forEach((beam) => {
-    beam.visible = false;
-  });
+  for (let index = 0; index < 15; index += 1) writeBeam(runtime, index, hand, hand, 0);
+  commitBeams(runtime);
   runtime.shock.visible = false;
   runtime.shockFill.visible = false;
   runtime.sparks.visible = false;
   if (runtime.cubeKey !== runtime.locale) paintCube(runtime);
-}
-
-function makeBeam(
-  color: string,
-  geometry: THREE.BufferGeometry,
-  tracked: Array<THREE.BufferGeometry | THREE.Material | THREE.Texture>,
-) {
-  const group = new THREE.Group();
-  const core = additive(color, 0.95);
-  const glow = additive(color, 0.28);
-  tracked.push(core, glow);
-  const a = new THREE.Mesh(geometry, core);
-  a.scale.set(0.025, 1, 0.025);
-  const b = new THREE.Mesh(geometry, glow);
-  b.scale.set(0.08, 1, 0.08);
-  group.add(a, b);
-  group.visible = false;
-  return group;
 }
 
 export function Act4Arena() {
@@ -692,9 +722,9 @@ export function Act4Arena() {
         return { mesh, ...painted, key: "" };
       });
 
-      const pedestalGeo = new THREE.CylinderGeometry(0.62, 0.7, 0.12, 36);
-      const pedestalRing = new THREE.TorusGeometry(0.64, 0.018, 8, 48);
-      const pedestalGlow = new THREE.PlaneGeometry(2.2, 2.2);
+      const pedestalGeo = new THREE.CylinderGeometry(0.62, 0.7, 0.12, 20);
+      const pedestalRingGeo = new THREE.TorusGeometry(0.64, 0.018, 6, 28);
+      const pedestalGlowGeo = new THREE.PlaneGeometry(2.2, 2.2);
       const pedestalBody = new THREE.MeshPhysicalMaterial({
         color: "#0C0E14",
         metalness: 0.55,
@@ -702,28 +732,38 @@ export function Act4Arena() {
         clearcoat: 1,
         clearcoatRoughness: 0.06,
       });
-      disposables.push(pedestalGeo, pedestalRing, pedestalGlow, pedestalBody);
-      const pedestals = ARENA_ROLES.map((role) => {
-        const group = new THREE.Group();
-        const glowMap = radialTexture(role.color);
-        const glowMaterial = additive("#ffffff", 0.35, glowMap);
-        disposables.push(glowMap, glowMaterial);
-        const glow = new THREE.Mesh(pedestalGlow, glowMaterial);
-        glow.rotation.x = -Math.PI / 2;
-        glow.position.y = 0.08;
-        group.add(glow);
-        group.add(new THREE.Mesh(pedestalGeo, pedestalBody));
-        const ringMaterial = additive(role.color, 0.9);
-        disposables.push(ringMaterial);
-        const ring = new THREE.Mesh(pedestalRing, ringMaterial);
-        ring.rotation.x = Math.PI / 2;
-        ring.position.y = 0.07;
-        group.add(ring);
-        group.position.set(0, -2.12, 0.6);
-        group.visible = false;
-        parent.add(group);
-        return group;
+      const pedestalGlowMap = radialTexture("#ffffff");
+      const pedestalGlowMaterial = additive("#ffffff", 0.35, pedestalGlowMap);
+      const pedestalRingMaterial = additive("#ffffff", 0.9);
+      disposables.push(
+        pedestalGeo,
+        pedestalRingGeo,
+        pedestalGlowGeo,
+        pedestalBody,
+        pedestalGlowMap,
+        pedestalGlowMaterial,
+        pedestalRingMaterial,
+      );
+      const pedestalBodyMesh = new THREE.InstancedMesh(pedestalGeo, pedestalBody, 5);
+      const pedestalGlowMesh = new THREE.InstancedMesh(pedestalGlowGeo, pedestalGlowMaterial, 5);
+      const pedestalRingMesh = new THREE.InstancedMesh(pedestalRingGeo, pedestalRingMaterial, 5);
+      for (const surface of [pedestalBodyMesh, pedestalGlowMesh, pedestalRingMesh]) {
+        surface.frustumCulled = false;
+        surface.count = 5;
+        parent.add(surface);
+      }
+      ARENA_ROLES.forEach((role, index) => {
+        const tint = new THREE.Color(role.color);
+        pedestalGlowMesh.setColorAt(index, tint);
+        pedestalRingMesh.setColorAt(index, tint);
       });
+      if (pedestalGlowMesh.instanceColor) pedestalGlowMesh.instanceColor.needsUpdate = true;
+      if (pedestalRingMesh.instanceColor) pedestalRingMesh.instanceColor.needsUpdate = true;
+      const pedestals: Pedestals = {
+        body: pedestalBodyMesh,
+        ring: pedestalRingMesh,
+        glow: pedestalGlowMesh,
+      };
 
       const targets: Paint[] = ARENA_TARGETS.map(() => {
         const painted = canvasPaint(1024, 560);
@@ -736,17 +776,36 @@ export function Act4Arena() {
 
       const beamGeo = new THREE.CylinderGeometry(1, 1, 1, 8, 1, true);
       beamGeo.translate(0, 0.5, 0);
-      disposables.push(beamGeo);
-      const beamsTarget = ARENA_ROLES.map((role) => {
-        const beam = makeBeam(role.color, beamGeo, disposables);
-        parent.add(beam);
-        return beam;
-      });
-      const beamsCube = Array.from({ length: 10 }, (_, index) => {
-        const beam = makeBeam(index % 2 ? "#3DDC97" : "#FFD27A", beamGeo, disposables);
-        parent.add(beam);
-        return beam;
-      });
+      const beamCoreMaterial = additive("#ffffff", 0.95);
+      const beamGlowMaterial = additive("#ffffff", 0.28);
+      disposables.push(beamGeo, beamCoreMaterial, beamGlowMaterial);
+      const beamCore = new THREE.InstancedMesh(beamGeo, beamCoreMaterial, 15);
+      const beamGlow = new THREE.InstancedMesh(beamGeo, beamGlowMaterial, 15);
+      beamCore.frustumCulled = false;
+      beamGlow.frustumCulled = false;
+      const amberBeam = new THREE.Color("#FFD27A");
+      const emeraldBeam = new THREE.Color("#3DDC97");
+      for (let index = 0; index < 15; index += 1) {
+        const tint =
+          index < 5
+            ? new THREE.Color(ARENA_ROLES[index]?.color ?? "#ffffff")
+            : (index - 5) % 2
+              ? emeraldBeam
+              : amberBeam;
+        beamCore.setColorAt(index, tint);
+        beamGlow.setColorAt(index, tint);
+        beamDummy.position.set(0, 0, 0);
+        beamDummy.quaternion.identity();
+        beamDummy.scale.set(0, 0, 0);
+        beamDummy.updateMatrix();
+        beamCore.setMatrixAt(index, beamDummy.matrix);
+        beamGlow.setMatrixAt(index, beamDummy.matrix);
+      }
+      if (beamCore.instanceColor) beamCore.instanceColor.needsUpdate = true;
+      if (beamGlow.instanceColor) beamGlow.instanceColor.needsUpdate = true;
+      beamCore.instanceMatrix.needsUpdate = true;
+      beamGlow.instanceMatrix.needsUpdate = true;
+      parent.add(beamCore, beamGlow);
 
       const cubeCanvases: CanvasRenderingContext2D[] = [];
       const cubeTextures: THREE.CanvasTexture[] = [];
@@ -815,8 +874,8 @@ export function Act4Arena() {
         labels,
         pedestals,
         targets,
-        beamsTarget,
-        beamsCube,
+        beamCore,
+        beamGlow,
         cube,
         cubeGlow,
         cubeGlowMaterial,

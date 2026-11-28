@@ -233,6 +233,7 @@ export function ObsidianAtmosphere() {
       if (material instanceof THREE.MeshBasicMaterial) {
         material.opacity =
           record.stage === null ? record.opacity : stageNebulaOpacity(internal, record.stage);
+        record.mesh.visible = material.opacity > 0.012;
       }
       record.mesh.quaternion.copy(camera.quaternion);
     });
